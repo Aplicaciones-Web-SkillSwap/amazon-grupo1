@@ -4,30 +4,46 @@ Cada pedido se rutea en cada layout con la técnica exacta (DP) si su tamaño ll
 umbral T, y con el voraz si no. Así la comparación entre layouts no depende de la
 heurística salvo en los pedidos más grandes.
 """
+import time
+
 import numpy as np
 import pandas as pd
 
 from almacen import config
 
 
+class Cancelado(Exception):
+  """El usuario canceló el experimento."""
 
-def correr(servicio, n_pedidos, semilla=config.SEMILLA, layouts=None, umbral_dp=None):
-  """Una fila por (pedido, layout): order_id, n, layout, costo, tecnica, costo_voraz."""
+
+
+def correr(servicio, n_pedidos, semilla=config.SEMILLA, layouts=None, umbral_dp=None,
+           progreso=None, cancelar=None):
+  """Una fila por (pedido, layout): order_id, n, layout, costo, tecnica, tiempo_s,
+  costo_voraz, tiempo_voraz_s.
+
+  progreso(i, total) se llama tras cada pedido; si cancelar() devuelve True se lanza
+  Cancelado."""
   import random
   umbral_dp = config.UMBRAL_DP if umbral_dp is None else umbral_dp
   layouts = layouts or list(servicio.layouts)
   ids = sorted(servicio.pedidos)
   muestra = random.Random(semilla).sample(ids, min(n_pedidos, len(ids)))
   filas = []
-  for oid in muestra:
+  for i, oid in enumerate(muestra, start=1):
+    if cancelar is not None and cancelar():
+      raise Cancelado()
     productos = servicio.pedidos[oid]
     n = len(productos)
     tecnica = "dp" if n <= umbral_dp else "voraz"
     for nombre in layouts:
       r = servicio.rutear(productos, nombre, tecnica)
-      voraz = r.costo if tecnica == "voraz" else servicio.rutear(productos, nombre, "voraz").costo
+      v = r if tecnica == "voraz" else servicio.rutear(productos, nombre, "voraz")
       filas.append({"order_id": oid, "n": n, "layout": nombre, "costo": r.costo,
-                    "tecnica": tecnica, "costo_voraz": voraz})
+                    "tecnica": tecnica, "tiempo_s": r.tiempo_s,
+                    "costo_voraz": v.costo, "tiempo_voraz_s": v.tiempo_s})
+    if progreso is not None:
+      progreso(i, len(muestra))
   return pd.DataFrame(filas)
 
 
@@ -89,3 +105,19 @@ def comparar_pareado(df, a, b):
   red, lo, hi = _ic_reduccion(costos[b], costos[a])
   return {"a": a, "b": b, "pedidos": len(costos), "reduccion_pct": red,
           "ic95_bajo": lo, "ic95_alto": hi, "significativo": not (lo <= 0 <= hi)}
+
+
+def _rangos(df, umbral_dp=None):
+  t = config.UMBRAL_DP if umbral_dp is None else umbral_dp
+  limites = [0, 5, 10, 15, t, max(t, df["n"].max()) + 1]
+  etiquetas = ["1-5", "6-10", "11-15", f"16-{t}", f">{t}"]
+  return pd.cut(df["n"], bins=limites, labels=etiquetas, right=True)
+
+
+def tiempos_por_tamano(df, umbral_dp=None):
+  """Tiempo medio de ruteo (ms) por rango de tamaño: DP (pedidos resueltos con DP) y voraz."""
+  rango = _rangos(df, umbral_dp)
+  d = df.assign(rango=rango)
+  dp = d[d["tecnica"] == "dp"].groupby("rango", observed=False)["tiempo_s"].mean() * 1000
+  voraz = d.groupby("rango", observed=False)["tiempo_voraz_s"].mean() * 1000
+  return pd.DataFrame({"dp_ms": dp, "voraz_ms": voraz})

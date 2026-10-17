@@ -93,3 +93,29 @@ def test_experimento_en_juguete(servicio):
   assert set(resumen["layout"]) == {ACTUAL, OPTIMIZADO}
   par = experimento.comparar_pareado(df, OPTIMIZADO, ACTUAL)
   assert par["ic95_bajo"] <= par["reduccion_pct"] <= par["ic95_alto"]
+
+
+def test_reoptimizar_y_controles(servicio):
+  est = servicio.reoptimizar(2)
+  assert est["capacidad"] == 2 and est["pasillos_usados"] == 3 and est["mayor_grupo"] <= 2
+  assert est["grupos"] == est["grupos_de_varios"] + est["aislados"]
+  servicio.agregar_controles()
+  assert {"solo_frecuencia", "aleatorio"} <= set(servicio.layouts)
+  with pytest.raises(ValueError):                    # 6 productos no caben en 3 pasillos de 1
+    servicio.reoptimizar(1)
+
+
+def test_alcance_bfs_y_floyd(servicio):
+  alcanzados, total = servicio.alcance_bfs()
+  assert alcanzados == total
+  r = servicio.resumen()
+  assert r["nodos_floyd"] == 7 and r["tiempo_floyd_s"] >= 0
+
+
+def test_experimento_con_progreso_y_cancelacion(servicio):
+  avances = []
+  df = experimento.correr(servicio, 4, semilla=1, progreso=lambda i, n: avances.append((i, n)))
+  assert avances[-1] == (4, 4) and {"tiempo_s", "tiempo_voraz_s"} <= set(df.columns)
+  assert set(experimento.tiempos_por_tamano(df).columns) == {"dp_ms", "voraz_ms"}
+  with pytest.raises(experimento.Cancelado):
+    experimento.correr(servicio, 4, cancelar=lambda: True)
