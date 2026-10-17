@@ -26,9 +26,12 @@ def cargar_datos(ruta=config.RUTA_DATOS):
 
 
 def seleccionar_nodos(datos, por_zona=config.PRODUCTOS_POR_ZONA):
-  """Los `por_zona` productos más pedidos de cada zona."""
+  """Los `por_zona` productos más pedidos de cada zona.
+
+  Los empates en el corte se resuelven por product_id ascendente para que la
+  selección sea la misma en cualquier equipo y versión de pandas."""
   frecuencia = datos.groupby(["zona", "product_id"]).size().rename("freq").reset_index()
-  seleccion = (frecuencia.sort_values("freq", ascending=False)
+  seleccion = (frecuencia.sort_values(["freq", "product_id"], ascending=[False, True])
                          .groupby("zona").head(por_zona))
   info = (datos[["product_id", "product_name", "aisle_id", "department", "zona"]]
           .drop_duplicates("product_id").set_index("product_id"))
