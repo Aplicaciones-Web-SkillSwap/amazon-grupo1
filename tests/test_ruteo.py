@@ -69,3 +69,67 @@ def test_voraz_nunca_mejora_al_optimo():
     assert costo >= ruteo.held_karp(m)[0] - 1e-9
     assert sorted(orden) == list(range(1, 8))
     assert ruteo.costo_ciclo(m, orden) == pytest.approx(costo)
+
+
+# ------------------------- Held-Karp optimizado y selección -------------------------
+@pytest.mark.parametrize("poda", [True, False])
+def test_held_karp_opt_a_mano(poda):
+  costo, orden = ruteo.held_karp_opt(M4, poda=poda)
+  assert costo == 13 and ruteo.costo_ciclo(M4, orden) == 13
+  assert sorted(orden) == [1, 2, 3]
+
+
+@pytest.mark.parametrize("poda", [True, False])
+def test_held_karp_opt_casos_borde(poda):
+  assert ruteo.held_karp_opt([[0]], poda=poda) == (0.0, [])
+  assert ruteo.held_karp_opt([[0, 7], [7, 0]], poda=poda) == (14, [1])
+
+
+@pytest.mark.parametrize("poda", [True, False])
+@pytest.mark.parametrize("n", [2, 4, 6, 8, 10, 12])
+def test_held_karp_opt_coincide_con_la_version_base(n, poda):
+  for semilla in range(5):
+    m = matriz_aleatoria(n, semilla)
+    costo, orden = ruteo.held_karp_opt(m, poda=poda)
+    assert costo == pytest.approx(ruteo.held_karp(m)[0])
+    assert sorted(orden) == list(range(1, n + 1))
+    assert ruteo.costo_ciclo(m, orden) == pytest.approx(costo)
+
+
+def test_la_poda_no_cambia_el_optimo():
+  for semilla in range(30):
+    m = matriz_aleatoria(9, 100 + semilla)
+    assert ruteo.held_karp_opt(m, poda=True)[0] == pytest.approx(
+        ruteo.held_karp_opt(m, poda=False)[0])
+
+
+def test_held_karp_opt_con_matriz_no_metrica():
+  rnd = random.Random(5)
+  for _ in range(10):
+    n = 6
+    m = [[0 if i == j else rnd.randint(1, 20) for j in range(n + 1)] for i in range(n + 1)]
+    assert ruteo.held_karp_opt(m)[0] == pytest.approx(ruteo.held_karp(m)[0])
+
+
+def test_held_karp_opt_rechaza_pedidos_demasiado_grandes():
+  m = [[0] * 24 for _ in range(24)]
+  with pytest.raises(ValueError):
+    ruteo.held_karp_opt(m)
+
+
+def test_elegir_tecnica():
+  assert ruteo.elegir_tecnica(10, umbral_fb=10, umbral_dp=15) == "exacta_verificada"
+  assert ruteo.elegir_tecnica(11, umbral_fb=10, umbral_dp=15) == "dp"
+  assert ruteo.elegir_tecnica(15, umbral_fb=10, umbral_dp=15) == "dp"
+  assert ruteo.elegir_tecnica(16, umbral_fb=10, umbral_dp=15) == "voraz"
+
+
+def test_resolver_segun_el_tamano():
+  m = matriz_aleatoria(6, 3)
+  exacto = ruteo.held_karp(m)[0]
+  costo, _, tecnica = ruteo.resolver(m, umbral_fb=6, umbral_dp=8)
+  assert tecnica == "exacta_verificada" and costo == pytest.approx(exacto)
+  costo, _, tecnica = ruteo.resolver(m, umbral_fb=4, umbral_dp=8)
+  assert tecnica == "dp" and costo == pytest.approx(exacto)
+  costo, orden, tecnica = ruteo.resolver(m, umbral_fb=2, umbral_dp=4)
+  assert tecnica == "voraz" and costo == pytest.approx(ruteo.voraz(m)[0])

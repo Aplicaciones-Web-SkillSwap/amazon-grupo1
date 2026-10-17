@@ -13,6 +13,8 @@ n productos. Devuelven (costo, orden) con `orden` = índices 1..n en el orden de
 from itertools import permutations
 from math import inf
 
+import numpy as np
+
 
 def costo_ciclo(m, orden):
   """Largo del ciclo depot -> orden -> depot."""
@@ -116,3 +118,126 @@ def held_karp(m):
     j = anterior
   orden.reverse()
   return mejor, orden
+
+
+# ---------------------------------------------------------------------------------------
+# Held-Karp optimizado
+# ---------------------------------------------------------------------------------------
+MAX_N_DP = 22        # con n = 22 la tabla ocupa ~0.7 GB; por encima no es viable en memoria
+
+
+def held_karp_opt(m, poda=False):
+  """Held-Karp con cuatro mejoras sobre la versión base.
+
+  1. Submatriz del pedido: recibe solo la matriz del pedido (depot + n productos), que
+     arma Distancias.matriz a partir de Floyd-Warshall; cada distancia es un acceso O(1).
+  2. Estructura plana: la tabla dp es un solo arreglo NumPy de forma (2^n, n).
+  3. Vectorización: se llenan los estados por capas (cantidad de productos visitados) y,
+     para cada último producto k, todas las máscaras de la capa se calculan de una vez.
+  4. Poda por cota superior (poda=True): la ruta del voraz acota el óptimo. Un estado se
+     descarta si su costo más una cota inferior de lo que falta (entrar una vez a cada
+     producto pendiente y al depot por su arista más barata) supera esa cota.
+     Está apagada por defecto: en pedidos reales el voraz queda a 0-3 % del óptimo, pero
+     esa cota inferior es solo ~40 % del óptimo, así que casi no descarta estados y la
+     poda solo agrega costo (ver scripts/benchmark_ruteo.py).
+
+  La complejidad sigue siendo O(n^2 * 2^n) en tiempo y O(n * 2^n) en memoria.
+  Devuelve (costo, orden) igual que held_karp."""
+  n = len(m) - 1
+  if n == 0:
+    return 0.0, []
+  if n > MAX_N_DP:
+    raise ValueError(f"Pedido de {n} productos: supera el máximo de {MAX_N_DP} para la DP")
+
+  C = np.asarray(m, dtype=float)
+  D = C[1:, 1:]                       # D[j, k]: del producto j al k
+  inicio, fin = C[0, 1:], C[1:, 0]    # depot -> producto, producto -> depot
+  total = 1 << n
+
+  dp = np.full((total, n), np.inf)
+  for j in range(n):
+    dp[1 << j, j] = inicio[j]
+
+  # cantidad de productos de cada máscara y las máscaras de cada capa
+  cuenta = np.zeros(total, dtype=np.int8)
+  for u in range(n):
+    cuenta[1 << u: 1 << (u + 1)] = cuenta[: 1 << u] + 1
+  capas = [np.flatnonzero(cuenta == s) for s in range(n + 1)]
+
+  if poda:
+    cota, eps = voraz(m)[0], 1e-9
+    entrada = np.array([min(C[w][u + 1] for w in range(n + 1) if w != u + 1)
+                        for u in range(n)])
+    visitado = np.zeros(total)
+    for u in range(n):
+      visitado[1 << u: 1 << (u + 1)] = visitado[: 1 << u] + entrada[u]
+    falta = entrada.sum() - visitado + fin.min()    # cota inferior de lo que resta
+    ms = capas[1]
+    dp[ms] = np.where(dp[ms] + falta[ms, None] > cota + eps, np.inf, dp[ms])
+    vivo = np.zeros(total, dtype=bool)
+    vivo[ms] = np.isfinite(dp[ms]).any(axis=1)
+
+  for s in range(2, n + 1):
+    ms = capas[s]
+    for k in range(n):
+      bit = 1 << k
+      sel = ms[(ms & bit) != 0]
+      prev = sel ^ bit
+      if poda:
+        ok = vivo[prev]
+        sel, prev = sel[ok], prev[ok]
+      if sel.size == 0:
+        continue
+      costo = (dp[prev] + D[:, k]).min(axis=1)
+      if poda:
+        costo[costo + falta[sel] > cota + eps] = np.inf
+      dp[sel, k] = costo
+    if poda:
+      vivo[ms] = np.isfinite(dp[ms]).any(axis=1)
+
+  completo = total - 1
+  cierre = dp[completo] + fin
+  j = int(np.argmin(cierre))
+  mejor = float(cierre[j])
+  orden, mask = [j + 1], completo
+  while cuenta[mask] > 1:
+    prev = mask ^ (1 << j)
+    j_ant = int(np.argmin(dp[prev] + D[:, j]))
+    orden.append(j_ant + 1)
+    mask, j = prev, j_ant
+  orden.reverse()
+  return mejor, orden
+
+
+# ---------------------------------------------------------------------------------------
+# Selección de la técnica según el tamaño del pedido
+# ---------------------------------------------------------------------------------------
+def elegir_tecnica(n, umbral_fb=None, umbral_dp=None):
+  """"exacta_verificada" (n <= umbral_fb), "dp" (hasta umbral_dp) o "voraz"."""
+  from almacen import config
+  umbral_fb = config.UMBRAL_FUERZA_BRUTA if umbral_fb is None else umbral_fb
+  umbral_dp = config.UMBRAL_DP if umbral_dp is None else umbral_dp
+  if n <= umbral_fb:
+    return "exacta_verificada"
+  if n <= umbral_dp:
+    return "dp"
+  return "voraz"
+
+
+def resolver(m, umbral_fb=None, umbral_dp=None):
+  """Resuelve un pedido con la técnica que corresponde a su tamaño.
+
+  Devuelve (costo, orden, tecnica). Para pedidos chicos corre backtracking y Held-Karp
+  optimizado y comprueba que den el mismo costo."""
+  n = len(m) - 1
+  tecnica = elegir_tecnica(n, umbral_fb, umbral_dp)
+  if tecnica == "voraz":
+    costo, orden = voraz(m)
+  elif tecnica == "dp":
+    costo, orden = held_karp_opt(m)
+  else:
+    costo, orden = held_karp_opt(m)
+    costo_bt, _ = backtracking(m)
+    if abs(costo - costo_bt) > 1e-6:
+      raise AssertionError(f"Backtracking ({costo_bt}) y DP ({costo}) no coinciden")
+  return costo, orden, tecnica
