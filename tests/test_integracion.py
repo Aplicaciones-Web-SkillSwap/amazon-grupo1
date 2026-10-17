@@ -48,3 +48,34 @@ def test_g2_como_en_el_informe(real):
   assert lo.grafo.num_aristas() == 1793
   assert lo.n_pasillos == 98
   assert lo.y_fondo == 76.0
+
+
+def test_g2_es_conexo_con_bfs(real):
+  from almacen import bfs
+  lo = layout.construir_layout(datos.pasillos_desde_catalogo(real[1]))
+  visited, _ = bfs.bfs(lo.grafo, "depot")
+  assert all(visited)
+
+
+def test_g1_componentes(real):
+  from almacen import bfs
+  _, nodos, pedidos = real
+  g1 = afinidad.construir_afinidad(nodos, pedidos)
+  grupos = bfs.componentes(g1)
+  assert len(grupos[0]) + sum(len(x) for x in grupos[1:]) == 1500
+  assert [len(x) for x in grupos] == [1496, 1, 1, 1, 1]
+
+
+def test_distancias_reales_contra_dijkstra(real):
+  import random
+  from almacen.distancias import Distancias
+  from oraculo import dijkstra
+  lo = layout.construir_layout(datos.pasillos_desde_catalogo(real[1]))
+  d = Distancias(lo)
+  assert d.red.num_nodos() == 197
+  prods = [e for e in lo.grafo.Vertices if lo.tipo[e] == "ubicacion"]
+  rnd = random.Random(0)
+  for a in ["depot"] + rnd.sample(prods, 6):
+    ref = dijkstra(lo.grafo, a)
+    for b in prods:
+      assert d.entre(a, b) == ref[lo.grafo.indice(b)]
