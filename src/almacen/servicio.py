@@ -6,7 +6,7 @@ import random
 import time
 from dataclasses import dataclass, field
 
-from almacen import afinidad, config, datos, layout, reubicacion, ruteo
+from almacen import afinidad, bfs, config, datos, layout, reubicacion, ruteo
 from almacen.distancias import Distancias
 
 ACTUAL, OPTIMIZADO = "actual", "optimizado"
@@ -34,7 +34,8 @@ class Resultado:
 
 
 class Servicio:
-  def __init__(self, nodos, pedidos, g1, pasillos_actual, pasillos_optimizado):
+  def __init__(self, nodos, pedidos, g1, pasillos_actual, pasillos_optimizado,
+               capacidad=config.CAPACIDAD_PASILLO):
     self.nodos = nodos
     self.info = datos.info_productos(nodos)
     self.pedidos = pedidos
@@ -43,8 +44,11 @@ class Servicio:
     self.layouts = {}
     self.distancias = {}
     self._base = None
+    self.tiempos_floyd = {}           # layout -> segundos de Floyd-Warshall
+    self.capacidad = capacidad
     self.agregar_layout(ACTUAL, pasillos_actual)
     self.agregar_layout(OPTIMIZADO, pasillos_optimizado)
+    self.estadisticas = self._estadisticas_agrupacion(capacidad)
 
   @classmethod
   def desde_csv(cls, ruta=config.RUTA_DATOS, por_zona=config.PRODUCTOS_POR_ZONA,
@@ -56,7 +60,7 @@ class Servicio:
     g1 = afinidad.construir_afinidad(nodos, pedidos, umbral)
     actual = datos.pasillos_desde_catalogo(nodos)
     optimizado = reubicacion.reubicar(g1, datos.info_productos(nodos), len(actual), capacidad)
-    return cls(nodos, pedidos, g1, actual, optimizado)
+    return cls(nodos, pedidos, g1, actual, optimizado, capacidad)
 
   # ---------- layouts ----------
   def agregar_layout(self, nombre, pasillos):
@@ -66,9 +70,44 @@ class Servicio:
     lo = layout.construir_layout(pasillos, y_fondo=y_fondo)
     if self._base is None:
       self._base = lo
+    t0 = time.perf_counter()
+    dist = Distancias(lo)
+    self.tiempos_floyd[nombre] = time.perf_counter() - t0
     self.pasillos[nombre] = pasillos
     self.layouts[nombre] = lo
-    self.distancias[nombre] = Distancias(lo)
+    self.distancias[nombre] = dist
+
+  def agregar_controles(self):
+    """Agrega los layouts de control (solo frecuencia y aleatorio) si no existen."""
+    if "solo_frecuencia" not in self.layouts:
+      self.agregar_layout("solo_frecuencia", reubicacion.por_frecuencia(self.info, self.capacidad))
+    if "aleatorio" not in self.layouts:
+      self.agregar_layout("aleatorio", reubicacion.aleatorio(self.info, self.capacidad))
+
+  def reoptimizar(self, capacidad):
+    """Vuelve a ejecutar UFDS con otra capacidad por pasillo y reemplaza el layout
+    optimizado. Devuelve estadísticas de la agrupación. Lanza ValueError si no cabe."""
+    pasillos = reubicacion.reubicar(self.g1, self.info, self.layouts[ACTUAL].n_pasillos,
+                                    capacidad)
+    self.agregar_layout(OPTIMIZADO, pasillos)
+    self.capacidad = capacidad
+    self.estadisticas = self._estadisticas_agrupacion(capacidad)
+    return self.estadisticas
+
+  def _estadisticas_agrupacion(self, capacidad):
+    grupos = reubicacion.agrupar(self.g1, capacidad)
+    tamanos = [len(g) for g in grupos]
+    return {"capacidad": capacidad, "grupos": len(grupos),
+            "grupos_de_varios": sum(t > 1 for t in tamanos),
+            "productos_en_grupos": sum(t for t in tamanos if t > 1),
+            "aislados": sum(t == 1 for t in tamanos), "mayor_grupo": max(tamanos),
+            "pasillos_usados": len(self.pasillos[OPTIMIZADO])}
+
+  def alcance_bfs(self, nombre=ACTUAL):
+    """(nodos alcanzados desde el depot, nodos totales) del layout, con BFS."""
+    lo = self.layouts[nombre]
+    visited, _ = bfs.bfs(lo.grafo, "depot")
+    return sum(visited), lo.grafo.num_nodos()
 
   def pasillo_de(self, producto, nombre=ACTUAL):
     """Id del pasillo en el que está el producto en ese layout."""
@@ -91,6 +130,8 @@ class Servicio:
         "nodos_g2": g2.grafo.num_nodos(), "aristas_g2": g2.grafo.num_aristas(),
         "pasillos": g2.n_pasillos, "pasillos_optimizado": len(self.pasillos[OPTIMIZADO]),
         "largo_pasillo_m": g2.y_fondo,
+        "nodos_floyd": self.distancias[ACTUAL].red.num_nodos(),
+        "tiempo_floyd_s": self.tiempos_floyd[ACTUAL],
     }
 
   def pedido_aleatorio(self, tamano=None, semilla=None):
