@@ -1,0 +1,14 @@
+# Datos y salidas generadas
+dataset/
+salida/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# Editor
+.vscode/
+.idea/
