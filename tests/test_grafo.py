@@ -96,3 +96,18 @@ def test_etiqueta_no_guardable(tmp_path):
   g.node("con espacio")
   with pytest.raises(ValueError):
     g.guardar(tmp_path / "x.la")
+
+
+def test_metricas():
+  g = triangulo()
+  g.node("d")
+  assert g.num_aislados() == 1
+  assert g.densidad() == pytest.approx(2 * 3 / (4 * 3))
+  assert g.grado_promedio() == pytest.approx(2 * 3 / 4)
+
+
+def test_metricas_grafo_vacio_o_de_un_nodo():
+  g = Grafo()
+  assert g.densidad() == 0.0 and g.grado_promedio() == 0.0
+  g.node("a")
+  assert g.densidad() == 0.0 and g.num_aislados() == 1

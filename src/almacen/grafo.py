@@ -54,6 +54,23 @@ class Grafo:
     lazos = sum(1 for u, ady in enumerate(self.G) for v, _ in ady if v == u)
     return (total - lazos) // 2 + lazos
 
+  def densidad(self):
+    n = self.num_nodos()
+    if n < 2:
+      return 0.0
+    m = self.num_aristas()
+    return m / (n * (n - 1)) if self.dirigido else 2 * m / (n * (n - 1))
+
+  def grado_promedio(self):
+    n = self.num_nodos()
+    if n == 0:
+      return 0.0
+    m = self.num_aristas()
+    return m / n if self.dirigido else 2 * m / n
+
+  def num_aislados(self):
+    return sum(1 for ady in self.G if not ady)
+
   def indice(self, label):
     return self.label2v[label]
 
