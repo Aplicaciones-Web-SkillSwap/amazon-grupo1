@@ -64,3 +64,29 @@ def reubicar(g1, info, n_pasillos, capacidad=config.CAPACIDAD_PASILLO):
     zona = Counter(info[p]["zona"] for p in prods).most_common(1)[0][0]
     resultado.append((zona, k, prods))
   return resultado
+
+
+# ---------------------------------------------------------------------------------------
+# Distribuciones de control (solo se usan para validar el aporte de la afinidad)
+# ---------------------------------------------------------------------------------------
+def por_frecuencia(info, capacidad=config.CAPACIDAD_PASILLO):
+  """Sin afinidad: los productos más pedidos primero, `capacidad` por pasillo."""
+  orden = sorted(info, key=lambda p: (-info[p]["freq"], p))
+  return _en_pasillos(orden, info, capacidad)
+
+
+def aleatorio(info, capacidad=config.CAPACIDAD_PASILLO, semilla=config.SEMILLA):
+  """Productos en orden al azar, `capacidad` por pasillo."""
+  import random
+  orden = sorted(info)
+  random.Random(semilla).shuffle(orden)
+  return _en_pasillos(orden, info, capacidad)
+
+
+def _en_pasillos(orden, info, capacidad):
+  resultado = []
+  for k, i in enumerate(range(0, len(orden), capacidad), start=1):
+    prods = orden[i:i + capacidad]
+    zona = Counter(info[p]["zona"] for p in prods).most_common(1)[0][0]
+    resultado.append((zona, k, prods))
+  return resultado

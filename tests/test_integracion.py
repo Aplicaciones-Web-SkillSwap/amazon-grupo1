@@ -110,3 +110,28 @@ def test_ruteo_sobre_pedidos_reales(real):
     exacto = ruteo.held_karp(m)[0]
     assert ruteo.backtracking(m)[0] == pytest.approx(exacto)
     assert ruteo.voraz(m)[0] >= exacto - 1e-9
+
+
+@pytest.fixture(scope="module")
+def servicio_real():
+  from almacen.servicio import Servicio
+  return Servicio.desde_csv()
+
+
+def test_servicio_real(servicio_real):
+  s = servicio_real
+  r = s.resumen()
+  assert r["productos"] == 1500 and r["pasillos"] == 98 and r["nodos_g2"] == 1697
+  oid, prods = s.pedido_aleatorio(tamano=8, semilla=3)
+  dos = s.comparar_layouts(prods, "dp")
+  assert dos["actual"].camino[0] == "depot" and dos["optimizado"].costo > 0
+  comp = s.comparar_tecnicas(prods)
+  assert comp["backtracking"].costo == pytest.approx(comp["dp"].costo)
+
+
+def test_experimento_real_pequeno(servicio_real):
+  from almacen import experimento
+  df = experimento.correr(servicio_real, 120, semilla=1)
+  res = experimento.por_layout(df).set_index("layout")
+  assert res.loc["optimizado", "media_m"] < res.loc["actual", "media_m"]
+  assert res.loc["optimizado", "reduccion_pct"] > 15

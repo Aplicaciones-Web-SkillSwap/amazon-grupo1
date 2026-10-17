@@ -65,3 +65,8 @@ def test_el_layout_se_puede_guardar_y_cargar(tmp_path):
   g.guardar(tmp_path / "g2.la")
   h = Grafo.cargar(tmp_path / "g2.la")
   assert h.G == g.G and h.Vertices == g.Vertices
+
+
+def test_pasillo_que_no_cabe_en_y_fondo():
+  with pytest.raises(ValueError):
+    layout.construir_layout(PASILLOS, y_fondo=1.0)

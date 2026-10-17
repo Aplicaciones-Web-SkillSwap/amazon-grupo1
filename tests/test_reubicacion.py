@@ -56,3 +56,22 @@ def test_reubicar_ordena_por_frecuencia():
   assert pasillos[1][2] == [2, 1, 3]
   assert pasillos[2][2] == [4]
   assert sorted(p for _, _, ps in pasillos for p in ps) == [1, 2, 3, 4, 5, 6, 7]
+
+
+def info_control():
+  freq = {1: 5, 2: 9, 3: 1, 4: 2, 5: 50, 6: 40, 7: 3}
+  return {p: {"freq": f, "zona": "A"} for p, f in freq.items()}
+
+
+def test_por_frecuencia():
+  pasillos = reubicacion.por_frecuencia(info_control(), capacidad=3)
+  assert [ps for _, _, ps in pasillos] == [[5, 6, 2], [1, 7, 4], [3]]
+  assert [k for _, k, _ in pasillos] == [1, 2, 3]
+
+
+def test_aleatorio_es_reproducible_y_completo():
+  a = reubicacion.aleatorio(info_control(), capacidad=3, semilla=1)
+  b = reubicacion.aleatorio(info_control(), capacidad=3, semilla=1)
+  assert a == b
+  assert sorted(p for _, _, ps in a for p in ps) == [1, 2, 3, 4, 5, 6, 7]
+  assert all(len(ps) <= 3 for _, _, ps in a)
