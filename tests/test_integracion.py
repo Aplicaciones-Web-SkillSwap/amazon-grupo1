@@ -79,3 +79,20 @@ def test_distancias_reales_contra_dijkstra(real):
     ref = dijkstra(lo.grafo, a)
     for b in prods:
       assert d.entre(a, b) == ref[lo.grafo.indice(b)]
+
+
+def test_reubicacion_real(real):
+  from almacen import reubicacion
+  from almacen.distancias import Distancias
+  _, nodos, pedidos = real
+  info = datos.info_productos(nodos)
+  g1 = afinidad.construir_afinidad(nodos, pedidos)
+  base = layout.construir_layout(datos.pasillos_desde_catalogo(nodos))
+  pasillos = reubicacion.reubicar(g1, info, n_pasillos=base.n_pasillos)
+  colocados = [p for _, _, ps in pasillos for p in ps]
+  assert sorted(colocados) == sorted(info)                      # cada producto, una vez
+  assert all(len(ps) <= config.CAPACIDAD_PASILLO for _, _, ps in pasillos)
+  assert len(pasillos) <= base.n_pasillos
+  opt = layout.construir_layout(pasillos, y_fondo=base.y_fondo)
+  assert opt.y_fondo == base.y_fondo == 76.0
+  Distancias(opt).entre("depot", colocados[-1])                 # el layout es transitable
