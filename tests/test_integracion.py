@@ -96,3 +96,17 @@ def test_reubicacion_real(real):
   opt = layout.construir_layout(pasillos, y_fondo=base.y_fondo)
   assert opt.y_fondo == base.y_fondo == 76.0
   Distancias(opt).entre("depot", colocados[-1])                 # el layout es transitable
+
+
+def test_ruteo_sobre_pedidos_reales(real):
+  from almacen import ruteo
+  from almacen.distancias import Distancias
+  _, nodos, pedidos = real
+  D = Distancias(layout.construir_layout(datos.pasillos_desde_catalogo(nodos)))
+  chicos = [p for p in pedidos.values() if 6 <= len(p) <= 8][:15]
+  assert len(chicos) == 15
+  for prods in chicos:
+    m = D.matriz(["depot"] + prods)
+    exacto = ruteo.held_karp(m)[0]
+    assert ruteo.backtracking(m)[0] == pytest.approx(exacto)
+    assert ruteo.voraz(m)[0] >= exacto - 1e-9
