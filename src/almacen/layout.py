@@ -62,6 +62,8 @@ def construir_layout(pasillos, y_fondo=None):
     anterior, y_anterior = frente, 0.0
     for j, pid in enumerate(prods):
       y = (j // 2 + 1) * d_ub
+      if y > y_fondo:
+        raise ValueError(f"El pasillo {i} ({len(prods)} productos) no cabe en y_fondo={y_fondo}")
       agregar(pid, "ubicacion", (x, y), zona)
       pasillo_de[pid] = i
       if y != y_anterior:                            # nuevo punto a lo largo del pasillo
