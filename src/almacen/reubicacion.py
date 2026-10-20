@@ -7,6 +7,8 @@
    productos más pedidos queden juntos en los primeros pasillos.
 3. reubicar: los pasillos más pedidos quedan más cerca del depot y, dentro de cada
    pasillo, los productos más pedidos quedan más cerca del frente.
+
+TÉCNICA: UFDS + VORAZ - agrupar (estilo Kruskal sobre G1 con UFDS) y empaquetar (first-fit). Se ejecuta en Servicio.desde_csv y en reoptimizar (pestaña Ubicación).
 """
 from collections import Counter
 

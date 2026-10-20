@@ -3,6 +3,8 @@
 Se aplica al grafo reducido del almacén (depot + cruces de pasillo), no a las 1,697
 ubicaciones: V^3 con V = 197 son ~7.6 millones de pasos, mientras que con 1,697
 serían ~4.9 mil millones.
+
+TÉCNICA: GRAFOS - Floyd-Warshall O(V^3). Lo llama distancias.Distancias una vez por layout.
 """
 INF = float("inf")
 

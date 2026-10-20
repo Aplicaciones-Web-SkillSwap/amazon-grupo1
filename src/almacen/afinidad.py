@@ -1,4 +1,7 @@
-"""Grafo de afinidad G1: nodos = productos, arista = pedidos en los que coinciden."""
+"""Grafo de afinidad G1: nodos = productos, arista = pedidos en los que coinciden.
+
+TÉCNICA: GRAFOS - construcción de G1 (no dirigido, peso = pedidos en común). Alimenta a reubicacion.py.
+"""
 from collections import Counter
 from itertools import combinations
 

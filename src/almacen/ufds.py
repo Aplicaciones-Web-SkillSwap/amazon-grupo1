@@ -3,6 +3,8 @@
 parent[i] >= 0 es el padre de i; en una raíz guarda el tamaño del conjunto en negativo
 (parent[r] = -tamaño). La unión cuelga la raíz menor de la mayor, así que find cuesta
 O(log n).
+
+TÉCNICA: UFDS - Quick-Union ponderado. Lo usa reubicacion.agrupar.
 """
 
 

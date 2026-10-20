@@ -8,6 +8,8 @@ de ordenamiento topológico.
 Archivo de texto (.la), una línea por nodo, como 06vesturario.txt pero con pesos:
     # dirigido=0
     etiqueta: vecino/peso vecino/peso ...
+
+TÉCNICA: GRAFOS - lista de adyacencia ponderada. Base de G1 (afinidad) y G2 (almacén).
 """
 
 

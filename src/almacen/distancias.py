@@ -6,6 +6,8 @@ entre dos productos de pasillos distintos es
 donde D sale de Floyd-Warshall sobre el grafo reducido (depot + cruces F{i}/R{i}, con una
 arista F{i}-R{i} por pasillo de largo y_fondo). Dentro de un mismo pasillo la distancia es
 |Δy|. Así se evitan los 1,697 nodos de G2 y Floyd-Warshall corre sobre solo 197.
+
+TÉCNICA: GRAFOS - Floyd-Warshall aplicado al grafo reducido del almacén; entrega la matriz de distancias de cada pedido a ruteo.py.
 """
 from almacen.floyd import INF, floyd_warshall, reconstruir
 from almacen.grafo import Grafo
