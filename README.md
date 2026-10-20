@@ -5,21 +5,30 @@ Dataset: [Instacart Market Basket Analysis](https://www.kaggle.com/c/instacart-m
 
 El proyecto modela un almacén con grafos y resuelve dos problemas: **dónde ubicar los productos**
 para que se pidan juntos desde lugares cercanos, y **en qué orden recorrer el almacén** para
-armar un pedido (picking). Incluye un aplicativo de escritorio (tkinter) y un experimento que
+armar un pedido (picking). Incluye un aplicativo de escritorio (tkinter), una versión web (Streamlit) desplegable en una máquina virtual y un experimento que
 compara la distribución actual contra la optimizada sobre pedidos reales.
 
 ## Técnicas y dónde están
 
-| Técnica | Para qué se usa | Módulo |
-|---|---|---|
-| Lista de adyacencia ponderada | Grafos G₁ (afinidad) y G₂ (almacén) | `grafo.py` |
-| BFS | Comprobar que todo el almacén es alcanzable desde el depot; componentes de G₁ | `bfs.py` |
-| Floyd-Warshall | Distancias mínimas entre cruces de pasillo (197 nodos) | `floyd.py`, `distancias.py` |
-| UFDS (Quick-Union ponderado) | Agrupar productos afines con un tope de 16 por pasillo | `ufds.py`, `reubicacion.py` |
-| Voraz (vecino más cercano) | Ruta aproximada y cota superior | `ruteo.py` |
-| Fuerza bruta y backtracking | Ruta exacta de pedidos chicos | `ruteo.py` |
-| Programación dinámica (Held-Karp) | Ruta exacta; versión base y versión optimizada con NumPy | `ruteo.py` |
-| Selección de técnica según el tamaño del pedido | n ≤ 10: backtracking + DP verificadas entre sí; hasta T = 19: DP optimizada; más: voraz | `ruteo.resolver` |
+Cada módulo de `src/almacen/` lleva en su encabezado una línea `TÉCNICA:` que dice qué técnica
+implementa y quién la invoca. Resumen:
+
+| Técnica | Funciones | Para qué se usa | Se ejecuta cuando... |
+|---|---|---|---|
+| Lista de adyacencia ponderada | `grafo.Grafo` | Estructura de G₁ (afinidad) y G₂ (almacén) | Al cargar la app (`Servicio.desde_csv`) |
+| Construcción de G₁ | `afinidad.construir_afinidad` | Productos unidos por pedidos en común | Al cargar la app; se dibuja en *Datos y grafos* |
+| Construcción de G₂ | `layout.construir_layout` | Plano del almacén (pasillos, cruces, depot) | Al cargar y al reoptimizar; se dibuja en *Datos y grafos* y *Ubicación* |
+| BFS | `bfs.bfs`, `bfs.camino`, `bfs.componentes` | Comprobar que todo G₂ es alcanzable desde el depot | `Servicio.alcance_bfs` → métricas de *Datos y grafos* |
+| Floyd-Warshall | `floyd.floyd_warshall`, `distancias.Distancias` | Distancias mínimas entre cruces (197 nodos) y entre productos | Una vez por layout al cargar; alimenta todo el ruteo |
+| UFDS (Quick-Union ponderado) | `ufds.UFDS`, `reubicacion.agrupar` | Unir productos afines con un tope de 16 por pasillo | Al cargar y con *Ejecutar UFDS* en *Ubicación* |
+| Voraz | `reubicacion.empaquetar`, `ruteo.voraz` | Acomodar grupos en pasillos (first-fit) y ruta por vecino más cercano | *Ubicación*; técnica *Voraz* en *Ruteo* |
+| Fuerza bruta | `ruteo.fuerza_bruta` | Ruta exacta de pedidos de hasta 9 productos | Técnica *Fuerza bruta* en *Ruteo* |
+| Backtracking | `ruteo.backtracking` | Ruta exacta con poda (hasta 11 productos) | Técnica *Backtracking* en *Ruteo* |
+| Programación dinámica (Held-Karp) | `ruteo.held_karp`, `ruteo.held_karp_opt` | Ruta exacta; versión base y versión optimizada con NumPy (hasta 22) | Técnica *DP* en *Ruteo*; usada por *Comparación* |
+| Selección según tamaño del pedido | `ruteo.elegir_tecnica`, `ruteo.resolver` | n ≤ 10: backtracking + DP verificadas entre sí; hasta T = 19: DP optimizada; más: voraz | Técnica *Automática* en *Ruteo* |
+
+La interfaz (tkinter o web) nunca calcula nada: solo llama a `servicio.Servicio`, que orquesta los módulos
+anteriores. En la pantalla de *Ruteo* el resultado siempre indica qué técnica se ejecutó.
 
 ## Instalación
 
@@ -74,6 +83,19 @@ la distancia por layout con intervalos de confianza, el aporte de la afinidad, l
 de distancia y tiempo. Active *layouts de control* para medir cuánto aporta cada ingrediente de la
 reubicación. *Guardar CSV* exporta el detalle por pedido.
 
+## Versión web
+
+Es la misma lógica (`servicio.py`) con una página Streamlit: pestañas *Inicio*, *Ruteo*, *Ubicación*,
+*Comparación* y *Grafos*. Al abrirla ya hay un pedido de ejemplo cargado; basta pulsar *Calcular ruta*.
+
+```powershell
+pip install -r requirements.txt
+streamlit run app_web.py
+```
+
+Se abre en http://localhost:8501. Cada pestaña indica qué técnicas usa. Para publicarla en una máquina
+virtual de AWS o Azure vea [docs/DESPLIEGUE.md](docs/DESPLIEGUE.md).
+
 ## Scripts
 
 ```powershell
@@ -98,7 +120,9 @@ sobre las 1,697 ubicaciones; las técnicas exactas se validan entre sí.
 ## Estructura
 
 ```
-main.py                    abre el aplicativo
+main.py                    abre el aplicativo de escritorio (tkinter)
+app_web.py                 abre la versión web (streamlit run app_web.py)
+deploy/  docs/             scripts y guía de despliegue en una VM
 scripts/                   experimento, benchmark y script del hito 1
 src/almacen/
   config.py                constantes (zonas, umbrales, capacidad, T)
@@ -110,6 +134,7 @@ src/almacen/
   servicio.py              fachada que usa la interfaz
   experimento.py           comparación de layouts sobre pedidos reales
   gui/                     interfaz tkinter (sin lógica de algoritmos)
+  web/                     interfaz web Streamlit (sin lógica de algoritmos)
 tests/
 ```
 
