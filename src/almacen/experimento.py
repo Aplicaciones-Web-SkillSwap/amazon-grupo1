@@ -3,6 +3,8 @@
 Cada pedido se rutea en cada layout con la técnica exacta (DP) si su tamaño llega al
 umbral T, y con el voraz si no. Así la comparación entre layouts no depende de la
 heurística salvo en los pedidos más grandes.
+
+TÉCNICA: Rutea una muestra de pedidos reales con ruteo.py en cada layout de Servicio y compara las distancias (pestaña Comparación).
 """
 import time
 

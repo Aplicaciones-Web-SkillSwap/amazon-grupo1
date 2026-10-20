@@ -1,4 +1,7 @@
-"""Medición de tiempos de las técnicas de ruteo y calibración del umbral T."""
+"""Medición de tiempos de las técnicas de ruteo y calibración del umbral T.
+
+TÉCNICA: Medición de tiempos de las técnicas de ruteo (no es una técnica del curso).
+"""
 import statistics
 import time
 

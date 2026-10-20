@@ -6,6 +6,8 @@ lados de la estantería (dos ubicaciones por metro). El depot, donde empieza y t
 cada recorrido, está en la esquina frontal izquierda.
 
 Etiquetas de nodo: "depot", "F{i}", "R{i}" y el product_id (int) para cada ubicación.
+
+TÉCNICA: GRAFOS - construcción de G2 (plano del almacén). Lo recorren bfs.py y distancias.py.
 """
 from dataclasses import dataclass
 

@@ -9,6 +9,8 @@ n productos. Devuelven (costo, orden) con `orden` = índices 1..n en el orden de
   fuerza_bruta  todas las permutaciones     O(n! * n)      óptimo
   backtracking  permutaciones con poda      O(n!) peor caso, óptimo
   held_karp     programación dinámica       O(n^2 * 2^n)   óptimo
+
+TÉCNICA: VORAZ (voraz), FUERZA BRUTA (fuerza_bruta), BACKTRACKING (backtracking) y PROGRAMACIÓN DINÁMICA (held_karp, held_karp_opt). resolver elige según el tamaño del pedido; Servicio.rutear lo invoca (pestaña Ruteo).
 """
 from itertools import permutations
 from math import inf

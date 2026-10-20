@@ -1,6 +1,8 @@
 """Servicio del aplicativo: arma todo una vez (datos, G1, layouts, distancias) y ofrece lo
 que necesita la interfaz: rutear un pedido con la técnica elegida, comparar técnicas y
 comparar el layout actual con el optimizado. La GUI no llama a los algoritmos directamente.
+
+TÉCNICA: Orquesta todas las técnicas: ninguna se calcula en la interfaz, la GUI y la web solo llaman a esta clase.
 """
 import random
 import time

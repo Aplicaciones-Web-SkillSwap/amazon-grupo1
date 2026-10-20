@@ -2,6 +2,8 @@
 
 path[v] es el nodo desde el que se descubrió v (-1 para el origen y los no alcanzados).
 Los índices son los de Grafo.Vertices; las funciones públicas reciben etiquetas.
+
+TÉCNICA: GRAFOS - BFS. Se usa en servicio.alcance_bfs (pestaña Datos y grafos): verifica que todas las ubicaciones se alcancen desde el depot.
 """
 from collections import deque
 
