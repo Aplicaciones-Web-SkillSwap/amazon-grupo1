@@ -1,6 +1,7 @@
 """Experimento: compara distribuciones del almacén sobre una muestra de pedidos reales.
 
-Cada pedido se rutea en cada layout con la técnica exacta (DP) si su tamaño llega al
+Los pedidos se toman solo del conjunto de prueba (los que no se usaron para armar G1 ni las
+frecuencias). Cada pedido se rutea en cada layout con la técnica exacta (DP) si su tamaño llega al
 umbral T, y con el voraz si no. Así la comparación entre layouts no depende de la
 heurística salvo en los pedidos más grandes.
 
@@ -29,13 +30,13 @@ def correr(servicio, n_pedidos, semilla=config.SEMILLA, layouts=None, umbral_dp=
   import random
   umbral_dp = config.UMBRAL_DP if umbral_dp is None else umbral_dp
   layouts = layouts or list(servicio.layouts)
-  ids = sorted(servicio.pedidos)
+  ids = sorted(servicio.pedidos_prueba)
   muestra = random.Random(semilla).sample(ids, min(n_pedidos, len(ids)))
   filas = []
   for i, oid in enumerate(muestra, start=1):
     if cancelar is not None and cancelar():
       raise Cancelado()
-    productos = servicio.pedidos[oid]
+    productos = servicio.pedidos_prueba[oid]
     n = len(productos)
     tecnica = "dp" if n <= umbral_dp else "voraz"
     for nombre in layouts:

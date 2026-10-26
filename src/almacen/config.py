@@ -12,6 +12,7 @@ DIST_UBICACION = 1.0                # metros entre ubicaciones contiguas
 DIST_PASILLO = 3.0                  # metros entre pasillos paralelos
 CAPACIDAD_PASILLO = 16              # tope de productos por pasillo en el layout optimizado (UFDS)
 SEMILLA = 42                        # semilla fija para el muestreo de pedidos
+FRACCION_PRUEBA = 0.3               # pedidos que NO se usan para construir G1 ni las frecuencias (validación)
 
 UMBRAL_FUERZA_BRUTA = 10            # hasta este tamaño de pedido se usa fuerza bruta + backtracking
 UMBRAL_DP = 19                      # umbral T de Held-Karp optimizado (scripts/benchmark_ruteo.py, límite 1 s por pedido)

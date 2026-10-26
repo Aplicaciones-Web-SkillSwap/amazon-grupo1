@@ -2,10 +2,16 @@
 que necesita la interfaz: rutear un pedido con la técnica elegida, comparar técnicas y
 comparar el layout actual con el optimizado. La GUI no llama a los algoritmos directamente.
 
+Validación: los pedidos se separan en construcción (70 %) y prueba (30 %). G1 "de construcción"
+y las frecuencias que arman el layout optimizado y los controles salen solo de la construcción;
+el experimento rutea únicamente pedidos de prueba. G1 (`g1`) se arma con todos los pedidos y
+solo sirve para describir y dibujar el grafo.
+
 TÉCNICA: Orquesta todas las técnicas: ninguna se calcula en la interfaz, la GUI y la web solo llaman a esta clase.
 """
 import random
 import time
+from collections import Counter
 from dataclasses import dataclass, field
 
 from almacen import afinidad, bfs, config, datos, layout, reubicacion, ruteo
@@ -37,11 +43,16 @@ class Resultado:
 
 class Servicio:
   def __init__(self, nodos, pedidos, g1, pasillos_actual, pasillos_optimizado,
-               capacidad=config.CAPACIDAD_PASILLO):
+               capacidad=config.CAPACIDAD_PASILLO, pedidos_prueba=None,
+               g1_construccion=None, info_construccion=None):
     self.nodos = nodos
     self.info = datos.info_productos(nodos)
     self.pedidos = pedidos
     self.g1 = g1
+    # Sin separación explícita, todo se construye y se prueba con los mismos pedidos.
+    self.pedidos_prueba = pedidos if pedidos_prueba is None else pedidos_prueba
+    self.g1_construccion = g1 if g1_construccion is None else g1_construccion
+    self.info_construccion = self.info if info_construccion is None else info_construccion
     self.pasillos = {}
     self.layouts = {}
     self.distancias = {}
@@ -54,15 +65,34 @@ class Servicio:
 
   @classmethod
   def desde_csv(cls, ruta=config.RUTA_DATOS, por_zona=config.PRODUCTOS_POR_ZONA,
-                umbral=config.UMBRAL_AFINIDAD, capacidad=config.CAPACIDAD_PASILLO):
-    """Carga el dataset y construye el servicio. Tarda unos segundos."""
+                umbral=config.UMBRAL_AFINIDAD, capacidad=config.CAPACIDAD_PASILLO,
+                fraccion_prueba=config.FRACCION_PRUEBA, semilla=config.SEMILLA):
+    """Carga el dataset y construye el servicio. Tarda unos segundos.
+
+    fraccion_prueba: parte de los pedidos que se reserva para evaluar (0 = sin separar)."""
     d = datos.cargar_datos(ruta)
     nodos = datos.seleccionar_nodos(d, por_zona)
     pedidos = datos.pedidos_filtrados(d, nodos)
-    g1 = afinidad.construir_afinidad(nodos, pedidos, umbral)
+    if fraccion_prueba:
+      construccion, prueba = datos.dividir_pedidos(pedidos, fraccion_prueba, semilla)
+    else:
+      construccion, prueba = pedidos, pedidos
+    conteo = afinidad.contar_coocurrencias(construccion)
+    g1_construccion = afinidad.construir_desde_conteo(nodos, conteo, umbral)
+    if construccion is prueba:
+      g1 = g1_construccion
+    else:
+      conteo.update(afinidad.contar_coocurrencias(prueba))
+      g1 = afinidad.construir_desde_conteo(nodos, conteo, umbral)
+    del conteo
+    frecuencias = Counter(p for productos in construccion.values() for p in productos)
+    nodos_construccion = nodos.copy()
+    nodos_construccion["freq"] = [frecuencias.get(int(p), 0) for p in nodos["product_id"]]
+    info_construccion = datos.info_productos(nodos_construccion)
     actual = datos.pasillos_desde_catalogo(nodos)
-    optimizado = reubicacion.reubicar(g1, datos.info_productos(nodos), len(actual), capacidad)
-    return cls(nodos, pedidos, g1, actual, optimizado, capacidad)
+    optimizado = reubicacion.reubicar(g1_construccion, info_construccion, len(actual), capacidad)
+    return cls(nodos, pedidos, g1, actual, optimizado, capacidad, pedidos_prueba=prueba,
+               g1_construccion=g1_construccion, info_construccion=info_construccion)
 
   # ---------- layouts ----------
   def agregar_layout(self, nombre, pasillos):
@@ -82,22 +112,22 @@ class Servicio:
   def agregar_controles(self):
     """Agrega los layouts de control (solo frecuencia y aleatorio) si no existen."""
     if "solo_frecuencia" not in self.layouts:
-      self.agregar_layout("solo_frecuencia", reubicacion.por_frecuencia(self.info, self.capacidad))
+      self.agregar_layout("solo_frecuencia", reubicacion.por_frecuencia(self.info_construccion, self.capacidad))
     if "aleatorio" not in self.layouts:
-      self.agregar_layout("aleatorio", reubicacion.aleatorio(self.info, self.capacidad))
+      self.agregar_layout("aleatorio", reubicacion.aleatorio(self.info_construccion, self.capacidad))
 
   def reoptimizar(self, capacidad):
     """Vuelve a ejecutar UFDS con otra capacidad por pasillo y reemplaza el layout
     optimizado. Devuelve estadísticas de la agrupación. Lanza ValueError si no cabe."""
-    pasillos = reubicacion.reubicar(self.g1, self.info, self.layouts[ACTUAL].n_pasillos,
-                                    capacidad)
+    pasillos = reubicacion.reubicar(self.g1_construccion, self.info_construccion,
+                                    self.layouts[ACTUAL].n_pasillos, capacidad)
     self.agregar_layout(OPTIMIZADO, pasillos)
     self.capacidad = capacidad
     self.estadisticas = self._estadisticas_agrupacion(capacidad)
     return self.estadisticas
 
   def _estadisticas_agrupacion(self, capacidad):
-    grupos = reubicacion.agrupar(self.g1, capacidad)
+    grupos = reubicacion.agrupar(self.g1_construccion, capacidad)
     tamanos = [len(g) for g in grupos]
     return {"capacidad": capacidad, "grupos": len(grupos),
             "grupos_de_varios": sum(t > 1 for t in tamanos),
@@ -127,6 +157,9 @@ class Servicio:
     g1, g2 = self.g1, self.layouts[ACTUAL]
     return {
         "productos": g1.num_nodos(), "pedidos": len(self.pedidos),
+        "pedidos_construccion": len(self.pedidos) - len(self.pedidos_prueba)
+        if self.pedidos_prueba is not self.pedidos else len(self.pedidos),
+        "pedidos_prueba": len(self.pedidos_prueba),
         "aristas_g1": g1.num_aristas(), "aislados_g1": g1.num_aislados(),
         "densidad_g1": g1.densidad(), "grado_promedio_g1": g1.grado_promedio(),
         "nodos_g2": g2.grafo.num_nodos(), "aristas_g2": g2.grafo.num_aristas(),

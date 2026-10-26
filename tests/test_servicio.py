@@ -7,7 +7,7 @@ from almacen.servicio import ACTUAL, OPTIMIZADO, Servicio
 @pytest.fixture
 def servicio(carpeta_datos):
   # capacidad 2 para que los pasillos optimizados quepan en el almacén de juguete
-  return Servicio.desde_csv(carpeta_datos, por_zona=2, umbral=2, capacidad=2)
+  return Servicio.desde_csv(carpeta_datos, por_zona=2, umbral=2, capacidad=2, fraccion_prueba=0)
 
 
 def largo_manhattan(lo, ruta):
@@ -119,3 +119,36 @@ def test_experimento_con_progreso_y_cancelacion(servicio):
   assert set(experimento.tiempos_por_tamano(df).columns) == {"dp_ms", "voraz_ms"}
   with pytest.raises(experimento.Cancelado):
     experimento.correr(servicio, 4, cancelar=lambda: True)
+
+
+# ---------- validación: construcción vs prueba ----------
+def test_pedidos_de_prueba_no_se_usan_para_construir(carpeta_datos):
+  s = Servicio.desde_csv(carpeta_datos, por_zona=2, umbral=1, capacidad=2, fraccion_prueba=0.5)
+  prueba = set(s.pedidos_prueba)
+  assert len(prueba) == 3 and prueba <= set(s.pedidos)
+  r = s.resumen()
+  assert r["pedidos_prueba"] == 3 and r["pedidos_construccion"] == 3
+  # las frecuencias de construcción salen solo de los pedidos de construcción
+  construccion = set(s.pedidos) - prueba
+  esperado = {p: sum(p in s.pedidos[o] for o in construccion) for p in s.info}
+  assert {p: s.info_construccion[p]["freq"] for p in s.info} == esperado
+  # G1 de construcción no puede tener más afinidad que G1 con todos los pedidos
+  assert s.g1_construccion.num_aristas() <= s.g1.num_aristas()
+
+
+def test_experimento_solo_usa_pedidos_de_prueba(carpeta_datos):
+  s = Servicio.desde_csv(carpeta_datos, por_zona=2, umbral=1, capacidad=2, fraccion_prueba=0.5)
+  df = experimento.correr(s, 10)
+  assert set(df["order_id"]) == set(s.pedidos_prueba)
+
+
+def test_sin_separacion_construye_y_prueba_con_todo(carpeta_datos):
+  s = Servicio.desde_csv(carpeta_datos, por_zona=2, umbral=1, capacidad=2, fraccion_prueba=0)
+  assert s.pedidos_prueba == s.pedidos and s.g1_construccion is s.g1
+  assert s.resumen()["pedidos_construccion"] == len(s.pedidos)
+
+
+def test_la_separacion_es_reproducible(carpeta_datos):
+  a = Servicio.desde_csv(carpeta_datos, por_zona=2, umbral=1, capacidad=2, fraccion_prueba=0.5)
+  b = Servicio.desde_csv(carpeta_datos, por_zona=2, umbral=1, capacidad=2, fraccion_prueba=0.5)
+  assert sorted(a.pedidos_prueba) == sorted(b.pedidos_prueba)
