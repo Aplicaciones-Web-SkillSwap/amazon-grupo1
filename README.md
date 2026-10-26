@@ -5,7 +5,7 @@ Dataset: [Instacart Market Basket Analysis](https://www.kaggle.com/c/instacart-m
 
 El proyecto modela un almacén con grafos y resuelve dos problemas: **dónde ubicar los productos**
 para que se pidan juntos desde lugares cercanos, y **en qué orden recorrer el almacén** para
-armar un pedido (picking). Incluye un aplicativo de escritorio (tkinter), una versión web (Streamlit) desplegable en una máquina virtual y un experimento que
+armar un pedido (picking). Incluye un aplicativo de escritorio (tkinter), una versión web (Streamlit) desplegable en una máquina virtual o en Streamlit Community Cloud y un experimento que
 compara la distribución actual contra la optimizada sobre pedidos reales.
 
 ## Técnicas y dónde están
@@ -78,15 +78,18 @@ alcanzan para 1,500 productos).
 4. *Comparar técnicas* corre backtracking, DP y voraz sobre el mismo pedido; *Comparar layouts* lo
    rutea en el actual y en el optimizado. *Acercar a la ruta* ajusta el zoom.
 
-**4. Comparación**: ejecuta el experimento sobre una muestra de pedidos reales (300 por defecto). Muestra
+**4. Comparación**: ejecuta el experimento sobre una muestra de pedidos reales (300 por defecto). Los pedidos
+se separan al azar (semilla 42) en 70 % de construcción, con los que se arman G1 y las frecuencias del layout
+optimizado, y 30 % de prueba, que es de donde sale la muestra; así el experimento no evalúa con los mismos
+datos con los que se construyó. Muestra
 la distancia por layout con intervalos de confianza, el aporte de la afinidad, la brecha del voraz y gráficos
 de distancia y tiempo. Active *layouts de control* para medir cuánto aporta cada ingrediente de la
 reubicación. *Guardar CSV* exporta el detalle por pedido.
 
 ## Versión web
 
-Es la misma lógica (`servicio.py`) con una página Streamlit: pestañas *Inicio*, *Ruteo*, *Ubicación*,
-*Comparación* y *Grafos*. Al abrirla ya hay un pedido de ejemplo cargado; basta pulsar *Calcular ruta*.
+Es la misma lógica (`servicio.py`) con una página Streamlit: pestañas *Inicio*, *Datos y grafos*, *Ubicación*,
+*Ruteo* y *Comparación* (el mismo orden que la versión de escritorio, más una pestaña de inicio). Al abrirla ya hay un pedido de ejemplo cargado; basta pulsar *Calcular ruta*.
 
 ```powershell
 pip install -r requirements.txt
@@ -154,22 +157,26 @@ tests/
 
 ## Resultados (semilla 42, reproducibles con los scripts)
 
-### Layouts: 1,500 pedidos reales, ruteo exacto con DP hasta 19 productos
+### Layouts: 1,000 pedidos de prueba, ruteo exacto con DP hasta 19 productos
+
+Los pedidos se separan al azar (semilla 42): el 70 % arma G₁ y las frecuencias del layout optimizado y el
+30 % restante (36,941 pedidos) es el conjunto de prueba, del que sale la muestra.
 
 | Layout | Distancia media | Reducción frente al actual (IC 95 %) | Pedidos con menor distancia |
 |---|---|---|---|
-| Actual (catálogo) | 547 m | – | – |
-| Aleatorio, 16 por pasillo (control) | 509 m | 7.0 % (5.4 – 8.6) | 63 % |
-| Solo frecuencia, sin afinidad (control) | 405 m | 26.0 % (24.5 – 27.6) | 79 % |
-| **Optimizado (UFDS + frecuencia)** | **401 m** | **26.8 % (25.2 – 28.3)** | 79 % |
+| Actual (catálogo) | 540 m | – | – |
+| Aleatorio, 16 por pasillo (control) | 509 m | 5.8 % (3.6 – 7.8) | 63 % |
+| Solo frecuencia, sin afinidad (control) | 392 m | 27.4 % (25.6 – 29.3) | 79 % |
+| **Optimizado (UFDS + frecuencia)** | **389 m** | **28.0 % (26.1 – 29.9)** | 80 % |
 
 - La mayor parte de la mejora viene de poner lo más pedido al frente y compactar los productos
-  (aleatorio ≈ 7 puntos por compactar; frecuencia ≈ 19 puntos más).
-- La afinidad (UFDS) aporta un **1.07 % adicional** sobre solo frecuencia (IC 95 %: 0.42 – 1.71),
-  pequeño pero estadísticamente claro. En pedidos de 1 a 5 productos no hay diferencia; aparece desde
-  6 productos (454.8 m frente a 460.4 m, y 567.4 m frente a 589.0 m en pedidos de 16 a 19).
+  (aleatorio ≈ 6 puntos por compactar; frecuencia ≈ 22 puntos más).
+- La afinidad (UFDS) aporta un **0.8 % adicional** sobre solo frecuencia (IC 95 %: 0.2 – 1.4),
+  pequeño pero estadísticamente claro.
 - Los pasillos del layout optimizado ocupan solo los primeros ~8 m, mientras el largo físico se
   mantiene en 76 m; parte de la ganancia es esa compactación.
+- Con los mismos datos de construcción y de prueba la reducción era 26.5 %, así que la separación no
+  cambia la conclusión.
 
 ### Técnicas de ruteo
 

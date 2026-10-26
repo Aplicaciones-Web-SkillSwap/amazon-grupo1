@@ -60,6 +60,20 @@ def pedidos_filtrados(datos, nodos):
           for oid, grupo in filtrado.groupby("order_id")["product_id"]}
 
 
+def dividir_pedidos(pedidos, fraccion_prueba=config.FRACCION_PRUEBA, semilla=config.SEMILLA):
+  """Separa los pedidos en (construccion, prueba) al azar y de forma reproducible.
+
+  La construcción alimenta a G1 y a las frecuencias; la prueba solo se usa para evaluar los
+  layouts, de modo que el experimento no mide con los mismos datos con los que se armó."""
+  import random
+  ids = sorted(pedidos)
+  random.Random(semilla).shuffle(ids)
+  n_prueba = round(len(ids) * fraccion_prueba)
+  prueba = {i: pedidos[i] for i in ids[:n_prueba]}
+  construccion = {i: pedidos[i] for i in ids[n_prueba:]}
+  return construccion, prueba
+
+
 def pasillos_desde_catalogo(nodos):
   """Lista de pasillos (zona, aisle_id, [product_id]) según el catálogo de Instacart.
 

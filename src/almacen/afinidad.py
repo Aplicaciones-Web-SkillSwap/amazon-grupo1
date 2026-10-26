@@ -18,11 +18,17 @@ def contar_coocurrencias(pedidos):
   return conteo
 
 
-def construir_afinidad(nodos, pedidos, umbral=config.UMBRAL_AFINIDAD):
-  """G1 no dirigido y ponderado. Solo se crean las aristas con peso >= umbral."""
+def construir_desde_conteo(nodos, conteo, umbral=config.UMBRAL_AFINIDAD):
+  """G1 no dirigido y ponderado a partir de un conteo de coocurrencias ya calculado.
+  Solo se crean las aristas con peso >= umbral."""
   g = Grafo()
   g.nodes([int(p) for p in nodos["product_id"]])
-  for (u, v), peso in contar_coocurrencias(pedidos).items():
+  for (u, v), peso in conteo.items():
     if peso >= umbral:
       g.edge(u, v, peso)
   return g
+
+
+def construir_afinidad(nodos, pedidos, umbral=config.UMBRAL_AFINIDAD):
+  """G1 no dirigido y ponderado. Solo se crean las aristas con peso >= umbral."""
+  return construir_desde_conteo(nodos, contar_coocurrencias(pedidos), umbral)

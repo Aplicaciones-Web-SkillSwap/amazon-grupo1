@@ -26,8 +26,8 @@ def main():
 
   print("Cargando datos y construyendo layouts...", flush=True)
   s = Servicio.desde_csv()
-  s.agregar_layout("solo_frecuencia", reubicacion.por_frecuencia(s.info))
-  s.agregar_layout("aleatorio", reubicacion.aleatorio(s.info, semilla=args.semilla))
+  s.agregar_layout("solo_frecuencia", reubicacion.por_frecuencia(s.info_construccion))
+  s.agregar_layout("aleatorio", reubicacion.aleatorio(s.info_construccion, semilla=args.semilla))
   print(f"Rutando {args.pedidos} pedidos en {len(s.layouts)} layouts (T = {config.UMBRAL_DP})...",
         flush=True)
   df = experimento.correr(s, args.pedidos, args.semilla)
