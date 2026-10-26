@@ -1,6 +1,6 @@
-# Datos y salidas generadas
-dataset/
+# Salidas generadas (el dataset de Instacart (25 MB) SI se versiona: lo necesita el despliegue)
 salida/
+dataset.zip
 
 # Python
 __pycache__/

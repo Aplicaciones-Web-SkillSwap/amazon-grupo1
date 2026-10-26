@@ -81,3 +81,14 @@ El script crea el entorno virtual, instala `requirements.txt` y registra el serv
 pip install -r requirements.txt
 streamlit run app_web.py
 ```
+
+## Alternativa: Streamlit Community Cloud (sin VM)
+
+No requiere servidor propio, IP ni certificados: da un link `https://<nombre>.streamlit.app` y se redespliega solo con cada push a `main`. El dataset (25 MB) va en el repositorio, en `dataset/`.
+
+1. Entrar a https://share.streamlit.io con la cuenta de GitHub y autorizar el acceso al repositorio.
+2. **Create app** -> **Deploy a public app from GitHub**, repositorio `amazon-grupo1`, rama `main`, archivo principal `app_web.py`.
+3. En **Advanced settings** elegir Python 3.12 y poner el subdominio deseado.
+4. **Deploy**. La primera carga tarda unos minutos (instala dependencias y construye los grafos).
+
+Notas: la app se duerme si nadie la abre durante unos dias; abrirla unos minutos antes de exponer. Para cambiar la interfaz basta con hacer push a `main`.
