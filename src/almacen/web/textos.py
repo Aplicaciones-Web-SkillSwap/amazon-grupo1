@@ -34,12 +34,12 @@ PASOS_INICIO = (
     "**2. Pruebe otras opciones.** Cambie la técnica, el layout o el pedido, y use *Comparar "
     "técnicas* o *Comparar layouts* para ver las diferencias.",
     "**3. Ubicación y Comparación.** Vea cómo UFDS reubica los productos y cuánta distancia se "
-    "ahorra en una muestra de pedidos reales.",
+    "ahorra en una muestra de pedidos de prueba (no usados para construir el layout).",
 )
 
 TECNICAS_DEL_PROYECTO = [
-    ("Lista de adyacencia ponderada", "Grafos G₁ y G₂", "Grafos"),
-    ("BFS", "Comprobar que todo el almacén es alcanzable desde el depot", "Grafos"),
+    ("Lista de adyacencia ponderada", "Grafos G₁ y G₂", "Datos y grafos"),
+    ("BFS", "Comprobar que todo el almacén es alcanzable desde el depot", "Datos y grafos"),
     ("Floyd-Warshall", "Distancias entre cruces de pasillo y entre productos", "Ruteo, Ubicación"),
     ("UFDS", "Agrupar productos afines con un tope de 16 por pasillo", "Ubicación"),
     ("Voraz", "Empaquetar grupos en pasillos y ruta del vecino más cercano", "Ubicación, Ruteo"),

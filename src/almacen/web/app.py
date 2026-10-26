@@ -278,7 +278,8 @@ def pestana_ubicacion(s):
 # ------------------------------------------------------------------ comparación
 def pestana_comparacion(s):
   st.caption("Técnicas en esta pestaña: programación dinámica (pedidos de hasta "
-             f"{config.UMBRAL_DP} productos) y voraz (el resto), sobre una muestra de pedidos reales.")
+             f"{config.UMBRAL_DP} productos) y voraz (el resto), sobre una muestra de pedidos reales. "
+             "Solo se usan pedidos de prueba (30 %): no intervinieron en armar G1 ni las frecuencias.")
   with st.form("experimento"):
     c = st.columns(3)
     n = c[0].slider("Pedidos a evaluar", 20, 1000, 200, step=20)
@@ -381,14 +382,16 @@ def main():
   if "svc" in st.session_state:
     st.sidebar.info("Está viendo su propia copia de la reubicación (K distinta o layouts de "
                     "control). Los demás usuarios no la ven.")
-  tabs = st.tabs(["Inicio", "Ruteo", "Ubicación", "Comparación", "Grafos"])
+  # Mismo orden que la versión de escritorio (Datos y grafos, Ubicación, Ruteo, Comparación),
+  # más una pestaña de inicio con la guía de uso.
+  tabs = st.tabs(["Inicio", "Datos y grafos", "Ubicación", "Ruteo", "Comparación"])
   with tabs[0]:
     pestana_inicio(s)
   with tabs[1]:
-    pestana_ruteo(s)
+    pestana_grafos(s)
   with tabs[2]:
     pestana_ubicacion(s)
   with tabs[3]:
-    pestana_comparacion(s)
+    pestana_ruteo(s)
   with tabs[4]:
-    pestana_grafos(s)
+    pestana_comparacion(s)
