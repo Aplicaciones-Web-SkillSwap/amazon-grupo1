@@ -38,34 +38,38 @@ def test_calcular_ruta_muestra_distancia_y_tecnica(app):
   assert not app.exception
   metricas = {m.label: m.value for m in app.metric}
   assert float(metricas["Distancia total"].split()[0].replace(",", "")) > 0
-  assert metricas["Técnica ejecutada"] in textos.NOMBRE_TECNICA.values()
+  assert any(n in m.value for m in app.markdown for n in textos.NOMBRE_TECNICA.values())
 
 
-def test_comparar_tecnicas_y_layouts(app):
-  boton(app, "Comparar técnicas").click()
+def test_carreras_de_tecnicas_y_layouts(app):
+  boton(app, "Carrera de técnicas").click()
   app.run()
   assert not app.exception
-  boton(app, "Comparar layouts").click()
+  assert any("Carrera de técnicas" in m.value for m in app.markdown)
+  boton(app, "Carrera de layouts").click()
   app.run()
   assert not app.exception
-  assert any("Comparación de layouts" in m.value for m in app.markdown)
+  assert any("Carrera de layouts" in m.value for m in app.markdown)
 
 
 def test_ufds_con_otra_capacidad(app):
-  next(n for n in app.number_input if n.label.startswith("Capacidad")).set_value(20)
-  boton(app, "Ejecutar UFDS").click()
+  next(s for s in app.slider if s.label.startswith("Capacidad")).set_value(20)
+  boton(app, "Reubicar los productos con este K").click()
   app.run()
   assert not app.exception
-  assert any("K = 20" in m.value for m in app.markdown)
+  assert any("K = 20" in c.value for c in app.caption)
 
 
 def test_experimento_y_grafos(app):
-  next(s for s in app.slider if s.label == "Pedidos a evaluar").set_value(20)
-  boton(app, "Ejecutar experimento").click()
+  next(s for s in app.slider if s.label.startswith("¿Cuántos pedidos")).set_value(20)
+  boton(app, "Comparar los almacenes").click()
   app.run()
   assert not app.exception
   assert "exp" in app.session_state
-  next(s for s in app.selectbox if s.label == "Grafo a dibujar").select("G₂ almacén optimizado")
+  next(r for r in app.radio if r.label == "Zona del almacén").set_value("A: Frescos")
+  app.run()
+  assert not app.exception
+  next(r for r in app.radio if r.label == "Almacén").set_value("Optimizado")
   app.run()
   assert not app.exception
 

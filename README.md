@@ -89,7 +89,7 @@ reubicación. *Guardar CSV* exporta el detalle por pedido.
 ## Versión web
 
 Es la misma lógica (`servicio.py`) con una página Streamlit: pestañas *Inicio*, *Datos y grafos*, *Ubicación*,
-*Ruteo* y *Comparación* (el mismo orden que la versión de escritorio, más una pestaña de inicio). Al abrirla ya hay un pedido de ejemplo cargado; basta pulsar *Calcular ruta*.
+*Ruteo* y *Comparación* (el mismo orden que la versión de escritorio, más una pestaña de inicio). Al abrirla ya hay un pedido de ejemplo cargado; basta pulsar *Calcular ruta*. En *Ruteo* el mapa es interactivo (Plotly): con *Reproducir* el carrito sale del depot y la ruta se traza tramo a tramo, y *Carrera de técnicas* / *Carrera de layouts* animan dos recorridos a la vez para ver cuál llega primero.
 
 ```powershell
 pip install -r requirements.txt

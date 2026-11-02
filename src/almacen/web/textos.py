@@ -12,7 +12,7 @@ TECNICAS = {
 }
 # Lo que ejecutó realmente Servicio.rutear -> texto para el usuario
 NOMBRE_TECNICA = {
-    "exacta_verificada": "Backtracking + Programación dinámica (verificadas entre sí)",
+    "exacta_verificada": "Backtracking + Programación dinámica",
     "dp": "Programación dinámica (Held-Karp optimizado)",
     "backtracking": "Backtracking", "fuerza_bruta": "Fuerza bruta",
     "voraz": "Voraz (vecino más cercano)", "dp_base": "Held-Karp base",
@@ -28,13 +28,20 @@ AYUDA_TECNICA = {
 }
 LAYOUTS = {"Actual (catálogo de Instacart)": ACTUAL, "Optimizado (UFDS)": OPTIMIZADO}
 
-PASOS_INICIO = (
-    "**1. Ruteo.** Ya hay un pedido de ejemplo cargado: pulse *Calcular ruta* y vea el recorrido "
-    "numerado sobre el plano del almacén.",
-    "**2. Pruebe otras opciones.** Cambie la técnica, el layout o el pedido, y use *Comparar "
-    "técnicas* o *Comparar layouts* para ver las diferencias.",
-    "**3. Ubicación y Comparación.** Vea cómo UFDS reubica los productos y cuánta distancia se "
-    "ahorra en una muestra de pedidos de prueba (no usados para construir el layout).",
+TARJETAS_INICIO = (
+    ("1", "Mire el problema",
+     "Vea qué productos se compran juntos (grafo G1) y cómo es el plano del almacén (grafo G2).",
+     "Datos y grafos"),
+    ("2", "Ordene el almacén",
+     "Elija cuántos productos caben en un pasillo y vea cómo se agrupan los que van juntos.",
+     "Ubicación"),
+    ("3", "Siga la ruta",
+     "Pulse Calcular ruta y luego Reproducir: el carrito sale del depot y recoge el pedido. "
+     "Compare dos rutas en una carrera.",
+     "Ruteo"),
+    ("4", "Compare los resultados",
+     "Con cientos de pedidos reales, vea cuántos metros se ahorran con el almacén optimizado.",
+     "Comparación"),
 )
 
 TECNICAS_DEL_PROYECTO = [
