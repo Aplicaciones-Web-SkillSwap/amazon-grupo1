@@ -28,13 +28,20 @@ AYUDA_TECNICA = {
 }
 LAYOUTS = {"Actual (catálogo de Instacart)": ACTUAL, "Optimizado (UFDS)": OPTIMIZADO}
 
-PASOS_INICIO = (
-    "**1. Ruteo.** Ya hay un pedido de ejemplo cargado: pulse *Calcular ruta* y luego *"
-    "Reproducir*: el carrito sale del depot y la ruta se va trazando sobre el plano.",
-    "**2. Pruebe otras opciones.** Cambie la técnica, el layout o el pedido, y use *Carrera de "
-    "técnicas* o *Carrera de layouts* para ver cuál ruta llega primero.",
-    "**3. Ubicación y Comparación.** Vea cómo UFDS reubica los productos y cuánta distancia se "
-    "ahorra en una muestra de pedidos de prueba (no usados para construir el layout).",
+TARJETAS_INICIO = (
+    ("1", "Mire el problema",
+     "Vea qué productos se compran juntos (grafo G1) y cómo es el plano del almacén (grafo G2).",
+     "Datos y grafos"),
+    ("2", "Ordene el almacén",
+     "Elija cuántos productos caben en un pasillo y vea cómo se agrupan los que van juntos.",
+     "Ubicación"),
+    ("3", "Siga la ruta",
+     "Pulse Calcular ruta y luego Reproducir: el carrito sale del depot y recoge el pedido. "
+     "Compare dos rutas en una carrera.",
+     "Ruteo"),
+    ("4", "Compare los resultados",
+     "Con cientos de pedidos reales, vea cuántos metros se ahorran con el almacén optimizado.",
+     "Comparación"),
 )
 
 TECNICAS_DEL_PROYECTO = [

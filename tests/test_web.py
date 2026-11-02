@@ -53,20 +53,23 @@ def test_carreras_de_tecnicas_y_layouts(app):
 
 
 def test_ufds_con_otra_capacidad(app):
-  next(n for n in app.number_input if n.label.startswith("Capacidad")).set_value(20)
-  boton(app, "Ejecutar UFDS").click()
+  next(s for s in app.slider if s.label.startswith("Capacidad")).set_value(20)
+  boton(app, "Reubicar los productos con este K").click()
   app.run()
   assert not app.exception
-  assert any("K = 20" in m.value for m in app.markdown)
+  assert any("K = 20" in c.value for c in app.caption)
 
 
 def test_experimento_y_grafos(app):
-  next(s for s in app.slider if s.label == "Pedidos a evaluar").set_value(20)
-  boton(app, "Ejecutar experimento").click()
+  next(s for s in app.slider if s.label.startswith("¿Cuántos pedidos")).set_value(20)
+  boton(app, "Comparar los almacenes").click()
   app.run()
   assert not app.exception
   assert "exp" in app.session_state
-  next(s for s in app.selectbox if s.label == "Grafo a dibujar").select("G₂ almacén optimizado")
+  next(r for r in app.radio if r.label == "Zona del almacén").set_value("A: Frescos")
+  app.run()
+  assert not app.exception
+  next(r for r in app.radio if r.label == "Almacén").set_value("Optimizado")
   app.run()
   assert not app.exception
 
