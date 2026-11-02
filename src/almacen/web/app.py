@@ -10,12 +10,14 @@ import random
 
 import pandas as pd
 import streamlit as st
+from types import SimpleNamespace
+
 from matplotlib.figure import Figure
 
 from almacen import config, experimento
 from almacen.gui import dibujo
 from almacen.servicio import ACTUAL, OPTIMIZADO, Servicio
-from almacen.web import textos
+from almacen.web import animacion, textos
 
 OPCIONES_GRAFO = {
     "G₁ completo (afinidad)": ("g1", None),
@@ -129,12 +131,26 @@ def elegir_pedido(s):
   return oid, productos
 
 
+def ms_texto(segundos):
+  """Tiempo legible: las técnicas rápidas (voraz) tardan microsegundos, no '0 ms'."""
+  ms = segundos * 1000
+  return f"{ms * 1000:,.0f} µs" if ms < 0.1 else f"{ms:,.1f} ms"
+
+
 def tabla_visita(s, productos, layout, orden=None):
   filas = []
   for k, p in enumerate(orden or productos, start=1):
     filas.append({"Visita": k if orden else None, "Producto": s.info[p]["nombre"],
                   "Zona": s.info[p]["zona"], "Pasillo": s.pasillo_de(p, layout)})
   return pd.DataFrame(filas)
+
+
+def carrera(s, clave, panes):
+  """Dos recorridos animados a la vez, a la misma velocidad: llega antes el más corto."""
+  fig = animacion.figura_ruta(s, panes)
+  st.plotly_chart(fig, width="stretch", key=clave, config={"displaylogo": False})
+  st.caption("Los dos carritos avanzan a la misma velocidad (metros por segundo): el que "
+             "tiene la ruta más corta llega primero a la meta. Pulse **Reproducir**.")
 
 
 def pestana_ruteo(s):
@@ -153,8 +169,8 @@ def pestana_ruteo(s):
                                      label_visibility="collapsed")]
     calcular = st.button("Calcular ruta", type="primary", width="stretch")
     c1, c2 = st.columns(2)
-    comparar_t = c1.button("Comparar técnicas", width="stretch")
-    comparar_l = c2.button("Comparar layouts", width="stretch")
+    comparar_t = c1.button("Carrera de técnicas", width="stretch")
+    comparar_l = c2.button("Carrera de layouts", width="stretch")
 
   clave = (str(oid), tuple(productos), layout, tecnica)
   if calcular:
@@ -183,27 +199,41 @@ def pestana_ruteo(s):
     if r:
       m = st.columns(3)
       m[0].metric("Distancia total", f"{r.costo:,.0f} m")
-      m[1].metric("Tiempo del algoritmo", f"{r.tiempo_s * 1000:,.1f} ms")
-      m[2].metric("Técnica ejecutada", textos.NOMBRE_TECNICA.get(r.tecnica, r.tecnica))
+      m[1].metric("Tiempo del algoritmo", ms_texto(r.tiempo_s))
+      m[2].markdown(f"<span style='font-size:0.85rem;color:#6b6b6b'>Técnica ejecutada</span><br>"
+                    f"<span style='font-size:1.05rem;font-weight:600'>"
+                    f"{textos.NOMBRE_TECNICA.get(r.tecnica, r.tecnica)}</span>",
+                    unsafe_allow_html=True)
     else:
-      st.info("Pulse **Calcular ruta** para ver el recorrido de este pedido.")
+      st.info("Pulse **Calcular ruta** y luego **Reproducir** para ver el recorrido.")
     acercar = st.checkbox("Acercar a la ruta", value=False, disabled=r is None)
-    fig, ax = figura(9, 5)
-    lo = s.layouts[layout]
-    dibujo.dibujar_almacen(ax, lo, s.info, orden=r.orden if r else None,
-                           camino=r.camino if r else None, marcar=productos,
-                           titulo=dibujo.nombre_layout(layout))
-    if r and acercar:
-      dibujo.vista_a_la_ruta(ax, lo, r.camino)
-    st.pyplot(fig)
-    st.caption("Los aros marcan los productos del pedido; con la ruta calculada se numeran en "
-               "el orden de visita (el ciclo sale del depot y vuelve a él).")
+    previo = SimpleNamespace(productos=productos, orden=[], camino=["depot"], costo=0.0)
+    titulo = f"Pedido {oid} · {dibujo.nombre_layout(layout)}"
+    fig = animacion.figura_ruta(s, [(titulo, layout, r or previo)], acercar=acercar)
+    st.plotly_chart(fig, width="stretch", key="mapa_ruta", config={"displaylogo": False})
+    st.caption("Los aros negros son los productos del pedido. Con **Reproducir** el carrito "
+               "sale del depot, la ruta se va trazando y cada producto se numera al recogerlo; "
+               "la barra permite ir y volver, y al pasar el mouse sobre un punto aparece su "
+               "nombre.")
     st.dataframe(tabla_visita(s, productos, layout, r.orden if r else None),
                  hide_index=True, width="stretch")
 
   g = st.session_state.get("cmp_t")
   if g and g[0] == clave[:3]:
-    st.markdown("#### Comparación de técnicas sobre este pedido")
+    st.markdown("#### Carrera de técnicas sobre este pedido")
+    voraz, exacta = g[1]["voraz"], g[1]["dp"] or g[1]["backtracking"]
+    if voraz and exacta:
+      carrera(s, "carrera_t", [("Voraz (vecino más cercano)", layout, voraz),
+                               ("Programación dinámica", layout, exacta)])
+      if voraz.costo - exacta.costo < 1e-6:
+        st.success("Empate: en este pedido la voraz encontró una ruta tan corta como la de la "
+                   "programación dinámica (pasa seguido en pedidos chicos; pruebe uno más grande).")
+      else:
+        st.success(f"Gana la programación dinámica: recorre {voraz.costo - exacta.costo:,.0f} m "
+                   f"menos ({100 * (voraz.costo - exacta.costo) / voraz.costo:.1f} %) que la voraz.")
+    else:
+      st.info("Este pedido es muy grande para la programación dinámica; la tabla muestra "
+              "lo que sí se pudo ejecutar.")
     validos = [x.costo for x in g[1].values() if x is not None]
     mejor = min(validos)
     filas = []
@@ -214,17 +244,27 @@ def pestana_ruteo(s):
       else:
         dif = 100 * (x.costo - mejor) / mejor if mejor else 0.0
         filas.append({"Técnica": textos.NOMBRE_TECNICA[nombre], "Distancia (m)": round(x.costo),
-                      "Tiempo (ms)": round(x.tiempo_s * 1000, 1),
+                      "Tiempo (ms)": round(x.tiempo_s * 1000, 3),
                       "Frente a la mejor": "óptima" if dif < 1e-9 else f"+{dif:.1f} %"})
     st.dataframe(pd.DataFrame(filas), hide_index=True, width="stretch")
   g = st.session_state.get("cmp_l")
   if g and g[0] == (clave[0], clave[1], tecnica):
-    st.markdown("#### Comparación de layouts sobre este pedido")
+    st.markdown("#### Carrera de layouts sobre este pedido")
     base = g[1][ACTUAL].costo
+    carrera(s, "carrera_l", [(f"{dibujo.nombre_layout(n)}", n, g[1][n]) for n in g[1]])
+    ahorro = base - g[1][OPTIMIZADO].costo
+    if ahorro > 1e-6:
+      st.success(f"Gana el layout optimizado: {ahorro:,.0f} m menos ({100 * ahorro / base:.1f} %) "
+                 "que el actual para este pedido.")
+    elif ahorro < -1e-6:
+      st.info(f"En este pedido el layout actual es {-ahorro:,.0f} m más corto; en promedio, "
+              "el optimizado gana (pestaña Comparación).")
+    else:
+      st.success("Empate: los dos layouts recorren la misma distancia en este pedido.")
     filas = []
     for nombre, x in g[1].items():
       filas.append({"Layout": dibujo.nombre_layout(nombre), "Distancia (m)": round(x.costo),
-                    "Tiempo (ms)": round(x.tiempo_s * 1000, 1),
+                    "Tiempo (ms)": round(x.tiempo_s * 1000, 3),
                     "Reducción": "—" if nombre == ACTUAL or not base
                     else f"{100 * (base - x.costo) / base:+.1f} %"})
     st.dataframe(pd.DataFrame(filas), hide_index=True, width="stretch")

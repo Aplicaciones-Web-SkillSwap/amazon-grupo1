@@ -38,17 +38,18 @@ def test_calcular_ruta_muestra_distancia_y_tecnica(app):
   assert not app.exception
   metricas = {m.label: m.value for m in app.metric}
   assert float(metricas["Distancia total"].split()[0].replace(",", "")) > 0
-  assert metricas["Técnica ejecutada"] in textos.NOMBRE_TECNICA.values()
+  assert any(n in m.value for m in app.markdown for n in textos.NOMBRE_TECNICA.values())
 
 
-def test_comparar_tecnicas_y_layouts(app):
-  boton(app, "Comparar técnicas").click()
+def test_carreras_de_tecnicas_y_layouts(app):
+  boton(app, "Carrera de técnicas").click()
   app.run()
   assert not app.exception
-  boton(app, "Comparar layouts").click()
+  assert any("Carrera de técnicas" in m.value for m in app.markdown)
+  boton(app, "Carrera de layouts").click()
   app.run()
   assert not app.exception
-  assert any("Comparación de layouts" in m.value for m in app.markdown)
+  assert any("Carrera de layouts" in m.value for m in app.markdown)
 
 
 def test_ufds_con_otra_capacidad(app):

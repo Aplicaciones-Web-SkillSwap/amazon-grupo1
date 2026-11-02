@@ -12,7 +12,7 @@ TECNICAS = {
 }
 # Lo que ejecutó realmente Servicio.rutear -> texto para el usuario
 NOMBRE_TECNICA = {
-    "exacta_verificada": "Backtracking + Programación dinámica (verificadas entre sí)",
+    "exacta_verificada": "Backtracking + Programación dinámica",
     "dp": "Programación dinámica (Held-Karp optimizado)",
     "backtracking": "Backtracking", "fuerza_bruta": "Fuerza bruta",
     "voraz": "Voraz (vecino más cercano)", "dp_base": "Held-Karp base",
@@ -29,10 +29,10 @@ AYUDA_TECNICA = {
 LAYOUTS = {"Actual (catálogo de Instacart)": ACTUAL, "Optimizado (UFDS)": OPTIMIZADO}
 
 PASOS_INICIO = (
-    "**1. Ruteo.** Ya hay un pedido de ejemplo cargado: pulse *Calcular ruta* y vea el recorrido "
-    "numerado sobre el plano del almacén.",
-    "**2. Pruebe otras opciones.** Cambie la técnica, el layout o el pedido, y use *Comparar "
-    "técnicas* o *Comparar layouts* para ver las diferencias.",
+    "**1. Ruteo.** Ya hay un pedido de ejemplo cargado: pulse *Calcular ruta* y luego *"
+    "Reproducir*: el carrito sale del depot y la ruta se va trazando sobre el plano.",
+    "**2. Pruebe otras opciones.** Cambie la técnica, el layout o el pedido, y use *Carrera de "
+    "técnicas* o *Carrera de layouts* para ver cuál ruta llega primero.",
     "**3. Ubicación y Comparación.** Vea cómo UFDS reubica los productos y cuánta distancia se "
     "ahorra en una muestra de pedidos de prueba (no usados para construir el layout).",
 )
