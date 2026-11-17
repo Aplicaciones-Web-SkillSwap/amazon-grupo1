@@ -75,9 +75,32 @@ def _rango(lo, camino=None, margen=10.0):
   return [-8, x_max + 6], [-6, lo.y_fondo + 14]
 
 
-def figura_ruta(s, panes, acercar=False, alto_panel=360):
+def _tramos(s, puntos, acum, llegadas, r, con_texto):
+  """Traza fija con un punto invisible a mitad de cada tramo (parada a parada): al pasar el
+  mouse muestra de dónde a dónde va y cuántos metros son; con_texto los escribe siempre."""
+  paradas = ["depot"] + list(r.orden) + ["depot"]
+  cortes = [0.0] + list(llegadas) + [acum[-1]]
+  nombre = lambda e: "Depot" if e == "depot" else s.info[e]["nombre"]
+  xs, ys, hover, texto = [], [], [], []
+  for k in range(len(cortes) - 1):
+    hx, hy = _hasta(puntos, acum, (cortes[k] + cortes[k + 1]) / 2)
+    metros = cortes[k + 1] - cortes[k]
+    xs.append(hx[-1])
+    ys.append(hy[-1])
+    hover.append(f"Tramo {k + 1}: {nombre(paradas[k])} → {nombre(paradas[k + 1])}"
+                 f"<br>{metros:,.0f} m")
+    texto.append(f"{metros:,.0f} m")
+  return go.Scatter(x=xs, y=ys, mode="markers+text" if con_texto else "markers",
+                    text=texto, textposition="top center",
+                    textfont=dict(size=11, color="#b71c1c"),
+                    marker=dict(size=18, color="rgba(0,0,0,0)"), hovertext=hover,
+                    hoverinfo="text", showlegend=False)
+
+
+def figura_ruta(s, panes, acercar=False, alto_panel=360, ms=MS_POR_CUADRO, metros_tramos=False):
   """Figura animada. panes: lista de (título, layout, Resultado) — uno para el recorrido
-  de un pedido, dos para la carrera."""
+  de un pedido, dos para la carrera. ms: milisegundos por cuadro; metros_tramos: escribir
+  sobre el plano los metros de cada tramo (siempre salen al pasar el mouse)."""
   n = len(panes)
   fig = make_subplots(rows=n, cols=1, subplot_titles=[p[0] for p in panes],
                       vertical_spacing=0.16 if n > 1 else 0.05)
@@ -109,6 +132,9 @@ def figura_ruta(s, panes, acercar=False, alto_panel=360):
         mode="markers", marker=dict(size=13, color="rgba(0,0,0,0)", line=dict(color="#111", width=1.6)),
         hovertext=[s.info[p]["nombre"] for p in r.productos], hoverinfo="text",
         showlegend=False), row=j, col=1)
+
+    if acum[-1] > 0:
+      fig.add_trace(_tramos(s, puntos, acum, datos[-1][2], r, metros_tramos), row=j, col=1)
 
     for dato in _cuadro(datos[-1], lo, 0.0):          # trazas dinámicas, estado inicial
       fig.add_trace(dato, row=j, col=1)
@@ -159,7 +185,7 @@ def figura_ruta(s, panes, acercar=False, alto_panel=360):
       updatemenus=[dict(type="buttons", direction="left", x=0, xanchor="left", y=y_ctrl,
                         yanchor="top", showactive=False, pad=dict(t=8, r=8), buttons=[
           dict(label="Reproducir", method="animate",
-               args=[None, anim(MS_POR_CUADRO, fromcurrent=True, mode="immediate")]),
+               args=[None, anim(ms, fromcurrent=True, mode="immediate")]),
           dict(label="Pausar", method="animate",
                args=[[None], anim(0, mode="immediate")]),
           dict(label="Reiniciar", method="animate",
@@ -180,7 +206,7 @@ def _cuadro(dato, lo, d):
   fin = d >= total - 1e-9
   texto = f"Terminó: {total:,.0f} m" if fin else f"{min(d, total):,.0f} m"
   if total <= 0:
-    texto = "Pulse «Calcular ruta»"
+    texto = "Falta calcular la ruta"
   y_tope = lo.y_fondo + 9
   return [
       go.Scatter(x=xs, y=ys, mode="lines", line=dict(color=COLOR_RUTA, width=3),

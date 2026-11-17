@@ -5,6 +5,7 @@ módulos de grafos (BFS, Floyd-Warshall), UFDS y ruteo (fuerza bruta, backtracki
 dinámica y voraz). Cada pestaña indica qué técnica está usando.
 """
 import copy
+import math
 import os
 import random
 from types import SimpleNamespace
@@ -17,7 +18,7 @@ from matplotlib.figure import Figure
 from almacen import config, experimento, reubicacion
 from almacen.gui import dibujo
 from almacen.servicio import ACTUAL, OPTIMIZADO, Servicio
-from almacen.web import animacion, graficos, mapas, textos
+from almacen.web import animacion, graficos, mapas, pasos, textos
 
 OPCIONES_GRAFO = {
     "G₁ completo (afinidad)": ("g1", None),
@@ -69,16 +70,16 @@ def figura(ancho=9, alto=5, filas=1):
 
 # ------------------------------------------------------------------ inicio
 def pestana_inicio(s):
-  st.markdown("### En un almacén, caminar menos es ganar tiempo")
+  st.markdown("### Sobre el proyecto")
   st.markdown(
-      "Armar un pedido obliga a recorrer pasillos para juntar sus productos. Esta página muestra "
-      "cómo **ordenar los productos según lo que se compra junto** hace que ese recorrido sea "
-      "más corto, y calcula la **ruta más corta** para cada pedido.")
+      "Para armar un pedido hay que recorrer los pasillos del almacén y juntar sus productos. "
+      "En esta página se **ordenan los productos según lo que se compra junto** y se calcula "
+      "la **ruta más corta** de cada pedido, para caminar menos.")
   tarjetas = [c for c in textos.TARJETAS_INICIO]
   cols = st.columns(len(tarjetas), gap="medium")
   for col, (numero, titulo, texto, pestana) in zip(cols, tarjetas):
     with col.container(border=True, height=235):
-      st.markdown(f"##### {numero}. {titulo}")
+      st.markdown(f"**{numero}. {titulo}**")
       st.write(texto)
       st.caption(f"Pestaña: **{pestana}**")
   r = s.resumen()
@@ -107,7 +108,7 @@ def pedido_inicial(s):
 
 def elegir_pedido(s):
   """Controles para elegir el pedido; guarda (order_id, productos) en la sesión."""
-  modo = st.radio("¿Cómo quiere elegirlo?",
+  modo = st.radio("Forma de elegir el pedido",
                   ["Aleatorio", "Por número de pedido", "Armar uno propio"], key="modo_pedido")
   try:
     if modo == "Aleatorio":
@@ -127,11 +128,11 @@ def elegir_pedido(s):
         else:
           st.session_state["pedido"] = (int(oid), list(s.pedidos[int(oid)]))
     else:
-      elegidos = st.multiselect("Productos (escriba para buscar)", sorted(s.info),
+      elegidos = st.multiselect("Productos (escribir para buscar)", sorted(s.info),
                                 format_func=lambda p: s.info[p]["nombre"])
       if st.button("Usar mi selección"):
         if not elegidos:
-          st.warning("Elija al menos un producto.")
+          st.warning("Se debe elegir al menos un producto.")
         else:
           st.session_state["pedido"] = ("propio", list(elegidos))
   except ValueError as e:
@@ -147,20 +148,40 @@ def ms_texto(segundos):
   return f"{ms * 1000:,.0f} µs" if ms < 0.1 else f"{ms:,.1f} ms"
 
 
+def num_pasillo(s, p, layout):
+  """Número de pasillo como se ve en el plano: 1 es el más cercano al depot. (El
+  identificador de pasillo del dataset no sigue ese orden, por eso no se muestra.)"""
+  return s.layouts[layout].pasillo[p] + 1
+
+
 def tabla_visita(s, productos, layout, orden=None):
   filas = []
   for k, p in enumerate(orden or productos, start=1):
     filas.append({"Visita": k if orden else None, "Producto": s.info[p]["nombre"],
-                  "Zona": s.info[p]["zona"], "Pasillo": s.pasillo_de(p, layout)})
+                  "Zona": s.info[p]["zona"], "Pasillo": num_pasillo(s, p, layout)})
   return pd.DataFrame(filas)
 
 
-def carrera(s, clave, panes):
+VELOCIDADES = {"Lenta": 2.2, "Normal": 1.0, "Rápida": 0.4}   # factor sobre el tiempo por cuadro
+
+
+def tabla_tramos(s, r):
+  """La ruta calculada, tramo por tramo, con los metros de cada uno y el acumulado."""
+  def nombre(e):
+    return "Depot" if e == "depot" else s.info[e]["nombre"][:34]
+  return pd.DataFrame([{"Tramo": k, "Desde": nombre(t["desde"]), "Hasta": nombre(t["hasta"]),
+                        "Pasillo": "" if t["hasta"] == "depot"
+                        else str(num_pasillo(s, t["hasta"], r.layout)),
+                        "Metros": round(t["metros"]), "Acumulado": round(t["acumulado"])}
+                       for k, t in enumerate(s.tramos(r), start=1)])
+
+
+def carrera(s, clave, panes, factor=1.0):
   """Dos recorridos animados a la vez, a la misma velocidad: llega antes el más corto."""
-  fig = animacion.figura_ruta(s, panes)
+  fig = animacion.figura_ruta(s, panes, ms=int(animacion.MS_POR_CUADRO * factor))
   st.plotly_chart(fig, width="stretch", key=clave, config={"displaylogo": False})
   st.caption("Los dos carritos avanzan a la misma velocidad (metros por segundo): el que "
-             "tiene la ruta más corta llega primero a la meta. Pulse **Reproducir**.")
+             "tiene la ruta más corta llega primero. Presionar **Reproducir** para iniciar.")
 
 
 def pestana_ruteo(s):
@@ -177,6 +198,8 @@ def pestana_ruteo(s):
     st.markdown("#### 3. Layout")
     layout = textos.LAYOUTS[st.radio("Layout", list(textos.LAYOUTS),
                                      label_visibility="collapsed")]
+    factor = VELOCIDADES[st.radio("Velocidad de las animaciones", list(VELOCIDADES), index=1,
+                                  horizontal=True)]
     calcular = st.button("Calcular ruta", type="primary", width="stretch")
     c1, c2 = st.columns(2)
     comparar_t = c1.button("Carrera de técnicas", width="stretch")
@@ -215,18 +238,24 @@ def pestana_ruteo(s):
                     f"{textos.NOMBRE_TECNICA.get(r.tecnica, r.tecnica)}</span>",
                     unsafe_allow_html=True)
     else:
-      st.info("Pulse **Calcular ruta** y luego **Reproducir** para ver el recorrido.")
-    acercar = st.checkbox("Acercar a la ruta", value=False, disabled=r is None)
+      st.info("Para ver el recorrido, presionar **Calcular ruta** y luego **Reproducir**.")
+    c1, c2 = st.columns(2)
+    acercar = c1.checkbox("Acercar a la ruta", value=False, disabled=r is None)
+    metros = c2.checkbox("Mostrar los metros de cada tramo", value=False, disabled=r is None)
     previo = SimpleNamespace(productos=productos, orden=[], camino=["depot"], costo=0.0)
     titulo = f"Pedido {oid} · {dibujo.nombre_layout(layout)}"
-    fig = animacion.figura_ruta(s, [(titulo, layout, r or previo)], acercar=acercar)
+    fig = animacion.figura_ruta(s, [(titulo, layout, r or previo)], acercar=acercar,
+                                ms=int(animacion.MS_POR_CUADRO * factor), metros_tramos=metros)
     st.plotly_chart(fig, width="stretch", key="mapa_ruta", config={"displaylogo": False})
-    st.caption("Los aros negros son los productos del pedido. Con **Reproducir** el carrito "
-               "sale del depot, la ruta se va trazando y cada producto se numera al recogerlo; "
-               "la barra permite ir y volver, y al pasar el mouse sobre un punto aparece su "
-               "nombre.")
-    st.dataframe(tabla_visita(s, productos, layout, r.orden if r else None),
-                 hide_index=True, width="stretch")
+    st.caption("Los aros negros son los productos del pedido. Al presionar **Reproducir**, el "
+               "carrito sale del depot y cada producto se numera cuando se recoge. Con la barra "
+               "se puede avanzar o retroceder, y al pasar el mouse sobre un punto se ve el "
+               "nombre del producto.")
+    if r:
+      st.markdown("**La ruta, tramo por tramo**")
+      st.dataframe(tabla_tramos(s, r), hide_index=True, width="stretch")
+    else:
+      st.dataframe(tabla_visita(s, productos, layout), hide_index=True, width="stretch")
 
   g = st.session_state.get("cmp_t")
   if g and g[0] == clave[:3]:
@@ -234,16 +263,23 @@ def pestana_ruteo(s):
     voraz, exacta = g[1]["voraz"], g[1]["dp"] or g[1]["backtracking"]
     if voraz and exacta:
       carrera(s, "carrera_t", [("Voraz (vecino más cercano)", layout, voraz),
-                               ("Programación dinámica", layout, exacta)])
+                               ("Programación dinámica", layout, exacta)], factor)
+      n = len(productos)
+      m = st.columns(2)
+      m[0].metric("Voraz: distancias que comparó", miles(n * (n + 1) // 2),
+                  help="En cada paso solo compara los productos que faltan.")
+      m[1].metric("Programación dinámica: casos que resolvió", miles(n * 2 ** (n - 1)),
+                  help="Guarda la mejor forma de recorrer cada grupo de productos y la "
+                       "reutiliza; por eso encuentra la ruta más corta.")
       if voraz.costo - exacta.costo < 1e-6:
-        st.success("Empate: en este pedido la voraz encontró una ruta tan corta como la de la "
-                   "programación dinámica (pasa seguido en pedidos chicos; pruebe uno más grande).")
+        st.success("Empate: la voraz y la programación dinámica recorren la misma distancia en "
+                   "este pedido. Se recomienda probar un pedido más grande para ver la diferencia.")
       else:
         st.success(f"Gana la programación dinámica: recorre {voraz.costo - exacta.costo:,.0f} m "
                    f"menos ({100 * (voraz.costo - exacta.costo) / voraz.costo:.1f} %) que la voraz.")
     else:
-      st.info("Este pedido es muy grande para la programación dinámica; la tabla muestra "
-              "lo que sí se pudo ejecutar.")
+      st.info("El pedido es demasiado grande para la programación dinámica. La tabla muestra "
+              "las técnicas que sí se pudieron ejecutar.")
     validos = [x.costo for x in g[1].values() if x is not None]
     mejor = min(validos)
     filas = []
@@ -261,13 +297,13 @@ def pestana_ruteo(s):
   if g and g[0] == (clave[0], clave[1], tecnica):
     st.markdown("#### Carrera de layouts sobre este pedido")
     base = g[1][ACTUAL].costo
-    carrera(s, "carrera_l", [(f"{dibujo.nombre_layout(n)}", n, g[1][n]) for n in g[1]])
+    carrera(s, "carrera_l", [(f"{dibujo.nombre_layout(n)}", n, g[1][n]) for n in g[1]], factor)
     ahorro = base - g[1][OPTIMIZADO].costo
     if ahorro > 1e-6:
       st.success(f"Gana el layout optimizado: {ahorro:,.0f} m menos ({100 * ahorro / base:.1f} %) "
                  "que el actual para este pedido.")
     elif ahorro < -1e-6:
-      st.info(f"En este pedido el layout actual es {-ahorro:,.0f} m más corto; en promedio, "
+      st.info(f"En este pedido el layout actual es {-ahorro:,.0f} m más corto. En promedio, "
               "el optimizado gana (pestaña Comparación).")
     else:
       st.success("Empate: los dos layouts recorren la misma distancia en este pedido.")
@@ -278,6 +314,101 @@ def pestana_ruteo(s):
                     "Reducción": "—" if nombre == ACTUAL or not base
                     else f"{100 * (base - x.costo) / base:+.1f} %"})
     st.dataframe(pd.DataFrame(filas), hide_index=True, width="stretch")
+  asi_piensa(s, productos, layout, factor)
+
+
+MAX_PASO_A_PASO = 9      # productos: con más, fuerza bruta y backtracking tardan demasiado
+
+EXPLICACIONES = {
+    "Voraz": ("voraz",
+              "En cada paso mira **cuánto hay que caminar** hasta cada producto que falta (líneas "
+              "punteadas) y va al **más cercano** (línea verde). Es muy rápida, pero como nunca "
+              "mira más allá del siguiente producto, a veces la ruta completa no es la más corta."),
+    "Fuerza bruta": ("fuerza_bruta",
+                     "Arma **todas las rutas posibles, una por una**, mide cada una y se queda con "
+                     "la más corta (en verde). Siempre acierta, pero no descarta nada: con cada "
+                     "producto extra la cantidad de rutas se multiplica."),
+    "Backtracking": ("backtracking",
+                     "Parte de la ruta voraz y arma otras rutas **producto por producto**. Si una "
+                     "ruta a medio armar ya es más larga que la mejor conocida, **la descarta** "
+                     "sin terminarla (rojo) y prueba otra. Cuando encuentra una más corta, la "
+                     "guarda (verde)."),
+    "Programación dinámica": ("dp",
+                              "No arma rutas completas: resuelve **casos pequeños y guarda la "
+                              "respuesta**. Primero calcula la mejor forma de llegar a cada "
+                              "producto, luego a cada grupo de 2, de 3, y así hasta el pedido "
+                              "completo. La ruta final se arma con lo guardado, sin repetir "
+                              "cálculos."),
+}
+
+
+@st.cache_data(show_spinner=False)
+def traza_del_ruteo(_s, productos, layout, capacidad, tecnica):
+  """Lo que hizo una técnica en este pedido (capacidad solo distingue en la caché el
+  layout optimizado de cada sesión)."""
+  return _s.explicar_ruteo(list(productos), layout, tecnica)
+
+
+def asi_piensa(s, productos, layout, factor=1.0):
+  st.markdown("#### Así piensa el algoritmo")
+  n = len(productos)
+  if n < 2 or n > MAX_PASO_A_PASO:
+    st.info(f"El paso a paso funciona con pedidos de 2 a {MAX_PASO_A_PASO} productos "
+            f"(este tiene {n}).")
+    return
+  cual = st.radio("Técnica a explicar", list(EXPLICACIONES), horizontal=True,
+                  label_visibility="collapsed")
+  tecnica, explicacion = EXPLICACIONES[cual]
+  st.markdown(explicacion)
+  traza = traza_del_ruteo(s, tuple(productos), layout, s.capacidad, tecnica)
+  optimo = s.rutear(productos, layout, "dp")
+  posibles = math.factorial(n)
+  ver = dict(width="stretch", config={"displaylogo": False})
+  if tecnica == "voraz":
+    fig, total = pasos.figura_voraz(s, layout, productos, traza,
+                                    ms=int(pasos.MS_POR_PASO * factor))
+    st.plotly_chart(fig, key="pasos_voraz", **ver)
+    if total - optimo.costo > 1e-6:
+      st.caption(f"En este pedido la voraz recorre {total:,.0f} m y la ruta más corta mide "
+                 f"{optimo.costo:,.0f} m: se pasó por {total - optimo.costo:,.0f} m.")
+    else:
+      st.caption(f"En este pedido la voraz ({total:,.0f} m) coincide con la ruta más corta.")
+  elif tecnica == "fuerza_bruta":
+    st.plotly_chart(pasos.figura_fuerza_bruta(s, layout, productos, traza, ms=int(400 * factor)),
+                    key="pasos_fb", **ver)
+    m = st.columns(2)
+    m[0].metric("Rutas que revisó", miles(traza["total"]),
+                help=f"{n}! = todas las formas de ordenar {n} productos.")
+    m[1].metric("Con un producto más serían", miles(math.factorial(n + 1)))
+    st.caption(f"La animación muestra las primeras rutas y después solo las que mejoran; "
+               f"el algoritmo sí revisó las {miles(traza['total'])}.")
+  elif tecnica == "backtracking":
+    st.plotly_chart(pasos.figura_backtracking(s, layout, productos, traza, ms=int(900 * factor)),
+                    key="pasos_bt", **ver)
+    m = st.columns(3)
+    m[0].metric("Órdenes de visita posibles", miles(posibles),
+                help=f"{n}! = lo que revisaría la fuerza bruta.")
+    m[1].metric("Rutas que terminó de armar", miles(traza["completas"]))
+    m[2].metric("Rutas descartadas a medias", miles(traza["podas"]),
+                help="Podas: rutas parciales que ya eran peores que la mejor conocida.")
+    st.caption("La animación muestra los primeros intentos y después solo las mejoras.")
+  else:
+    casos = sum(e for _, e in traza)
+    m = st.columns(3)
+    m[0].metric("Rutas posibles (fuerza bruta)", miles(posibles))
+    m[1].metric("Casos que resuelve", miles(casos),
+                help=f"n · 2^(n−1) con n = {n} productos.")
+    m[2].metric("Ruta más corta", f"{optimo.costo:,.0f} m")
+    izq, der = st.columns([2, 3], gap="large")
+    with izq:
+      st.plotly_chart(pasos.figura_estados_dp(traza), key="pasos_dp", **ver)
+      st.caption("Cada barra son los casos de un tamaño de grupo. Para resolver los grupos de "
+                 "3 productos reutiliza lo que ya guardó de los grupos de 2, y así hasta el "
+                 "pedido completo.")
+    with der:
+      fig = animacion.figura_ruta(s, [("Ruta que arma con lo guardado", layout, optimo)],
+                                  alto_panel=300, ms=int(animacion.MS_POR_CUADRO * factor))
+      st.plotly_chart(fig, key="pasos_dp_ruta", **ver)
 
 
 # ------------------------------------------------------------------ ubicación
@@ -309,7 +440,7 @@ def pestana_ubicacion(s):
       "luego cada grupo se acomoda en un pasillo, empezando por los de mayor demanda (voraz, "
       "first-fit). Así un pedido pasa por menos pasillos y camina menos.")
 
-  st.markdown("#### 1. Elija la capacidad de cada pasillo")
+  st.markdown("#### 1. Capacidad de cada pasillo")
   izq, der = st.columns([1, 1], gap="large")
   with izq:
     k = st.slider("Capacidad por pasillo (K)", config.CAPACIDAD_PASILLO, 60, int(s.capacidad),
@@ -352,8 +483,8 @@ def pestana_ubicacion(s):
     graf.update_yaxes(title_text="pasillos usados", title_font_size=11)
     st.plotly_chart(graf, width="stretch", key="grafico_k", config={"displaylogo": False})
 
-  st.markdown("#### 2. Explore el resultado")
-  modo = st.radio("¿Qué quiere ver?", ["Un grupo de productos", "Un producto", "Un pasillo"],
+  st.markdown("#### 2. Resultado de la reubicación")
+  modo = st.radio("Qué ver", ["Un grupo de productos", "Un producto", "Un pasillo"],
                   horizontal=True, label_visibility="collapsed")
   resaltar, pasillo, mensaje, detalle = None, None, None, None
   if modo == "Un grupo de productos":
@@ -372,25 +503,25 @@ def pestana_ubicacion(s):
       mensaje = (f"Estos {len(resaltar)} productos se piden juntos. En el almacén actual estaban "
                  f"repartidos en **{antes} pasillos**; en el optimizado quedan en **{ahora}**.")
       detalle = pd.DataFrame([{"Producto": s.info[p]["nombre"], "Zona": s.info[p]["zona"],
-                               "Pasillo actual": s.pasillo_de(p, ACTUAL),
-                               "Pasillo optimizado": s.pasillo_de(p, OPTIMIZADO)}
+                               "Pasillo actual": num_pasillo(s, p, ACTUAL),
+                               "Pasillo optimizado": num_pasillo(s, p, OPTIMIZADO)}
                               for p in resaltar])
   elif modo == "Un producto":
-    p = st.selectbox("Producto (escriba para buscar)", sorted(s.info),
+    p = st.selectbox("Producto (escribir para buscar)", sorted(s.info),
                      format_func=lambda x: s.info[x]["nombre"])
     resaltar = [p]
     mensaje = (f"**{s.info[p]['nombre']}** (zona {s.info[p]['zona']}, "
                f"{miles(s.info[p]['freq'])} líneas de pedido): estaba en el pasillo "
-               f"**{s.pasillo_de(p, ACTUAL)}** y ahora está en el **{s.pasillo_de(p, OPTIMIZADO)}**.")
+               f"**{num_pasillo(s, p, ACTUAL)}** y ahora está en el **{num_pasillo(s, p, OPTIMIZADO)}**.")
   else:
     opciones = list(range(len(s.pasillos[OPTIMIZADO])))
     pasillo = st.selectbox(
         "Pasillo del layout optimizado", opciones,
-        format_func=lambda i: f"Pasillo {s.pasillos[OPTIMIZADO][i][1]} "
+        format_func=lambda i: f"Pasillo {i + 1} "
                               f"({len(s.pasillos[OPTIMIZADO][i][2])} productos)")
-    zona, idp, prods = s.pasillos[OPTIMIZADO][pasillo]
+    zona, _, prods = s.pasillos[OPTIMIZADO][pasillo]
     resaltar = None
-    mensaje = f"El pasillo **{idp}** (zona {zona}) guarda {len(prods)} productos."
+    mensaje = f"El pasillo **{pasillo + 1}** (zona {zona}) guarda {len(prods)} productos."
     detalle = pd.DataFrame([{"Producto": s.info[p]["nombre"], "Zona": s.info[p]["zona"],
                              "Líneas de pedido": s.info[p]["freq"]} for p in prods])
   if mensaje:
@@ -400,15 +531,15 @@ def pestana_ubicacion(s):
   st.plotly_chart(mapas.mapa_almacen(s, OPTIMIZADO, f"Layout optimizado (UFDS, K = {s.capacidad})",
                                      resaltar, pasillo),
                   width="stretch", key="mapa_ubic_opt", config={"displaylogo": False})
-  st.caption("Pase el mouse sobre un punto para ver el producto y su pasillo; con la rueda o "
-             "arrastrando puede acercar el plano.")
+  st.caption("Al pasar el mouse sobre un punto se ve el producto y su pasillo. El plano se "
+             "puede acercar con la rueda del mouse o arrastrando.")
   if detalle is not None:
     st.dataframe(detalle, hide_index=True, width="stretch")
   with st.expander("Ver la tabla de todos los pasillos del layout optimizado"):
-    filas = [{"Pasillo": kk, "Productos": len(prods),
+    filas = [{"Pasillo": i, "Productos": len(prods),
               "Líneas de pedido": sum(s.info[p]["freq"] for p in prods),
               "Más pedidos": ", ".join(s.info[p]["nombre"][:22] for p in prods[:2])}
-             for _, kk, prods in s.pasillos[OPTIMIZADO]]
+             for i, (_, _, prods) in enumerate(s.pasillos[OPTIMIZADO], start=1)]
     st.dataframe(pd.DataFrame(filas), hide_index=True, width="stretch", height=400)
 
 
@@ -419,7 +550,7 @@ def pestana_comparacion(s):
       "Se toma una **muestra de pedidos reales** y se calcula la ruta de cada uno en el almacén "
       "actual y en el optimizado. Al final se comparan los metros recorridos.")
   with st.form("experimento"):
-    n = st.slider("¿Cuántos pedidos quiere comparar?", 20, 1000, 200, step=20,
+    n = st.slider("Cantidad de pedidos a comparar", 20, 1000, 200, step=20,
                   help="Con 200 pedidos tarda unos segundos; con 1,000 puede tardar un par de "
                        "minutos.")
     with st.expander("Opciones avanzadas"):
@@ -451,7 +582,8 @@ def pestana_comparacion(s):
 
   res = st.session_state.get("exp")
   if not res:
-    st.info("Elija la cantidad de pedidos y pulse **Comparar los almacenes**.")
+    st.info("Para ver los resultados, elegir la cantidad de pedidos y presionar "
+            "**Comparar los almacenes**.")
     return
   filas = res["layouts"].set_index("layout")
   actual, opt = filas.loc[ACTUAL], filas.loc[OPTIMIZADO]
@@ -475,7 +607,7 @@ def pestana_comparacion(s):
     else:
       st.info("Ordenar los productos solo por popularidad ya acorta casi todo el camino. Con esta "
               f"muestra, agregar la afinidad no marca una diferencia clara: el aporte está {rango}. "
-              "Con más pedidos la estimación se afina.")
+              "Se recomienda usar más pedidos para una estimación más precisa.")
   izq, der = st.columns(2, gap="large")
   with izq:
     st.plotly_chart(graficos.dispersion_pedidos(res["df"]), width="stretch", key="g_dispersion",
@@ -483,8 +615,8 @@ def pestana_comparacion(s):
   with der:
     st.plotly_chart(graficos.barras_tamano(res["tamano"]), width="stretch", key="g_tamano",
                     config={"displaylogo": False})
-  st.caption("Pase el mouse sobre cualquier barra o punto para ver el detalle (en el gráfico de "
-             "puntos, el número de pedido y cuántos productos tenía).")
+  st.caption("Al pasar el mouse sobre una barra o un punto se ve el detalle. En el gráfico de "
+             "puntos aparece el número de pedido y cuántos productos tenía.")
 
   with st.expander("Detalle técnico: voraz frente a programación dinámica y tiempos"):
     st.markdown("**¿Qué tan buena es la ruta voraz?** Se compara con la ruta óptima en los "
@@ -506,7 +638,7 @@ def pestana_comparacion(s):
 
 # ------------------------------------------------------------------ grafos
 def pestana_grafos(s):
-  st.markdown("### Los dos mapas del problema")
+  st.markdown("### Los dos grafos del problema")
   st.markdown(
       "**G₁ (afinidad):** une con una línea los productos que la gente compra en el mismo "
       "pedido. **G₂ (almacén):** es el plano real, con pasillos y ubicaciones. Con G₁ se decide "
@@ -530,14 +662,14 @@ def pestana_grafos(s):
     clave = None if zona == "Todas" else zona[0]
   calculo = posiciones_g1(clave)
   with der:
-    producto = st.selectbox("Busque un producto para ver con qué se compra", [None] + sorted(
+    producto = st.selectbox("Buscar un producto para ver con qué se compra", [None] + sorted(
         calculo["nodos"]), format_func=lambda p: "Ninguno" if p is None else s.info[p]["nombre"])
   fig, vecinos = graficos.grafo_afinidad(s, calculo, producto)
   st.plotly_chart(fig, width="stretch", key="grafo_g1", config={"displaylogo": False})
   if producto is None:
-    st.caption("Cada punto es un producto (más grande = se compra con más productos) y su color "
-               "indica la zona. Pase el mouse para ver su nombre, acerque con la rueda, o elija "
-               "un producto arriba para resaltar sus compañeros de compra. Se dibujan las 3 "
+    st.caption("Cada punto es un producto y su color indica la zona. Los puntos más grandes se "
+               "compran con más productos. Al pasar el mouse se ve el nombre, y al buscar un "
+               "producto arriba se resaltan los que más se compran con él. Se dibujan las 3 "
                "conexiones más fuertes de cada producto.")
   else:
     st.markdown(f"**{s.info[producto]['nombre']}** se compra más seguido con:")
@@ -566,14 +698,16 @@ def pestana_grafos(s):
 def main():
   st.set_page_config(page_title="Almacenes inteligentes", layout="wide")
   st.title("Gestión de almacenes inteligentes")
-  st.markdown("Ubique los productos de un almacén según lo que se pide junto y calcule la "
-              "ruta más corta para armar cada pedido.")
+  st.markdown("<style>[data-testid='stHeaderActionElements'] {display: none;}</style>",
+              unsafe_allow_html=True)      # sin el ícono de enlace junto a los títulos
+  st.markdown("Ubicación de los productos de un almacén según lo que se pide junto y cálculo "
+              "de la ruta más corta para armar cada pedido.")
   base = servicio_base()
   if "pedido" not in st.session_state:
     st.session_state["pedido"] = pedido_inicial(base)
   s = servicio_actual()
   if "svc" in st.session_state:
-    st.sidebar.info("Está viendo su propia copia de la reubicación (K distinta o layouts de "
+    st.sidebar.info("Se muestra una copia propia de la reubicación (otro K o layouts de "
                     "control). Los demás usuarios no la ven.")
   # Mismo orden que la versión de escritorio (Datos y grafos, Ubicación, Ruteo, Comparación),
   # más una pestaña de inicio con la guía de uso.

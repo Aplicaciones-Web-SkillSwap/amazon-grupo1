@@ -61,7 +61,7 @@ def test_ufds_con_otra_capacidad(app):
 
 
 def test_experimento_y_grafos(app):
-  next(s for s in app.slider if s.label.startswith("¿Cuántos pedidos")).set_value(20)
+  next(s for s in app.slider if s.label.startswith("Cantidad de pedidos")).set_value(20)
   boton(app, "Comparar los almacenes").click()
   app.run()
   assert not app.exception
