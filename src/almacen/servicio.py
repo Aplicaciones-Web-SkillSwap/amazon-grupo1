@@ -219,6 +219,38 @@ class Servicio:
       ruta.extend(dist.camino(a, b)[1:])
     return ruta
 
+  def explicar_ruteo(self, productos, layout=ACTUAL, tecnica="voraz"):
+    """Lo que hace una técnica sobre un pedido, para mostrarlo paso a paso. Según `tecnica`
+    devuelve: "voraz" -> ruteo.voraz_pasos; "fuerza_bruta" y "backtracking" -> la traza de
+    ruteo.fuerza_bruta_traza / backtracking_traza; "dp" -> ruteo.estados_held_karp.
+    Los índices 1..n se refieren a `productos` en el orden recibido (0 es el depot)."""
+    productos = list(dict.fromkeys(productos))
+    n = len(productos)
+    if tecnica == "dp":
+      return ruteo.estados_held_karp(n)
+    if tecnica not in ("voraz", "fuerza_bruta", "backtracking"):
+      raise ValueError(f"Técnica sin paso a paso: {tecnica!r}")
+    if n > TECNICAS[tecnica][1]:
+      raise ValueError(f"{tecnica} no es viable con {n} productos (máximo {TECNICAS[tecnica][1]})")
+    m = [[float(x) for x in fila] for fila in self.distancias[layout].matriz(["depot"] + productos)]
+    if tecnica == "voraz":
+      return ruteo.voraz_pasos(m)
+    if tecnica == "fuerza_bruta":
+      return ruteo.fuerza_bruta_traza(m)[2]
+    return ruteo.backtracking_traza(m)[2]
+
+  def tramos(self, resultado):
+    """La ruta de un Resultado, tramo por tramo: lista de dicts con desde, hasta (etiquetas:
+    "depot" o product_id), metros del tramo y metros acumulados."""
+    dist = self.distancias[resultado.layout]
+    paradas = ["depot"] + list(resultado.orden) + ["depot"]
+    filas, acumulado = [], 0.0
+    for a, b in zip(paradas, paradas[1:]):
+      metros = float(dist.entre(a, b))
+      acumulado += metros
+      filas.append({"desde": a, "hasta": b, "metros": metros, "acumulado": acumulado})
+    return filas
+
   def comparar_tecnicas(self, productos, layout=ACTUAL):
     """Corre backtracking, DP optimizada y voraz sobre el mismo pedido.
 
