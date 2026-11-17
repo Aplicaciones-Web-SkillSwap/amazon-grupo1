@@ -79,3 +79,17 @@ def test_textos_coinciden_con_el_servicio():
   claves = set(textos.TECNICAS.values()) - {"auto"}
   assert claves <= set(TECNICAS)
   assert claves <= set(textos.AYUDA_TECNICA)
+
+
+def test_el_servicio_se_reconstruye_si_cambia_el_codigo(monkeypatch):
+  """Tras un redespliegue sin reinicio, el servicio en caché no debe ser de la versión vieja."""
+  from almacen.web import app as web
+  vista = []
+  monkeypatch.setattr(web.Servicio, "desde_csv", staticmethod(lambda ruta: vista.append(1) or object()))
+  web._servicio_base.clear()
+  monkeypatch.setattr(web, "version_del_codigo", lambda: "v1")
+  primero = web.servicio_base()
+  assert web.servicio_base() is primero and len(vista) == 1
+  monkeypatch.setattr(web, "version_del_codigo", lambda: "v2")
+  assert web.servicio_base() is not primero and len(vista) == 2
+  web._servicio_base.clear()

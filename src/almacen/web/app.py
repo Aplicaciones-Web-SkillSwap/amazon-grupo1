@@ -5,9 +5,11 @@ módulos de grafos (BFS, Floyd-Warshall), UFDS y ruteo (fuerza bruta, backtracki
 dinámica y voraz). Cada pestaña indica qué técnica está usando.
 """
 import copy
+import hashlib
 import math
 import os
 import random
+from pathlib import Path
 from types import SimpleNamespace
 
 import pandas as pd
@@ -15,6 +17,7 @@ import plotly.graph_objects as go
 import streamlit as st
 from matplotlib.figure import Figure
 
+import almacen
 from almacen import config, experimento, reubicacion
 from almacen.gui import dibujo
 from almacen.servicio import ACTUAL, OPTIMIZADO, Servicio
@@ -35,28 +38,55 @@ def ruta_datos():
   return os.environ.get("ALMACEN_DATOS", str(config.RUTA_DATOS))
 
 
-@st.cache_resource(show_spinner="Cargando el dataset y construyendo los grafos (unos segundos)…")
-def servicio_base():
-  """Una sola vez por proceso: lo comparten todas las sesiones, solo para lectura."""
+def version_del_codigo():
+  """Huella del código del paquete almacen. Streamlit Cloud, al redesplegar, puede volver a
+  cargar el código sin reiniciar el proceso: el servicio guardado en caché seguiría siendo
+  un objeto de la versión anterior (sin los métodos nuevos). Con esta huella como parte de
+  la clave, un cambio de código obliga a construir el servicio de nuevo."""
+  huella = hashlib.md5()
+  for archivo in sorted(Path(almacen.__file__).parent.rglob("*.py")):
+    huella.update(archivo.read_bytes())
+  return huella.hexdigest()
+
+
+@st.cache_resource(show_spinner="Cargando el dataset y construyendo los grafos (unos segundos)…",
+                   max_entries=1)
+def _servicio_base(version):
+  """Una sola vez por proceso y versión del código: lo comparten todas las sesiones, solo
+  para lectura."""
   return Servicio.desde_csv(ruta_datos())
+
+
+def servicio_base():
+  return _servicio_base(version_del_codigo())
 
 
 def servicio_propio():
   """Copia de esta sesión, para las acciones que modifican layouts (UFDS con otra K,
   layouts de control). Así un usuario no cambia lo que ven los demás."""
+  version = version_del_codigo()
+  if st.session_state.get("svc_version") != version:
+    st.session_state.pop("svc", None)          # copia hecha con una versión anterior del código
   if "svc" not in st.session_state:
     st.session_state["svc"] = copy.deepcopy(servicio_base())
+    st.session_state["svc_version"] = version
   return st.session_state["svc"]
 
 
 def servicio_actual():
+  if "svc" in st.session_state and st.session_state.get("svc_version") != version_del_codigo():
+    st.session_state.pop("svc", None)
   return st.session_state.get("svc") or servicio_base()
 
 
 @st.cache_resource(show_spinner="Calculando la posición de los nodos de G₁…")
-def posiciones_g1(zona):
+def _posiciones_g1(zona, version):
   s = servicio_base()
   return dibujo.calcular_posiciones_g1(s.g1, s.info, zona)
+
+
+def posiciones_g1(zona):
+  return _posiciones_g1(zona, version_del_codigo())
 
 
 def miles(x):
