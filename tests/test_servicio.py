@@ -152,3 +152,29 @@ def test_la_separacion_es_reproducible(carpeta_datos):
   a = Servicio.desde_csv(carpeta_datos, por_zona=2, umbral=1, capacidad=2, fraccion_prueba=0.5)
   b = Servicio.desde_csv(carpeta_datos, por_zona=2, umbral=1, capacidad=2, fraccion_prueba=0.5)
   assert sorted(a.pedidos_prueba) == sorted(b.pedidos_prueba)
+
+
+def test_explicar_ruteo_coincide_con_las_rutas_del_servicio(servicio):
+  productos = [1, 2, 4, 6]
+  voraz = servicio.rutear(productos, ACTUAL, "voraz")
+  optimo = servicio.rutear(productos, ACTUAL, "dp").costo
+  pasos = servicio.explicar_ruteo(productos, ACTUAL, "voraz")
+  assert [productos[e - 1] for _, _, e in pasos] == voraz.orden
+  traza = servicio.explicar_ruteo(productos, ACTUAL, "backtracking")
+  assert traza["inicio"][0] == pytest.approx(voraz.costo)
+  assert min([traza["inicio"][0]] + [c for c, _ in traza["mejoras"]]) == pytest.approx(optimo)
+  bruta = servicio.explicar_ruteo(productos, ACTUAL, "fuerza_bruta")
+  assert bruta["total"] == 24 and min(e[1] for e in bruta["eventos"]) == pytest.approx(optimo)
+  assert sum(e for _, e in servicio.explicar_ruteo(productos, ACTUAL, "dp")) == 4 * 2 ** 3
+  with pytest.raises(ValueError):
+    servicio.explicar_ruteo(productos, ACTUAL, "otra")
+
+
+def test_tramos_suman_la_distancia_de_la_ruta(servicio):
+  r = servicio.rutear([1, 2, 4, 6], OPTIMIZADO, "dp")
+  tramos = servicio.tramos(r)
+  assert len(tramos) == 5
+  assert tramos[0]["desde"] == "depot" and tramos[-1]["hasta"] == "depot"
+  assert [t["hasta"] for t in tramos[:-1]] == r.orden
+  assert tramos[-1]["acumulado"] == pytest.approx(r.costo)
+  assert sum(t["metros"] for t in tramos) == pytest.approx(r.costo)

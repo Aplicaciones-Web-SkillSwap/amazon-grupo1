@@ -41,6 +41,22 @@ def voraz(m):
   return costo_ciclo(m, orden), orden
 
 
+def voraz_pasos(m):
+  """La misma ruta que `voraz`, pero contando cada decisión, para poder mostrarla paso a
+  paso. Devuelve una lista de (actual, [(candidato, distancia), ...], elegido) con los
+  candidatos ordenados del más cercano al más lejano."""
+  n = len(m) - 1
+  pendientes = set(range(1, n + 1))
+  pasos, actual = [], 0
+  while pendientes:
+    candidatos = sorted(pendientes, key=lambda j: (m[actual][j], j))
+    elegido = candidatos[0]
+    pasos.append((actual, [(j, float(m[actual][j])) for j in candidatos], elegido))
+    pendientes.remove(elegido)
+    actual = elegido
+  return pasos
+
+
 def fuerza_bruta(m):
   """Prueba todas las permutaciones de los productos y se queda con la mejor."""
   n = len(m) - 1
@@ -81,6 +97,89 @@ def backtracking(m):
 
   explorar(0, 0.0)
   return mejor, mejor_orden
+
+
+def fuerza_bruta_traza(m, muestra=40):
+  """La misma fuerza bruta, anotando su trabajo para poder explicarlo. Devuelve
+  (costo, orden, traza) con traza = {"total": permutaciones revisadas (n!), "eventos":
+  [(número, costo, orden, mejor_hasta_entonces, es_mejora), ...]}. Para no guardar n!
+  rutas, los eventos son las primeras `muestra` permutaciones y, después, solo las que
+  mejoran a la mejor conocida."""
+  n = len(m) - 1
+  mejor, mejor_orden = inf, []
+  traza = {"total": 0, "eventos": []}
+  if n == 0:
+    return 0.0, [], traza
+  for k, perm in enumerate(permutations(range(1, n + 1)), start=1):
+    c = costo_ciclo(m, perm)
+    es_mejora = c < mejor
+    if es_mejora or k <= muestra:
+      traza["eventos"].append((k, float(c), list(perm), float(min(mejor, c)), es_mejora))
+    if es_mejora:
+      mejor, mejor_orden = c, list(perm)
+  traza["total"] = k
+  return mejor, mejor_orden, traza
+
+
+def backtracking_traza(m, muestra=30):
+  """El mismo backtracking, anotando su trabajo para poder explicarlo. Devuelve
+  (costo, orden, traza) con traza = {"inicio": (costo, orden) de la ruta voraz de partida,
+  "mejoras": [(costo, orden), ...] cada vez que encontró un ciclo más corto,
+  "completas": ciclos completos que llegó a evaluar, "podas": ramas abandonadas,
+  "eventos": [(número, tipo, ruta, costo, mejor_conocida), ...]}.
+
+  Un evento es un intento que terminó: tipo "poda" (ruta parcial abandonada, con su costo
+  parcial), "completa" (ciclo completo que no mejora) o "mejora" (ciclo completo más
+  corto). Se guardan los primeros `muestra` intentos y, después, solo las mejoras."""
+  n = len(m) - 1
+  if n == 0:
+    return 0.0, [], {"inicio": (0.0, []), "mejoras": [], "completas": 0, "podas": 0,
+                     "eventos": []}
+  mejor, mejor_orden = voraz(m)
+  traza = {"inicio": (float(mejor), list(mejor_orden)), "mejoras": [], "completas": 0,
+           "podas": 0, "eventos": []}
+  visitado = [False] * (n + 1)
+  camino = []
+
+  def anotar(tipo, costo):
+    numero = traza["podas"] + traza["completas"]
+    if tipo == "mejora" or numero <= muestra:
+      traza["eventos"].append((numero, tipo, camino.copy(), float(costo), float(mejor)))
+
+  def explorar(actual, costo):
+    nonlocal mejor, mejor_orden
+    if costo >= mejor:                       # poda
+      traza["podas"] += 1
+      anotar("poda", costo)
+      return
+    if len(camino) == n:
+      traza["completas"] += 1
+      total = costo + m[actual][0]
+      if total < mejor:
+        anotar("mejora", total)
+        mejor, mejor_orden = total, camino.copy()
+        traza["mejoras"].append((float(total), camino.copy()))
+      else:
+        anotar("completa", total)
+      return
+    for j in range(1, n + 1):
+      if not visitado[j]:
+        visitado[j] = True
+        camino.append(j)
+        explorar(j, costo + m[actual][j])
+        camino.pop()
+        visitado[j] = False
+
+  explorar(0, 0.0)
+  return mejor, mejor_orden, traza
+
+
+def estados_held_karp(n):
+  """Cuántos subproblemas resuelve Held-Karp por tamaño de grupo: para cada grupo de k
+  productos guarda la mejor forma de recorrerlo terminando en cada uno de sus k productos,
+  es decir C(n, k) * k estados. En total n * 2^(n-1), frente a n! rutas de la fuerza bruta."""
+  from math import comb
+  return [(k, comb(n, k) * k) for k in range(1, n + 1)]
 
 
 def held_karp(m):

@@ -29,18 +29,19 @@ AYUDA_TECNICA = {
 LAYOUTS = {"Actual (catálogo de Instacart)": ACTUAL, "Optimizado (UFDS)": OPTIMIZADO}
 
 TARJETAS_INICIO = (
-    ("1", "Mire el problema",
-     "Vea qué productos se compran juntos (grafo G1) y cómo es el plano del almacén (grafo G2).",
+    ("1", "Mirar el problema",
+     "Ver qué productos se compran juntos (grafo G1) y cómo es el plano del almacén (grafo G2).",
      "Datos y grafos"),
-    ("2", "Ordene el almacén",
-     "Elija cuántos productos caben en un pasillo y vea cómo se agrupan los que van juntos.",
+    ("2", "Ordenar el almacén",
+     "Elegir cuántos productos caben en un pasillo y ver cómo se agrupan los que se compran "
+     "juntos.",
      "Ubicación"),
-    ("3", "Siga la ruta",
-     "Pulse Calcular ruta y luego Reproducir: el carrito sale del depot y recoge el pedido. "
-     "Compare dos rutas en una carrera.",
+    ("3", "Seguir la ruta",
+     "Calcular la ruta de un pedido y reproducir el recorrido del carrito. También se pueden "
+     "comparar dos rutas en una carrera.",
      "Ruteo"),
-    ("4", "Compare los resultados",
-     "Con cientos de pedidos reales, vea cuántos metros se ahorran con el almacén optimizado.",
+    ("4", "Comparar los resultados",
+     "Medir cuántos metros se ahorran con el almacén optimizado en cientos de pedidos reales.",
      "Comparación"),
 )
 

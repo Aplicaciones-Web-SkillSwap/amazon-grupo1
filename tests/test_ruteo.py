@@ -133,3 +133,53 @@ def test_resolver_segun_el_tamano():
   assert tecnica == "dp" and costo == pytest.approx(exacto)
   costo, orden, tecnica = ruteo.resolver(m, umbral_fb=2, umbral_dp=4)
   assert tecnica == "voraz" and costo == pytest.approx(ruteo.voraz(m)[0])
+
+
+def test_voraz_pasos_reproduce_la_ruta_voraz():
+  for semilla in range(20):
+    m = matriz_aleatoria(7, semilla)
+    pasos = ruteo.voraz_pasos(m)
+    assert [elegido for _, _, elegido in pasos] == ruteo.voraz(m)[1]
+    for actual, candidatos, elegido in pasos:
+      distancias = [d for _, d in candidatos]
+      assert distancias == sorted(distancias) and candidatos[0][0] == elegido
+    assert [len(c) for _, c, _ in pasos] == list(range(7, 0, -1))
+
+
+def test_backtracking_traza_coincide_con_backtracking():
+  for semilla in range(20):
+    m = matriz_aleatoria(7, semilla)
+    costo, orden, traza = ruteo.backtracking_traza(m)
+    assert (costo, orden) == ruteo.backtracking(m)
+    assert traza["inicio"][0] == pytest.approx(ruteo.voraz(m)[0])
+    costos = [traza["inicio"][0]] + [c for c, _ in traza["mejoras"]]
+    assert costos == sorted(costos, reverse=True) and costos[-1] == pytest.approx(costo)
+    assert traza["podas"] > 0 and traza["completas"] >= len(traza["mejoras"])
+    eventos = traza["eventos"]
+    assert [e[0] for e in eventos] == sorted(e[0] for e in eventos)
+    assert [e[3] for e in eventos if e[1] == "mejora"] == [c for c, _ in traza["mejoras"]]
+    for _, tipo, ruta, c, mejor_conocida in eventos:
+      assert (c >= mejor_conocida) == (tipo != "mejora")
+      assert (len(ruta) == 7) or tipo == "poda"
+
+
+def test_fuerza_bruta_traza_revisa_todas_las_permutaciones():
+  import math
+  for semilla in range(5):
+    m = matriz_aleatoria(6, semilla)
+    costo, orden, traza = ruteo.fuerza_bruta_traza(m, muestra=10)
+    assert (costo, orden) == ruteo.fuerza_bruta(m)
+    assert traza["total"] == math.factorial(6)
+    eventos = traza["eventos"]
+    assert [e[0] for e in eventos[:10]] == list(range(1, 11))
+    assert all(e[4] for e in eventos if e[0] > 10)
+    assert eventos[-1][3] == pytest.approx(costo) or min(e[1] for e in eventos) == pytest.approx(costo)
+    for _, c, perm, _, _ in eventos:
+      assert ruteo.costo_ciclo(m, perm) == pytest.approx(c)
+
+
+def test_estados_held_karp():
+  for n in (1, 5, 8):
+    estados = ruteo.estados_held_karp(n)
+    assert [k for k, _ in estados] == list(range(1, n + 1))
+    assert sum(e for _, e in estados) == n * 2 ** (n - 1)
