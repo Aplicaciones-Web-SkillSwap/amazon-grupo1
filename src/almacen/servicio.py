@@ -251,15 +251,19 @@ class Servicio:
       filas.append({"desde": a, "hasta": b, "metros": metros, "acumulado": acumulado})
     return filas
 
-  def comparar_tecnicas(self, productos, layout=ACTUAL):
+  def comparar_tecnicas(self, productos, layout=ACTUAL, max_dp=None):
     """Corre backtracking, DP optimizada y voraz sobre el mismo pedido.
 
-    Devuelve {tecnica: Resultado, o None si el pedido es demasiado grande para ella}."""
+    max_dp limita el tamaño para la DP (la versión web usa el umbral T para no agotar la
+    memoria del servidor). Devuelve {tecnica: Resultado, o None si el pedido es demasiado
+    grande para ella}."""
     n = len(dict.fromkeys(productos))
+    limite = dict((k, v[1]) for k, v in TECNICAS.items())
+    if max_dp is not None:
+      limite["dp"] = min(limite["dp"], max_dp)
     salida = {}
     for nombre in ("backtracking", "dp", "voraz"):
-      salida[nombre] = (self.rutear(productos, layout, nombre)
-                        if n <= TECNICAS[nombre][1] else None)
+      salida[nombre] = self.rutear(productos, layout, nombre) if n <= limite[nombre] else None
     return salida
 
   def comparar_layouts(self, productos, tecnica="auto"):

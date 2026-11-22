@@ -236,6 +236,11 @@ def pestana_ruteo(s):
     comparar_l = c2.button("Carrera de layouts", width="stretch")
 
   clave = (str(oid), tuple(productos), layout, tecnica)
+  if calcular and tecnica == "dp" and len(productos) > config.UMBRAL_DP:
+    st.warning(f"En la versión web la programación dinámica admite hasta {config.UMBRAL_DP} "
+               "productos (con más, la memoria del servidor no alcanza). Se recomienda la "
+               "técnica automática para este pedido.")
+    calcular = False
   if calcular:
     try:
       with st.spinner("Calculando la ruta…"):
@@ -245,7 +250,8 @@ def pestana_ruteo(s):
   if comparar_t:
     try:
       with st.spinner("Ejecutando las tres técnicas…"):
-        st.session_state["cmp_t"] = (clave[:3], s.comparar_tecnicas(productos, layout))
+        st.session_state["cmp_t"] = (clave[:3], s.comparar_tecnicas(productos, layout,
+                                                                 max_dp=config.UMBRAL_DP))
     except ValueError as e:
       st.warning(str(e))
   if comparar_l:
