@@ -313,7 +313,7 @@ def held_karp_opt(m, poda=False):
 # ---------------------------------------------------------------------------------------
 # Vueltas del carrito (capacidad en kg)
 # ---------------------------------------------------------------------------------------
-def dividir_en_vueltas(m, orden, pesos, capacidad, max_unidades=None):
+def dividir_en_vueltas(m, orden, pesos, capacidad, max_unidades=None, cantidades=None):
   """Parte la ruta `orden` en vueltas que entren en el carrito, con la menor distancia.
 
   El carrito sale del depot, recoge los productos de una vuelta y regresa al depot a
@@ -325,8 +325,13 @@ def dividir_en_vueltas(m, orden, pesos, capacidad, max_unidades=None):
   `capacidad` son los kg que aguanta y `max_unidades` cuántos productos le caben (None =
   sin tope). Para limitar solo por unidades, basta pasar capacidad = float("inf").
 
-  `pesos` se indexa igual que `m`: pesos[i] son los kg del producto i (pesos[0], el depot,
-  no se usa). Devuelve (costo_total, vueltas) con vueltas = lista de listas de índices.
+  `cantidades` dice cuántas unidades se recogen de cada índice (None = una de cada uno).
+  Si de un producto se piden más unidades de las que caben, se reparten entre vueltas y
+  su ubicación se visita en cada una de ellas.
+
+  `pesos` se indexa igual que `m`: pesos[i] son los kg de UNA unidad del producto i
+  (pesos[0], el depot, no se usa). Devuelve (costo_total, vueltas) con vueltas = lista de
+  listas de índices, repetidos tantas veces como unidades se lleven en esa vuelta.
 
   Programación dinámica, O(n^2):
       mejor[i] = min sobre k de  mejor[k-1] + costo(depot -> orden[k-1..i-1] -> depot)
@@ -336,13 +341,20 @@ def dividir_en_vueltas(m, orden, pesos, capacidad, max_unidades=None):
 
   El resultado es el mejor corte *de ese orden*, que es lo que pide el enunciado; no
   rehace la ruta, así que no es necesariamente el óptimo del problema con capacidad."""
-  n = len(orden)
+  # una entrada por unidad a recoger, en el orden de visita
+  if cantidades is None:
+    unidades = list(orden)
+  else:
+    unidades = []
+    for i in orden:
+      unidades.extend([i] * int(cantidades.get(i, 1)))
+  n = len(unidades)
   if n == 0:
     return 0.0, []
 
   if max_unidades is not None and max_unidades < 1:
     raise ValueError("El carrito tiene que llevar al menos un producto por vuelta")
-  exceso = [i for i in orden if pesos[i] > capacidad]
+  exceso = [i for i in unidades if pesos[i] > capacidad]
   if exceso:
     raise ValueError(
         f"El producto {exceso[0]} pesa {pesos[exceso[0]]:.2f} kg y el carrito aguanta "
@@ -355,12 +367,13 @@ def dividir_en_vueltas(m, orden, pesos, capacidad, max_unidades=None):
     for k in range(i, 0, -1):                 # la vuelta cubre orden[k-1 .. i-1]
       if max_unidades is not None and i - k + 1 > max_unidades:
         break
-      peso += pesos[orden[k - 1]]
+      peso += pesos[unidades[k - 1]]
       if peso > capacidad:
         break
       if k < i:
-        interno += m[orden[k - 1]][orden[k]]
-      costo = m[0][orden[k - 1]] + interno + m[orden[i - 1]][0]
+        # si las dos unidades son del mismo producto, m[a][a] = 0 y no suma nada
+        interno += m[unidades[k - 1]][unidades[k]]
+      costo = m[0][unidades[k - 1]] + interno + m[unidades[i - 1]][0]
       if mejor[k - 1] + costo < mejor[i]:
         mejor[i] = mejor[k - 1] + costo
         corte[i] = k - 1
@@ -368,7 +381,7 @@ def dividir_en_vueltas(m, orden, pesos, capacidad, max_unidades=None):
   vueltas, i = [], n
   while i > 0:
     j = corte[i]
-    vueltas.append(list(orden[j:i]))
+    vueltas.append(list(unidades[j:i]))
     i = j
   vueltas.reverse()
   return mejor[n], vueltas

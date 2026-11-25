@@ -292,3 +292,64 @@ def test_el_stock_no_se_descuenta_entre_pedidos(servicio):
   despues = servicio.rutear([1, 2, 4], ACTUAL)
   assert antes.costo == pytest.approx(despues.costo)
   assert servicio.stock() == servicio.stock()
+
+
+# --------------------------------------------------------------------------------------
+# cantidades por producto
+# --------------------------------------------------------------------------------------
+def test_unidades_pedidas_acepta_lista_y_diccionario(servicio):
+  assert servicio.unidades_pedidas([1, 2, 1]) == {1: 1, 2: 1}
+  assert servicio.unidades_pedidas({1: 3, 2: 1}) == {1: 3, 2: 1}
+
+
+def test_el_peso_del_pedido_cuenta_las_unidades(servicio):
+  uno = servicio.peso_pedido([1])
+  assert servicio.peso_pedido({1: 4}) == pytest.approx(4 * uno)
+
+
+def test_varias_unidades_no_alargan_la_ruta_si_caben(servicio):
+  una = servicio.rutear([1, 2], ACTUAL)
+  varias = servicio.rutear({1: 3, 2: 2}, ACTUAL)
+  assert len(varias.vueltas) == 1
+  assert varias.costo_total == pytest.approx(una.costo_total)   # una sola parada por producto
+  assert varias.vueltas[0]["unidades"] == 5
+  assert varias.cantidades == {1: 3, 2: 2}
+
+
+def test_un_producto_se_parte_entre_vueltas_si_no_cabe():
+  m = matriz_aleatoria(2, random.Random(61))
+  pesos = [0.0, 1.0, 1.0]
+  costo, vueltas = ruteo.dividir_en_vueltas(m, [1, 2], pesos, 2, cantidades={1: 3, 2: 1})
+  assert sum(v.count(1) for v in vueltas) == 3          # las 3 unidades se recogen
+  assert sum(v.count(2) for v in vueltas) == 1
+  assert all(ruteo.peso_total(v, pesos) <= 2 + 1e-9 for v in vueltas)
+  assert costo == pytest.approx(sum(ruteo.costo_ciclo(m, v) for v in vueltas))
+
+
+def test_cantidades_coincide_con_la_fuerza_bruta():
+  rnd = random.Random(67)
+  for _ in range(30):
+    n = rnd.randint(1, 4)
+    m = matriz_aleatoria(n, rnd)
+    orden = list(range(1, n + 1))
+    cant = {i: rnd.randint(1, 3) for i in orden}
+    pesos = [0.0] + [1.0] * n
+    tope = rnd.randint(1, 4)
+    expandido = [i for i in orden for _ in range(cant[i])]
+    costo, _ = ruteo.dividir_en_vueltas(m, orden, pesos, tope, cantidades=cant)
+    assert costo == pytest.approx(cortes_por_fuerza_bruta(m, expandido, pesos, tope))
+
+
+def test_se_recoge_lo_que_haya_cuando_falta_stock(servicio):
+  disponible = servicio.stock()[1]
+  r = servicio.rutear({1: disponible + 5}, ACTUAL)
+  assert r.cantidades == {1: disponible}
+  assert r.faltantes == {1: 5}
+  assert r.omitidos == []
+
+
+def test_sin_cantidades_el_resultado_no_cambia(servicio):
+  lista = servicio.rutear([1, 2, 4], ACTUAL)
+  dicc = servicio.rutear({1: 1, 2: 1, 4: 1}, ACTUAL)
+  assert lista.costo_total == pytest.approx(dicc.costo_total)
+  assert lista.orden == dicc.orden
