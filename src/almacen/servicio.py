@@ -42,6 +42,7 @@ class Resultado:
   vueltas: list = field(default_factory=list)  # una por viaje del carrito: productos, kg y metros
   costo_total: float = 0.0                     # metros de todas las vueltas (= costo si es una sola)
   capacidad_kg: float = config.CAPACIDAD_CARRITO_KG
+  max_unidades: int = config.CAPACIDAD_CARRITO_UNIDADES
 
 
 class Servicio:
@@ -191,11 +192,14 @@ class Servicio:
     """Kilos que suma un pedido."""
     return sum(self.info[p]["peso"] for p in dict.fromkeys(productos))
 
-  def rutear(self, productos, layout=ACTUAL, tecnica="auto", capacidad_kg=None):
+  def rutear(self, productos, layout=ACTUAL, tecnica="auto", capacidad_kg=None,
+             max_unidades=None):
     """Ruta de picking de un pedido. tecnica: "auto" o una clave de TECNICAS.
 
-    `capacidad_kg` es lo que aguanta el carrito; si el pedido pesa más, la ruta se parte
-    en varias vueltas que pasan por el depot a descargar (ruteo.dividir_en_vueltas)."""
+    El carrito se limita por peso (`capacidad_kg`) y por cantidad de productos
+    (`max_unidades`); se pueden usar juntos o por separado. Si el pedido no entra, la
+    ruta se parte en varias vueltas que pasan por el depot a descargar
+    (ruteo.dividir_en_vueltas). Para quitar un tope, pasar float("inf") o None."""
     productos = list(dict.fromkeys(productos))
     if not productos:
       raise ValueError("El pedido está vacío")
@@ -221,21 +225,23 @@ class Servicio:
     tiempo = time.perf_counter() - t0
 
     capacidad = config.CAPACIDAD_CARRITO_KG if capacidad_kg is None else float(capacidad_kg)
+    tope = config.CAPACIDAD_CARRITO_UNIDADES if max_unidades is None else max_unidades
+    tope = None if tope in (None, float("inf")) else int(tope)
     kilos = [0.0] + [self.info[p]["peso"] for p in productos]
-    costo_total, cortes = ruteo.dividir_en_vueltas(m, orden, kilos, capacidad)
+    costo_total, cortes = ruteo.dividir_en_vueltas(m, orden, kilos, capacidad, tope)
 
     visita = [productos[i - 1] for i in orden]
     vueltas, camino = [], []
     for indices in cortes:
       prods = [productos[i - 1] for i in indices]
       paso = self._camino(dist, prods)
-      vueltas.append({"productos": prods,
+      vueltas.append({"productos": prods, "unidades": len(prods),
                       "kg": round(ruteo.peso_total(indices, kilos), 2),
                       "metros": float(ruteo.costo_ciclo(m, indices)),
                       "camino": paso})
       camino.extend(paso if not camino else paso[1:])
     return Resultado(productos, visita, float(costo), nombre, tiempo, layout,
-                     camino, vueltas, float(costo_total), capacidad)
+                     camino, vueltas, float(costo_total), capacidad, tope)
 
   @staticmethod
   def _camino(dist, visita):

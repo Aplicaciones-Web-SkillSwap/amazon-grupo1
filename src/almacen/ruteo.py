@@ -313,20 +313,24 @@ def held_karp_opt(m, poda=False):
 # ---------------------------------------------------------------------------------------
 # Vueltas del carrito (capacidad en kg)
 # ---------------------------------------------------------------------------------------
-def dividir_en_vueltas(m, orden, pesos, capacidad):
-  """Parte la ruta `orden` en vueltas de a lo más `capacidad` kg, con la menor distancia.
+def dividir_en_vueltas(m, orden, pesos, capacidad, max_unidades=None):
+  """Parte la ruta `orden` en vueltas que entren en el carrito, con la menor distancia.
 
   El carrito sale del depot, recoge los productos de una vuelta y regresa al depot a
   descargar antes de empezar la siguiente. Como el orden de visita ya viene dado (es la
   ruta óptima que calculó la técnica de ruteo), cada vuelta es un tramo seguido de ese
   orden y solo hay que decidir dónde cortar.
 
+  El carrito se limita de dos formas, que se pueden usar juntas o por separado:
+  `capacidad` son los kg que aguanta y `max_unidades` cuántos productos le caben (None =
+  sin tope). Para limitar solo por unidades, basta pasar capacidad = float("inf").
+
   `pesos` se indexa igual que `m`: pesos[i] son los kg del producto i (pesos[0], el depot,
   no se usa). Devuelve (costo_total, vueltas) con vueltas = lista de listas de índices.
 
   Programación dinámica, O(n^2):
       mejor[i] = min sobre k de  mejor[k-1] + costo(depot -> orden[k-1..i-1] -> depot)
-  tomando solo los tramos que no pasan de `capacidad`. Para cada i se recorre el inicio
+  tomando solo los tramos que entran en el carrito. Para cada i se recorre el inicio
   del tramo hacia atrás acumulando el peso y el tramo interno, así cada par (k, i) cuesta
   O(1) y el total es O(n^2).
 
@@ -336,6 +340,8 @@ def dividir_en_vueltas(m, orden, pesos, capacidad):
   if n == 0:
     return 0.0, []
 
+  if max_unidades is not None and max_unidades < 1:
+    raise ValueError("El carrito tiene que llevar al menos un producto por vuelta")
   exceso = [i for i in orden if pesos[i] > capacidad]
   if exceso:
     raise ValueError(
@@ -347,6 +353,8 @@ def dividir_en_vueltas(m, orden, pesos, capacidad):
   for i in range(1, n + 1):
     peso = interno = 0.0
     for k in range(i, 0, -1):                 # la vuelta cubre orden[k-1 .. i-1]
+      if max_unidades is not None and i - k + 1 > max_unidades:
+        break
       peso += pesos[orden[k - 1]]
       if peso > capacidad:
         break

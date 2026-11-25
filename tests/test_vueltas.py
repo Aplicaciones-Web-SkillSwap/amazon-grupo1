@@ -123,6 +123,76 @@ def test_bajar_la_capacidad_nunca_acorta_la_ruta():
 
 
 # --------------------------------------------------------------------------------------
+# tope de unidades
+# --------------------------------------------------------------------------------------
+def test_sin_tope_de_unidades_es_igual_que_antes():
+  m = matriz_aleatoria(7, random.Random(31))
+  orden = [1, 2, 3, 4, 5, 6, 7]
+  pesos = [0.0] + [1.0] * 7
+  assert (ruteo.dividir_en_vueltas(m, orden, pesos, 3)
+          == ruteo.dividir_en_vueltas(m, orden, pesos, 3, max_unidades=None))
+
+
+def test_ninguna_vuelta_pasa_el_tope_de_unidades():
+  rnd = random.Random(37)
+  for _ in range(40):
+    n = rnd.randint(1, 12)
+    m = matriz_aleatoria(n, rnd)
+    orden = list(range(1, n + 1))
+    rnd.shuffle(orden)
+    pesos = [0.0] + [1.0] * n
+    tope = rnd.randint(1, 5)
+    _, vueltas = ruteo.dividir_en_vueltas(m, orden, pesos, float("inf"), tope)
+    assert all(len(v) <= tope for v in vueltas)
+    assert [i for v in vueltas for i in v] == orden
+
+
+def test_tope_de_una_unidad_obliga_a_una_vuelta_por_producto():
+  m = matriz_aleatoria(5, random.Random(41))
+  orden = [1, 2, 3, 4, 5]
+  pesos = [0.0] + [1.0] * 5
+  costo, vueltas = ruteo.dividir_en_vueltas(m, orden, pesos, float("inf"), 1)
+  assert vueltas == [[1], [2], [3], [4], [5]]
+  assert costo == pytest.approx(sum(m[0][i] + m[i][0] for i in orden))
+
+
+def test_los_dos_topes_a_la_vez_se_respetan():
+  rnd = random.Random(43)
+  for _ in range(30):
+    n = rnd.randint(1, 10)
+    m = matriz_aleatoria(n, rnd)
+    orden = list(range(1, n + 1))
+    rnd.shuffle(orden)
+    pesos = [0.0] + [round(rnd.uniform(0.5, 2.0), 2) for _ in range(n)]
+    capacidad = max(pesos[1:]) + rnd.uniform(0, 3)
+    tope = rnd.randint(1, 4)
+    costo, vueltas = ruteo.dividir_en_vueltas(m, orden, pesos, capacidad, tope)
+    for v in vueltas:
+      assert len(v) <= tope
+      assert ruteo.peso_total(v, pesos) <= capacidad + 1e-9
+    assert costo == pytest.approx(sum(ruteo.costo_ciclo(m, v) for v in vueltas))
+
+
+def test_tope_de_unidades_coincide_con_la_fuerza_bruta():
+  rnd = random.Random(47)
+  for _ in range(40):
+    n = rnd.randint(1, 8)
+    m = matriz_aleatoria(n, rnd)
+    orden = list(range(1, n + 1))
+    rnd.shuffle(orden)
+    pesos = [0.0] + [1.0] * n                  # peso 1 por producto: capacidad = unidades
+    tope = rnd.randint(1, 4)
+    costo, _ = ruteo.dividir_en_vueltas(m, orden, pesos, float("inf"), tope)
+    assert costo == pytest.approx(cortes_por_fuerza_bruta(m, orden, pesos, tope))
+
+
+def test_tope_de_unidades_invalido_da_error():
+  m = matriz_aleatoria(2, random.Random(53))
+  with pytest.raises(ValueError, match="al menos un producto"):
+    ruteo.dividir_en_vueltas(m, [1, 2], [0.0, 1.0, 1.0], float("inf"), 0)
+
+
+# --------------------------------------------------------------------------------------
 # integración con el servicio
 # --------------------------------------------------------------------------------------
 def test_servicio_devuelve_una_vuelta_con_la_capacidad_por_defecto(servicio):
@@ -146,6 +216,21 @@ def test_el_camino_pasa_por_el_depot_entre_vueltas(servicio):
   r = servicio.rutear([1, 2, 4], ACTUAL, capacidad_kg=CARRITO_CHICO)
   assert r.camino[0] == "depot" and r.camino[-1] == "depot"
   assert r.camino.count("depot") == len(r.vueltas) + 1
+
+
+def test_servicio_limita_por_unidades(servicio):
+  r = servicio.rutear([1, 2, 4], ACTUAL, capacidad_kg=float("inf"), max_unidades=2)
+  assert r.max_unidades == 2
+  assert len(r.vueltas) == 2                           # 3 productos de a 2 por vuelta
+  assert all(v["unidades"] <= 2 for v in r.vueltas)
+  assert sum(v["unidades"] for v in r.vueltas) == 3
+  assert [p for v in r.vueltas for p in v["productos"]] == r.orden
+
+
+def test_servicio_con_los_dos_topes(servicio):
+  r = servicio.rutear([1, 2, 4], ACTUAL, capacidad_kg=CARRITO_CHICO, max_unidades=1)
+  assert len(r.vueltas) == 3
+  assert all(v["unidades"] == 1 for v in r.vueltas)
 
 
 def test_los_tramos_indican_su_vuelta(servicio):
