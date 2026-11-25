@@ -81,6 +81,18 @@ def info_productos(nodos, pesos=None):
   return info
 
 
+def calcular_stock(info, tope=config.STOCK_PRODUCTO_TOP):
+  """Unidades en almacén de cada producto, proporcionales a su demanda.
+
+  El producto más pedido tiene `tope` unidades y el resto se reparte en proporción a su
+  frecuencia de pedido, redondeando. Con el `tope` por defecto ningún producto queda en
+  cero; al bajarlo, los menos pedidos se van agotando primero."""
+  if tope < 0:
+    raise ValueError("El stock no puede ser negativo")
+  mayor = max(d["freq"] for d in info.values())
+  return {p: round(tope * d["freq"] / mayor) for p, d in info.items()}
+
+
 def pedidos_filtrados(datos, nodos):
   """Diccionario order_id -> lista ordenada de productos del pedido que están en `nodos`."""
   ids = set(nodos["product_id"])
