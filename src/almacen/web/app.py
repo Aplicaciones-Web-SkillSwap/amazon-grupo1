@@ -160,16 +160,27 @@ def elegir_pedido(s):
     else:
       elegidos = st.multiselect("Productos (escribir para buscar)", sorted(s.info),
                                 format_func=lambda p: s.info[p]["nombre"])
+      cuantos = {}
+      if elegidos:
+        st.caption("Unidades de cada producto")
+        for prod in elegidos:
+          cuantos[prod] = st.number_input(
+              s.info[prod]["nombre"][:38], min_value=1, max_value=99, value=1, step=1,
+              key=f"cant_{prod}")
       if st.button("Usar mi selección"):
         if not elegidos:
           st.warning("Se debe elegir al menos un producto.")
         else:
-          st.session_state["pedido"] = ("propio", list(elegidos))
+          st.session_state["pedido"] = ("propio", list(elegidos), dict(cuantos))
   except ValueError as e:
     st.warning(str(e))
-  oid, productos = st.session_state["pedido"]
-  st.caption(f"Pedido {oid}: {len(productos)} productos distintos")
-  return oid, productos
+  guardado = st.session_state["pedido"]
+  oid, productos = guardado[0], guardado[1]
+  cantidades = guardado[2] if len(guardado) > 2 else {p: 1 for p in productos}
+  unidades = sum(cantidades.values())
+  extra = f" · {unidades} unidades" if unidades != len(productos) else ""
+  st.caption(f"Pedido {oid}: {len(productos)} productos distintos{extra}")
+  return oid, productos, cantidades
 
 
 def ms_texto(segundos):
@@ -184,11 +195,13 @@ def num_pasillo(s, p, layout):
   return s.layouts[layout].pasillo[p] + 1
 
 
-def tabla_visita(s, productos, layout, orden=None):
+def tabla_visita(s, productos, layout, orden=None, cantidades=None):
+  cantidades = cantidades or {}
   filas = []
   for k, p in enumerate(orden or productos, start=1):
     filas.append({"Visita": k if orden else None, "Producto": s.info[p]["nombre"],
-                  "Zona": s.info[p]["zona"], "Pasillo": num_pasillo(s, p, layout)})
+                  "Unidades": cantidades.get(p, 1), "Zona": s.info[p]["zona"],
+                  "Pasillo": num_pasillo(s, p, layout)})
   return pd.DataFrame(filas)
 
 
@@ -232,9 +245,13 @@ def tabla_tramos(s, r):
 
 def tabla_vueltas(s, r):
   """Una fila por vuelta del carrito: cuántos productos lleva, cuántos kilos y cuántos metros."""
+  def detalle(v):
+    return ", ".join(f"{s.info[p]['nombre'][:20]}" +
+                     (f" x{v['cantidades'][p]}" if v["cantidades"][p] > 1 else "")
+                     for p in v["productos"])
   return pd.DataFrame([{"Vuelta": k, "Productos": len(v["productos"]),
-                        "Peso (kg)": round(v["kg"], 2), "Metros": round(v["metros"]),
-                        "Detalle": ", ".join(s.info[p]["nombre"][:22] for p in v["productos"])}
+                        "Unidades": v["unidades"], "Peso (kg)": round(v["kg"], 2),
+                        "Metros": round(v["metros"]), "Detalle": detalle(v)}
                        for k, v in enumerate(r.vueltas, start=1)])
 
 
@@ -252,7 +269,7 @@ def pestana_ruteo(s):
   izq, der = st.columns([1, 2], gap="large")
   with izq:
     st.markdown("#### 1. Pedido")
-    oid, productos = elegir_pedido(s)
+    oid, productos, cantidades = elegir_pedido(s)
     st.markdown("#### 2. Técnica")
     tecnica = textos.TECNICAS[st.selectbox("Técnica", list(textos.TECNICAS),
                                            label_visibility="collapsed")]
@@ -276,8 +293,8 @@ def pestana_ruteo(s):
           "Productos por vuelta", min_value=1,
           max_value=int(config.CAPACIDAD_CARRITO_UNIDADES),
           value=int(config.CAPACIDAD_CARRITO_UNIDADES), step=1)
-    st.caption(f"Este pedido: **{len(productos)} productos**, "
-               f"**{s.peso_pedido(productos):.2f} kg**.")
+    st.caption(f"Este pedido: **{sum(cantidades.values())} unidades** de "
+               f"**{len(productos)} productos**, **{s.peso_pedido(cantidades):.2f} kg**.")
 
     st.markdown("#### 5. Stock del almacén")
     stock_tope = st.number_input(
@@ -296,26 +313,26 @@ def pestana_ruteo(s):
     comparar_t = c1.button("Carrera de técnicas", width="stretch")
     comparar_l = c2.button("Carrera de layouts", width="stretch")
 
-  clave = (str(oid), tuple(productos), layout, tecnica, float(capacidad), float(tope),
-           int(stock_tope))
+  clave = (str(oid), tuple(sorted(cantidades.items())), layout, tecnica, float(capacidad),
+           float(tope), int(stock_tope))
   if calcular:
     try:
       with st.spinner("Calculando la ruta…"):
-        st.session_state["res"] = (clave, s.rutear(productos, layout, tecnica, capacidad,
+        st.session_state["res"] = (clave, s.rutear(cantidades, layout, tecnica, capacidad,
                                                    tope, stock_tope))
     except ValueError as e:
       st.warning(str(e))
   if comparar_t:
     try:
       with st.spinner("Ejecutando las tres técnicas…"):
-        st.session_state["cmp_t"] = (clave[:3], s.comparar_tecnicas(productos, layout))
+        st.session_state["cmp_t"] = (clave[:3], s.comparar_tecnicas(cantidades, layout))
     except ValueError as e:
       st.warning(str(e))
   if comparar_l:
     try:
       with st.spinner("Ruteando en ambos layouts…"):
         st.session_state["cmp_l"] = ((clave[0], clave[1], tecnica),
-                                     s.comparar_layouts(productos, tecnica))
+                                     s.comparar_layouts(cantidades, tecnica))
     except ValueError as e:
       st.warning(str(e))
 
@@ -335,6 +352,11 @@ def pestana_ruteo(s):
                     unsafe_allow_html=True)
     else:
       st.info("Para ver el recorrido, presionar **Calcular ruta** y luego **Reproducir**.")
+    if r and r.faltantes:
+      detalle = ", ".join(f"{s.info[p]['nombre'][:26]} (faltan {q})"
+                          for p, q in list(r.faltantes.items())[:5])
+      st.info(f"**Stock insuficiente**: se recoge lo que hay. {detalle}"
+              + (" …" if len(r.faltantes) > 5 else ""))
     if r and r.omitidos:
       nombres = ", ".join(s.info[p]["nombre"][:30] for p in r.omitidos[:6])
       st.warning(f"**{len(r.omitidos)} producto(s) sin stock** y fuera de la ruta: {nombres}"
@@ -366,7 +388,8 @@ def pestana_ruteo(s):
       st.markdown("**La ruta, tramo por tramo**")
       st.dataframe(tabla_tramos(s, r), hide_index=True, width="stretch")
     else:
-      st.dataframe(tabla_visita(s, productos, layout), hide_index=True, width="stretch")
+      st.dataframe(tabla_visita(s, productos, layout, cantidades=cantidades),
+                   hide_index=True, width="stretch")
 
   g = st.session_state.get("cmp_t")
   if g and g[0] == clave[:3]:
