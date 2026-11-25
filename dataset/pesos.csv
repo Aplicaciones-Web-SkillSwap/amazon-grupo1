@@ -1,0 +1,1501 @@
+product_id,product_name,department,peso_kg,origen
+34,Peanut Butter Cereal,breakfast,0.4,categoria
+45,European Cucumber,produce,0.3,categoria
+79,Wild Albacore Tuna No Salt Added,canned goods,0.14,categoria
+130,Vanilla Milk Chocolate Almond Ice Cream Bars Multi-Pack,frozen,0.47,categoria
+162,Organic Mini Homestyle Waffles,frozen,0.29,categoria
+196,Soda,beverages,2.1,revisado
+204,Free & Clear Natural Laundry Detergent For Sensitive Skin,household,2.5,categoria
+210,Homemade Hot Arrabbiata Fra Diavolo Sauce,dry goods pasta,0.45,categoria
+248,Dried Sweetened Cranberries,snacks,0.25,categoria
+260,Cantaloupe,produce,1.5,revisado
+277,Diet Root Beer,beverages,2.1,categoria
+287,Turkey,deli,0.23,categoria
+311,Naturals Savory Turkey Breakfast Sausage,frozen,0.34,categoria
+329,Organic Whole Grassmilk Milk,dairy eggs,1.9,categoria
+365,Cheerios Cereal,breakfast,0.4,categoria
+397,Pure Granulated Cane Sugar,pantry,1.81,categoria
+432,Vanilla Almond Breeze Almond Milk,dairy eggs,1.9,revisado
+436,Petite Brussels Sprouts,frozen,0.4,categoria
+581,Garnet Sweet Potato (Yam),produce,0.25,categoria
+651,Organic Salted Butter,dairy eggs,0.45,categoria
+781,Organic Shredded Mild Cheddar,dairy eggs,0.23,categoria
+790,Garbanzo Beans,canned goods,0.42,categoria
+812,Healthy Grains Oats & Honey Clusters with Toasted Coconut Gluten Free,breakfast,0.51,categoria
+890,Organic Diced Tomatoes,canned goods,0.42,revisado
+1006,Philadelphia Cream Cheese,dairy eggs,0.23,categoria
+1025,Organic Fresh Basil,produce,0.06,categoria
+1090,Shells & Real Aged Cheddar Macaroni & Cheese,dry goods pasta,0.45,categoria
+1117,Turkey Bacon,meat seafood,0.34,categoria
+1158,Mango Chunks,frozen,0.4,categoria
+1194,Natural Artisan Water,beverages,1.05,categoria
+1215,Kidz All Natural Baked Chicken Nuggets,frozen,0.45,categoria
+1217,"Select-A-Size Paper Towels, White, 2 Huge Rolls = 5 Regular Rolls  Towels/Napkins",household,1.2,categoria
+1244,Organic Orange Bell Pepper,produce,0.2,categoria
+1263,American Cheese Slices 12 Count,dairy eggs,0.28,nombre
+1360,Crunchy Peanut Butter,pantry,0.51,categoria
+1408,Mini Cucumbers,produce,0.3,categoria
+1463,Organic Milk,dairy eggs,1.9,revisado
+1468,Organic Peeled & Cooked Beets,produce,0.45,categoria
+1511,2% Reduced Fat DHA Omega-3 Reduced Fat Milk,dairy eggs,1.9,categoria
+1516,Organic Acai Berry Smoothie Packs,frozen,0.45,categoria
+1529,"Parsley, Italian (Flat), New England Grown",produce,0.06,categoria
+1559,Cherry Pomegranate Greek Yogurt,dairy eggs,0.17,categoria
+1695,Major Dickason's Blend Ground Coffee Dark Roast,beverages,0.34,categoria
+1700,White Cheddar Popcorn,snacks,0.15,categoria
+1890,Organic Large Grade A Eggs,dairy eggs,0.7,categoria
+1940,Organic 2% Reduced Fat Milk,dairy eggs,1.9,revisado
+1999,Organic Chicken Broth,canned goods,0.95,categoria
+2078,Unsalted Pure Irish Butter,dairy eggs,0.45,categoria
+2086,Sustainably Soft Bath Tissue,household,2.0,revisado
+2091,Almond Nut & Rice Cracker Snacks,snacks,0.23,categoria
+2120,Sauvignon Blanc,alcohol,1.3,categoria
+2180,Angel Hair Pasta,dry goods pasta,0.45,categoria
+2228,Organic Frozen Mango Chunks,frozen,0.4,categoria
+2295,Yellow Bell Pepper,produce,0.2,revisado
+2314,Whole Milk Ricotta Cheese,dairy eggs,1.9,categoria
+2326,Organic Blueberry Waffles,frozen,0.29,categoria
+2361,Mint Chip,frozen,0.4,categoria
+2450,Taco Seasoning,international,0.4,categoria
+2452,Naturals Chicken Nuggets,frozen,0.45,categoria
+2480,Organic 85% Cacao Dark Chocolate Bar,snacks,0.25,categoria
+2536,Ultra Plush 3 ply Toilet Paper 12 Double Rolls,household,2.0,categoria
+2611,Gluten Free SpongeBob Spinach Littles,babies,0.5,categoria
+2716,Organic Greek Lowfat Yogurt With Strawberries,dairy eggs,0.17,categoria
+2732,Gluten Free Pretzel Sticks,snacks,0.28,categoria
+2825,Organic Original Hommus,deli,0.28,categoria
+2846,Organic Green Onions,produce,0.2,categoria
+2855,Organic Good Seed Bread,bakery,0.68,categoria
+2962,"Milk, Reduced Fat, 2% Milkfat",dairy eggs,1.9,categoria
+2966,Pure Coconut Water,beverages,1.05,categoria
+2979,Beyond Beef Beefy Crumble,frozen,0.4,categoria
+3020,Broccoli & Apple Stage 2 Baby Food,babies,0.11,categoria
+3142,Organic Short Grain Brown Rice,dry goods pasta,0.91,categoria
+3265,Mini Seedless Watermelon Pack,produce,2.7,categoria
+3298,Mozzarella String Cheese,dairy eggs,0.34,categoria
+3318,Cinnamon Swirl Raisin Bread,bakery,0.68,categoria
+3339,Organic Russet Potato Bag,produce,1.36,categoria
+3376,Organic Whole Kernel Sweet Corn No Salt Added,canned goods,0.42,categoria
+3389,Diet Dr.Pepper Soda Pack,beverages,5.0,categoria
+3397,Organic Lightly Salted Sea Salt Thin & Crispy Restaurant Style Tortilla Chips,snacks,0.2,categoria
+3464,"Organic Butterhead (Boston, Butter, Bibb) Lettuce",produce,0.45,categoria
+3481,Pineapple,produce,1.4,categoria
+3583,Unsweetened Coconut Milk Beverage,dairy eggs,1.9,categoria
+3599,Baked Aged White Cheddar Rice and Corn Puffs,snacks,0.14,categoria
+3696,Original Baked Snack Crackers,snacks,0.23,categoria
+3765,Original Whole Fat Lactose Free Milk,dairy eggs,1.9,categoria
+3798,Pink Lady Apples,produce,0.2,categoria
+3843,Organic Brussels Sprouts,produce,0.45,categoria
+3849,Organic Sprouted English Muffin,bakery,0.4,categoria
+3856,Deli Fresh Smoked Turkey Breast,deli,0.23,categoria
+3873,Mountain Spring Water,beverages,1.05,categoria
+3880,Corn Maize Tortillas,bakery,0.45,categoria
+3896,Organic Honey Sweet Whole Wheat Bread,bakery,0.68,categoria
+3919,Hearty Grains 100% Whole Wheat English Muffins,bakery,0.4,categoria
+3952,Organic Broccoli Crowns,produce,0.4,revisado
+3957,100% Raw Coconut Water,beverages,1.05,revisado
+3990,Natural Sharp Cheddar Sliced Cheese,dairy eggs,0.23,categoria
+3999,Bosc Pear,produce,0.2,categoria
+4006,Hazelnut Spread With Skim Milk & Cocoa,pantry,0.45,categoria
+4086,Mint,produce,0.06,categoria
+4137,Whole Grain Oat Cereal,breakfast,0.4,categoria
+4138,Arancita Rossa,beverages,1.05,categoria
+4149,Frozen Organic Blueberries,produce,0.3,categoria
+4163,Spanish Rice Pilaf Mix,dry goods pasta,0.91,categoria
+4210,Whole Milk,dairy eggs,1.9,revisado
+4317,Solid White Albacore Tuna In Water,canned goods,0.14,categoria
+4347,Extralean Ground Turkey Breast,meat seafood,0.45,categoria
+4367,Garlic & Fine Herbs Gournay Cheese,dairy eggs,0.23,categoria
+4421,Organic Beef Uncured Hot Dogs,meat seafood,0.45,categoria
+4461,Organic Raw Unfiltered Apple Cider Vinegar,pantry,0.52,categoria
+4462,Pink Lady Apple Kombucha,beverages,0.48,categoria
+4472,Toasted Coconut Almondmilk Blend,dairy eggs,0.35,categoria
+4562,English Seedless Cucumber,produce,0.35,revisado
+4595,Italian Dry Salame,deli,0.28,categoria
+4605,Yellow Onions,produce,1.36,revisado
+4656,Raspberry Preserves,pantry,0.45,categoria
+4724,Broccoli Florettes,produce,0.4,categoria
+4778,Wheat Thins Reduced Fat Crackers,snacks,0.23,categoria
+4781,Original Coconut Milk Creamer,dairy eggs,1.9,categoria
+4792,Panda Puffs Peanut Butter Cereal,breakfast,0.4,categoria
+4793,Wild Berry Smoothie,dairy eggs,0.35,categoria
+4796,Baby Portabella Mushrooms,produce,0.23,categoria
+4799,Shredded Parmesan,dairy eggs,0.23,revisado
+4853,Broccoli Rabe,produce,0.4,categoria
+4920,Seedless Red Grapes,produce,0.91,revisado
+4932,Vanilla Bean Ice Cream,frozen,0.47,categoria
+4942,Vanilla Almond Breeze,dairy eggs,0.35,categoria
+4945,Large Pineapple Chunks,produce,1.4,categoria
+4957,Total 2% Lowfat Greek Strained Yogurt With Blueberry,dairy eggs,0.17,categoria
+5025,Green Onions,produce,0.1,revisado
+5031,Medium Salsa Roja,deli,0.45,categoria
+5067,Original Syrup,pantry,0.35,categoria
+5068,Cauliflower Florets,produce,0.8,categoria
+5077,100% Whole Wheat Bread,bakery,0.68,revisado
+5097,Mexican Style Taco Shredded Cheese,dairy eggs,0.23,categoria
+5114,"Peach,  Apricot & Banana Stage 2 Baby Food",babies,0.11,categoria
+5120,Organic Vanilla Soymilk,dairy eggs,0.35,categoria
+5134,Organic Thompson Seedless Raisins,snacks,0.23,categoria
+5161,Dried Mango,bulk,0.45,categoria
+5194,Organic Bunny Fruit Snacks Berry Patch,snacks,0.23,categoria
+5212,Watermelon Chunks,produce,0.9,revisado
+5240,Spaghetti  No 12,dry goods pasta,0.45,categoria
+5250,Blueberry Muffin Bar,snacks,0.25,categoria
+5258,Sparkling Water,beverages,2.9,categoria
+5322,Gluten Free Dark Chocolate Chunk Chewy with a Crunch Granola Bars,snacks,0.25,categoria
+5337,Monterey Jack Cheese,dairy eggs,0.23,categoria
+5373,Organic No Salt Added Diced Tomatoes,canned goods,0.42,categoria
+5385,Country White Bread,bakery,0.68,categoria
+5428,1 Liter,beverages,1.03,nombre
+5438,Prosciutto,deli,0.28,categoria
+5449,Margherita Pizza,frozen,0.5,categoria
+5450,Small Hass Avocado,produce,0.15,revisado
+5451,Organic Zucchini Spirals,produce,0.25,categoria
+5456,Green Tea With Ginseng and Honey,deli,0.28,categoria
+5460,Butter,dairy eggs,0.45,categoria
+5479,Italian Sparkling Mineral Water,beverages,1.05,revisado
+5550,YoBaby Peach Pear Yogurt,dairy eggs,0.17,categoria
+5612,Reduced Fat Milk,dairy eggs,1.9,categoria
+5618,Cauliflower,produce,0.8,categoria
+5621,Sea Salt Fine Crystals,pantry,0.74,categoria
+5640,Vanilla Soy Creamer,dairy eggs,0.95,categoria
+5646,Organic Turkey Bacon,meat seafood,0.34,categoria
+5652,Organic Red Potatoes,produce,0.25,categoria
+5746,Heavy Cream,dairy eggs,0.47,categoria
+5750,Total Plain Greek Strained Yogurt,dairy eggs,0.17,categoria
+5769,Organic Chicken Stock,canned goods,0.95,categoria
+5782,Grade A Large White Eggs,dairy eggs,0.7,categoria
+5785,Organic Reduced Fat 2% Milk,dairy eggs,1.9,revisado
+5818,White Onion,produce,0.2,revisado
+5819,Baby Carrots,produce,0.45,categoria
+5876,Organic Lemon,produce,0.1,revisado
+5959,Four Cheese Thin Crust Pizza,frozen,0.5,categoria
+5991,Bok Choy,produce,0.3,categoria
+5994,Traditional Refried Beans,canned goods,0.42,categoria
+6046,Boneless Skinless Chicken Breast,meat seafood,0.91,revisado
+6104,Whole Milk Plain Yogurt,dairy eggs,1.9,categoria
+6128,Original Fresh Stack Crackers,snacks,0.23,categoria
+6182,Natural Artesian Bottled Water,beverages,1.05,categoria
+6184,Clementines,produce,1.36,revisado
+6187,Raisin Bran Cereal,breakfast,0.4,categoria
+6193,Organic Fancy Shredded Mozzarella Cheese,dairy eggs,0.23,categoria
+6287,Organic & Raw Strawberry Serenity Kombucha,beverages,0.48,categoria
+6343,"Pizza Poppers, Three Cheese",frozen,0.5,categoria
+6347,Unsweetened Almond Milk,dairy eggs,1.9,categoria
+6348,Mini Original Babybel Cheese,dairy eggs,0.23,categoria
+6383,All Whites 100% Egg Whites,dairy eggs,0.47,categoria
+6448,Smartfood White Cheddar Cheese Popcorn,snacks,0.15,categoria
+6473,Bag of Lemons,produce,1.36,categoria
+6489,Backyard Barbeque Potato Chips,snacks,0.2,categoria
+6532,Organic YoKids Very Berry Smoothies,dairy eggs,0.35,categoria
+6615,Mozzarella Cheese,dairy eggs,0.23,categoria
+6631,No Pulp Calcium & Vitamin D Pure Orange Juice,beverages,1.9,categoria
+6656,Organic California Style Sprouted Bread,bakery,0.68,categoria
+6740,Organic Braeburn Apple,produce,0.2,categoria
+6774,Brown Fertile Large Grade AA Eggs,dairy eggs,0.7,categoria
+6873,Organic Iceberg Lettuce,produce,0.45,categoria
+6948,Organic Original Almond Milk,dairy eggs,1.9,categoria
+7021,Organic Tomato Paste,canned goods,0.42,categoria
+7035,Peanut Butter Ice Cream Cup,missing,0.35,categoria
+7054,Low Fat Plain Yogurt,dairy eggs,0.17,categoria
+7131,Light Semisoft Cheese,dairy eggs,0.23,categoria
+7156,Traditional Plain Greek Yogurt,dairy eggs,0.17,categoria
+7175,Organic Whipped Naturally Buttery Spread,dairy eggs,0.45,categoria
+7179,Chopped Pecans,snacks,0.25,categoria
+7419,Sweet Red Grape Tomatoes,produce,0.91,categoria
+7461,Pinto Beans No Salt Added,canned goods,0.42,categoria
+7485,Garlic Hummus,deli,0.28,categoria
+7500,Organic Vanilla Extract,pantry,0.06,categoria
+7503,Whole Almonds,snacks,0.45,categoria
+7521,New Orleans Iced Coffee,beverages,0.34,categoria
+7559,Cinnamon Rolls with Icing,pantry,0.45,categoria
+7600,Mild Chunky Salsa,pantry,0.45,categoria
+7628,"Dressing, Jersey Sweet Onion, Calorie Free",produce,0.2,categoria
+7631,Broccoli Bunch,produce,0.4,categoria
+7644,Scoops! Tortilla Chips,snacks,0.2,categoria
+7649,Whole Wheat Tandoori Naan,bakery,0.45,categoria
+7693,Cran-Raspberry Flavored Sparkling Water,beverages,2.9,categoria
+7736,Premium Original Saltine Crackers,snacks,0.23,categoria
+7746,Oregano,pantry,0.45,categoria
+7751,Tomato Ketchup,pantry,0.57,categoria
+7781,Organic Sticks Low Moisture Part Skim Mozzarella String Cheese,dairy eggs,0.34,revisado
+7806,Soft Pretzel Burger Buns,bakery,0.4,categoria
+7862,Raw Shrimp,frozen,0.4,categoria
+7916,Grilled Chicken Breast,deli,0.28,categoria
+7948,Organic Unsalted Butter,dairy eggs,0.45,categoria
+7963,Gluten Free Whole Grain Bread,frozen,0.4,categoria
+7969,Lime,produce,0.07,categoria
+8006,Chopped Organic Garlic,pantry,0.45,categoria
+8012,Pizza 4 Cheese,frozen,0.5,categoria
+8021,100% Recycled Paper Towels,household,1.2,revisado
+8022,Spinach Pizza,frozen,0.5,categoria
+8025,Uncured Beef Hot Dogs,meat seafood,0.45,categoria
+8048,Packaged Grape Tomatoes,produce,0.91,categoria
+8087,Florida Orange Juice With Calcium & Vitamin D,beverages,1.9,categoria
+8138,Traditional Hummus,deli,0.28,categoria
+8153,Plain Non-Fat Greek Yogurt,dairy eggs,0.17,categoria
+8174,Organic Navel Orange,produce,0.2,revisado
+8193,Russet Potato,produce,0.25,revisado
+8204,Traditional Favorites Tomato & Basil Pasta Sauce,dry goods pasta,0.45,categoria
+8230,100% Recycled Bathroom Tissue,household,0.6,categoria
+8239,Peanut Butter Creamy With Salt,pantry,0.51,categoria
+8277,Apple Honeycrisp Organic,produce,0.22,revisado
+8309,Nonfat Icelandic Style Strawberry Yogurt,dairy eggs,0.17,categoria
+8424,Broccoli Crown,produce,0.4,revisado
+8467,Cinnamon Raisin Bread,bakery,0.68,categoria
+8475,Diet 12 Oz Ginger Ale,beverages,0.37,nombre
+8479,Original Black Box Tablewater Cracker,snacks,0.23,categoria
+8490,Strawberry Rhubarb Yogurt,dairy eggs,0.17,categoria
+8518,Organic Red Onion,produce,0.2,revisado
+8536,Green Leaf Shreds,produce,0.3,categoria
+8555,Sweet Potato Tortilla Chips,snacks,0.2,categoria
+8571,Baby Cucumbers,produce,0.3,categoria
+8590,Ground Turkey,meat seafood,0.45,categoria
+8670,Diced Tomatoes,canned goods,0.42,categoria
+8671,Semi-Sweet Chocolate Premium Baking Chips,pantry,0.45,categoria
+8710,Dairy Free Coconut Milk Blueberry Yogurt Alternative,dairy eggs,1.9,categoria
+8736,Synergy Organic & Raw Cosmic Cranberry,beverages,1.05,categoria
+8744,Mixed Vegetables,frozen,0.34,categoria
+8803,Fully Husked & Trimmed Super Sweet Corn,produce,0.3,categoria
+8859,Natural Spring Water,beverages,1.0,revisado
+8955,Basil,produce,0.06,categoria
+9000,Organic Yellow Zucchini,produce,0.25,categoria
+9018,All Natural Virgin Lemonade,beverages,1.9,categoria
+9020,Boneless Skinless Chicken Thighs,meat seafood,0.91,categoria
+9076,Blueberries,frozen,0.45,revisado
+9092,Organic Vegetable Broth,canned goods,0.95,categoria
+9124,Broccoli & Cheddar Bake Meal Bowl,frozen,0.34,categoria
+9203,Dairy Free Coconut Milk Raspberry Yogurt Alternative,dairy eggs,1.9,categoria
+9210,Fresh Whole Chicken,meat seafood,0.91,categoria
+9327,Garlic Powder,pantry,0.45,categoria
+9337,Purity Farms Ghee Clarified Butter,dairy eggs,0.45,categoria
+9339,Organic Chicken & Apple Sausage,meat seafood,0.91,categoria
+9366,Penne Rigate #41 Pasta,dry goods pasta,0.45,categoria
+9387,Granny Smith Apples,produce,0.2,revisado
+9390,Frozen Peaches,frozen,0.34,categoria
+9421,Organic Raw Multigreen Kobmbucha,beverages,1.05,categoria
+9434,Bag of Large Lemons,frozen,0.4,categoria
+9477,Medium Cheddar Cheese,dairy eggs,0.23,categoria
+9515,Natural Classic Pork Breakfast Sausage,frozen,0.34,categoria
+9534,Organic White Bread Done Right,bakery,0.68,categoria
+9550,Ancient Grain Original Granola,breakfast,0.34,categoria
+9554,Mocha Almond Fudge Minis Almond Milk Frozen Dessert,frozen,0.4,categoria
+9595,Organic Homestyle Mini Waffles,frozen,0.29,categoria
+9598,Gogo Squeez Organic Apple Strawberry Applesauce on the Go,canned goods,0.42,categoria
+9623,Sparkling Natural Spring Water,beverages,1.05,categoria
+9741,Cheese Pizza,frozen,0.5,categoria
+9755,Original Popcorn,snacks,0.15,categoria
+9808,Organic Cottage Cheese,dairy eggs,0.23,categoria
+9825,Organic Multigrain Waffles,frozen,0.29,categoria
+9839,Organic Broccoli,produce,0.4,revisado
+10017,Tilapia Filet,meat seafood,0.34,categoria
+10032,Cola Soft Drink,beverages,2.1,categoria
+10070,Organic 1% Low Fat Milk,dairy eggs,1.9,categoria
+10106,Honey & Maple Turkey Breast,deli,0.23,categoria
+10132,Organic American Cheese Singles,dairy eggs,0.23,categoria
+10151,Bolthouse Baby Carrots,produce,0.45,categoria
+10199,Watermelon Agave Frozen Pops,frozen,0.4,categoria
+10246,Organic Celery Hearts,produce,0.5,revisado
+10255,Clean Care Mega Rolls Toilet Paper,household,2.0,categoria
+10305,Black Plum,produce,0.15,categoria
+10312,Zen Tea,beverages,0.25,categoria
+10326,Organic Fuji Apples,produce,0.2,categoria
+10369,Organic Genoa Salami,deli,0.17,categoria
+10385,Organic English Cucumber,produce,0.3,categoria
+10473,Half And Half Cream,dairy eggs,0.95,categoria
+10492,Coconut Milk,international,0.4,categoria
+10504,Yukon Gold Potatoes 5lb Bag,produce,2.3,nombre
+10603,93% Ground Beef,meat seafood,0.45,categoria
+10613,Cut & Peeled Baby Carrots,produce,0.45,categoria
+10621,Organic Purple Kale,produce,0.23,categoria
+10644,Italian Extra Virgin Olive Oil,pantry,0.95,categoria
+10673,Original Nooks & Crannies English Muffins,bakery,0.4,categoria
+10690,Natural Lemon Flavored Sparkling Water,missing,0.35,categoria
+10749,Organic Red Bell Pepper,produce,0.2,revisado
+10753,Peanut Butter Bar,snacks,0.25,categoria
+10761,Organic Yokids Lemonade/Blueberry Variety Pack Yogurt Squeezers Tubes,dairy eggs,0.17,categoria
+10768,Organic Raspberry Lowfat Yogurt,dairy eggs,0.17,categoria
+10814,Applewood Smoked Bacon,meat seafood,0.34,categoria
+10831,Yobaby Organic Plain Yogurt,dairy eggs,0.17,categoria
+10895,Mexican Finely Shredded Cheese,dairy eggs,0.23,categoria
+10912,Lowfat Vanilla Yogurt,dairy eggs,0.17,categoria
+10957,Fridge Pack Cola,beverages,5.0,categoria
+11005,Organic Cream Cheese Bar,dairy eggs,0.23,categoria
+11068,Medium Cheddar Cheese Block,dairy eggs,0.23,categoria
+11123,Vitamin Water Zero Squeezed Lemonade,beverages,1.05,categoria
+11136,Organic Low Sodium Chicken Cooking Stock,canned goods,0.95,categoria
+11140,Organic Romaine Leaf,produce,0.45,categoria
+11182,Baby Spinach,produce,0.14,revisado
+11281,Double Stuf Oreo Sandwich Cookies,snacks,0.3,categoria
+11286,Organic Uncured Beef Hot Dog,missing,0.35,categoria
+11352,Organic Mini Sandwich Crackers Peanut Butter,snacks,0.23,categoria
+11365,Leaf Spinach,produce,0.28,categoria
+11408,Crushed Tomatoes,canned goods,0.42,categoria
+11422,Plain Greek Yogurt,dairy eggs,0.17,categoria
+11440,Chicken Breast Tenders Breaded,frozen,0.4,categoria
+11461,White Corn Tortillas,bakery,0.45,categoria
+11481,Organic Quinoa & Brown Rice With Garlic,dry goods pasta,0.91,categoria
+11494,Cookie Dough Ice Cream Chocolate Chip,missing,0.35,categoria
+11512,Honey Yoghurt,dairy eggs,0.35,categoria
+11520,Large Alfresco Eggs,dairy eggs,0.7,revisado
+11576,Corn Chips,snacks,0.2,categoria
+11688,Lemon Fruit & Nut Food Bar,snacks,0.25,categoria
+11710,Fresh Mozzarella Snacking Cheese,dairy eggs,0.23,categoria
+11712,Cage Free Large White Eggs,dairy eggs,0.7,categoria
+11759,Organic Simply Naked Pita Chips,snacks,0.2,categoria
+11777,Red Raspberries,produce,0.17,revisado
+11782,Bing Cherries,produce,0.45,categoria
+11827,Chunky Medium Salsa,pantry,0.45,categoria
+11941,"Tortillas, Corn, Organic",bakery,0.45,categoria
+12078,Shredded Mexican Blend Cheese,dairy eggs,0.23,categoria
+12087,Chicken Flavor Ramen Noodle Soup,dry goods pasta,0.34,categoria
+12099,Honey Greek Yogurt,dairy eggs,0.17,categoria
+12144,Gluten-Free Chicken Nuggets,frozen,0.45,categoria
+12206,Basil Pesto,dry goods pasta,0.45,categoria
+12276,Chocolate Chip Cookie Dough Ice Cream,frozen,0.47,categoria
+12312,Lavender Hand Soap,personal care,0.3,categoria
+12320,Organic Italian Herb Pasta Sauce,dry goods pasta,0.45,categoria
+12341,Hass Avocados,produce,0.2,revisado
+12384,Organic Lactose Free 1% Lowfat Milk,dairy eggs,1.9,categoria
+12395,Plain Goat Milk Yogurt,dairy eggs,1.9,categoria
+12409,Organic Distilled White Vinegar,pantry,0.52,categoria
+12419,Organic Sage,produce,0.06,categoria
+12427,Original Beef Jerky,snacks,0.09,categoria
+12456,Organic Sunday Bacon,meat seafood,0.34,categoria
+12481,Oreo Chocolate Sandwich Cookies,snacks,0.3,categoria
+12545,French Vanilla Coconut Milk Creamer,dairy eggs,1.9,categoria
+12564,Rigatoni Pasta,dry goods pasta,0.45,categoria
+12572,6 OZ LA PANZANELLA CROSTINI ORIGINAL CRACKERS,snacks,0.2,nombre
+12576,Kiwi Sandia Sparkling Water,beverages,2.9,categoria
+12606,100% Natural Spring Water,beverages,1.05,categoria
+12614,Yellow Grape Tomatoes,produce,0.91,categoria
+12732,Organic Ground Turkey,meat seafood,0.45,categoria
+12745,"Yogurt, Lowfat, Strawberry",dairy eggs,0.17,categoria
+12779,Spaghetti Squash,produce,0.9,categoria
+12797,Organic Whole Peeled Tomatoes,canned goods,0.42,categoria
+12817,Original Baked Whole Grain Wheat Crackers,snacks,0.23,categoria
+12845,Chopped Walnuts,snacks,0.25,categoria
+12872,Penne Rigate,dry goods pasta,0.45,categoria
+12916,Ginger Ale,beverages,2.1,categoria
+12980,Large Greenhouse Tomato,produce,0.2,categoria
+13083,Lowfat Small Curd Cottage Cheese,dairy eggs,0.23,categoria
+13166,"Organic Milk Reduced Fat, 2% Milkfat",dairy eggs,1.9,categoria
+13176,Bag of Organic Bananas,produce,1.2,revisado
+13198,85% Lean Ground Beef,meat seafood,0.45,categoria
+13212,Ground Black Pepper,pantry,0.05,categoria
+13225,Lowfat Milk,dairy eggs,1.9,categoria
+13249,Skim Milk,dairy eggs,1.9,categoria
+13259,Organic Variety Pack,beverages,1.05,categoria
+13263,Non Fat Acai & Mixed Berries Yogurt,dairy eggs,0.17,categoria
+13292,"Juice Beverage, Cold Pressed, Kale Apple Ginger Romaine Spinach Cucumber Celery Parsley Lemon",beverages,1.9,categoria
+13380,Organic Blue Corn Tortilla Chips,snacks,0.2,categoria
+13409,Dubliner Wedge Pre Cut Cheese,dairy eggs,0.23,categoria
+13424,Almonds,snacks,0.45,categoria
+13431,Flaky Biscuits,pantry,0.45,categoria
+13500,Mild Sliced Cheddar Cheese,dairy eggs,0.23,categoria
+13517,Whole Wheat Bread,bakery,0.68,categoria
+13535,Organic Medium Salsa,pantry,0.45,categoria
+13536,Shredded Parmesan Cheese,dairy eggs,0.23,categoria
+13575,Apples,produce,0.2,categoria
+13629,Organic Snipped Green Beans,produce,0.34,revisado
+13646,Lemon Hummus,deli,0.28,categoria
+13702,Good Seed Organic Thin Sliced Bread,bakery,0.68,categoria
+13712,Cold Brew Coffee Double Espresso with Almond Milk,dairy eggs,1.9,categoria
+13733,Red Potatoes,produce,0.25,categoria
+13740,Organic Summer Strawberry Bunny Fruit Snacks,snacks,0.23,categoria
+13780,Thyme,produce,0.06,categoria
+13802,Salted Sweet Cream Butter,dairy eggs,0.47,categoria
+13819,Roasted Salted Cashews,snacks,0.45,categoria
+13829,Mild Salsa,pantry,0.45,categoria
+13838,Natural Free & Clear Dish Liquid,household,0.6,categoria
+13852,Organic Broccoli Crown,produce,0.4,categoria
+13866,Deluxe Plain Bagels,bakery,0.5,categoria
+13870,Lightly Salted Baked Snap Pea Crisps,snacks,0.09,revisado
+13885,Caramel Cookie Crunch Gelato,frozen,0.47,categoria
+13944,Pure Water,beverages,1.05,categoria
+13966,Chicken Pot Pie,frozen,0.4,categoria
+13984,Organic Mint,produce,0.06,categoria
+13988,Snow Peas,produce,0.3,categoria
+14084,Organic Unsweetened Vanilla Almond Milk,dairy eggs,1.9,categoria
+14129,Organic Chicken Bone Broth,canned goods,0.95,categoria
+14147,Sweet Cream Salted Butter,dairy eggs,0.47,categoria
+14159,Seedless Watermelon,produce,2.7,categoria
+14161,Kiwi,produce,0.08,categoria
+14168,Penne Pasta,dry goods pasta,0.45,categoria
+14197,Tomato Paste,dry goods pasta,0.45,categoria
+14218,Grade A Large Eggs Cage Free Omega 3,dairy eggs,0.7,categoria
+14233,Natural Artesian Water,beverages,1.05,categoria
+14267,Organic Refried Black Beans,canned goods,0.42,categoria
+14332,Organic Yellow Mustard,pantry,0.28,categoria
+14462,Sliced Black Olives,pantry,0.45,categoria
+14467,Sweet Baguette,bakery,0.28,categoria
+14536,Natural Goodness 33% Less Sodium Chicken Broth,canned goods,0.95,categoria
+14633,Veggie Chips,snacks,0.2,categoria
+14651,Tommy/Kent/Keitt/Haden Mango,produce,0.35,categoria
+14678,Organic Frozen Peas,frozen,0.34,categoria
+14715,Coconut Water,beverages,1.05,categoria
+14778,Organic Chocolate Chip Chewy Granola Bars,snacks,0.2,categoria
+14814,Gluteen Free Center Cut Applewood Smoked Uncured Bacon,meat seafood,0.34,categoria
+14852,All Natural Marinara Sauce,dry goods pasta,0.45,categoria
+14858,Multigrain Pita Chips,snacks,0.2,categoria
+14870,Icelandic Style Fat Free Plain Yogurt,dairy eggs,0.17,categoria
+14874,Organic Eggs Large,dairy eggs,0.7,categoria
+14875,Soft & Smooth Whole Grain White Bread,bakery,0.68,categoria
+14897,Sweet Potato Yam,produce,0.25,categoria
+14901,Raisins,snacks,0.25,categoria
+14947,Pure Sparkling Water,beverages,2.9,revisado
+14966,Organic Mandarins,produce,0.3,categoria
+14992,Green Beans,produce,0.45,revisado
+14999,Grade A Large Brown Eggs,dairy eggs,0.7,categoria
+15100,Fresh Spinach,produce,0.28,categoria
+15200,Organic Green Beans,produce,0.45,categoria
+15261,Organic Rosemary,produce,0.06,categoria
+15290,Orange Bell Pepper,produce,0.2,revisado
+15359,All Purpose Flour,pantry,2.27,categoria
+15386,Whole Grain White Corn Salted Tortilla Chips,snacks,0.2,categoria
+15392,Organic Mayonnaise,pantry,0.45,categoria
+15399,"Almondmilk Creamer, Vanilla",dairy eggs,0.95,categoria
+15424,Purified Water,beverages,1.05,categoria
+15541,Original Almondmilk,dairy eggs,0.35,categoria
+15576,Uncured Beef Hot Dog,missing,0.35,categoria
+15592,Organic Baby Romaine Lettuce,produce,0.45,categoria
+15599,Naturally Hickory Smoked Thick Cut Bacon,meat seafood,0.34,categoria
+15613,Salted Tub of Butter,dairy eggs,0.45,categoria
+15649,Baby Seedless Cucumbers,produce,0.3,categoria
+15872,Celery Hearts,produce,0.5,categoria
+15902,100 Calorie  Per Bag Popcorn,snacks,0.15,categoria
+15937,Shallot,produce,0.08,revisado
+15950,Chik'n Nuggets,frozen,0.45,categoria
+15984,Almond Milk Blueberry Yogurt,dairy eggs,1.9,categoria
+15995,Organic Cinnamon Apple Sauce,canned goods,0.42,categoria
+16083,Organic Large Brown Eggs,dairy eggs,0.7,categoria
+16145,Organic Cannellini Beans,canned goods,0.42,categoria
+16168,Large Organic Omega3 Brown Eggs,dairy eggs,0.7,categoria
+16185,Sharp Cheddar Cheese,dairy eggs,0.23,revisado
+16249,Lacinato Kale Og,produce,0.23,categoria
+16254,ZBar Organic Chocolate Brownie Energy Snack,snacks,0.12,categoria
+16262,Everything Bagels,bakery,0.5,categoria
+16283,Fresh Asparagus,produce,0.45,categoria
+16290,Sparkling Clementine Juice,beverages,1.9,categoria
+16349,Organic Yams,produce,0.3,categoria
+16521,Walnut Halves & Pieces,snacks,0.25,categoria
+16525,Organic Chopped Garlic,canned goods,0.42,categoria
+16589,Plantain Chips,snacks,0.2,categoria
+16616,Organic Sliced White Mushrooms,produce,0.23,categoria
+16617,Organic Muenster Cheese Slices,dairy eggs,0.23,categoria
+16696,Coke Classic,beverages,1.05,categoria
+16759,Organic Carrot Bunch,produce,0.6,revisado
+16797,Strawberries,produce,0.45,revisado
+16823,Organic Beef Broth,canned goods,0.95,categoria
+16882,Baby Spring Mix,produce,0.14,categoria
+16953,Creamy Peanut Butter,pantry,0.51,revisado
+16965,Chocolate Ice Cream,frozen,0.47,categoria
+17008,Shredded Sharp Cheddar Cheese,dairy eggs,0.23,categoria
+17027,Avocado Roll,deli,0.28,categoria
+17044,French Baguette,bakery,0.28,categoria
+17122,Honeycrisp Apples,produce,0.2,categoria
+17183,Peach Yoghurt,dairy eggs,0.35,categoria
+17191,Tangerine,beverages,1.05,categoria
+17207,Non Fat Greek Yogurt,dairy eggs,0.17,categoria
+17224,Oats & Honey Gluten Free Granola,snacks,0.34,categoria
+17284,Organic Sugar Snap Peas,produce,0.3,categoria
+17313,Hass Avocado Variety,produce,0.2,categoria
+17316,Vitamin D Organic Whole Milk,dairy eggs,1.9,categoria
+17334,Coffee Ice Cream,frozen,0.47,categoria
+17341,Presliced Everything Bagels,bakery,0.5,categoria
+17419,Sprouted Whole Wheat Bread,bakery,0.68,categoria
+17429,Jalapeno Hummus,deli,0.28,categoria
+17461,Air Chilled Organic Boneless Skinless Chicken Breasts,meat seafood,0.91,categoria
+17600,"YoKids Squeezers Organic Low-Fat Yogurt, Strawberry",dairy eggs,0.17,categoria
+17615,Calcium Pulp Free Orange Juice,beverages,1.9,categoria
+17616,Goldfish Cheddar Baked Snack Crackers,snacks,0.23,categoria
+17630,YoKids Squeeze! Organic Strawberry Flavor Yogurt,dairy eggs,0.17,categoria
+17634,Chick Peas,canned goods,0.42,categoria
+17652,Air Chilled Breaded Chicken Breast Nuggets,frozen,0.45,categoria
+17706,Organic Whole Grain Wheat English Muffins,bakery,0.4,categoria
+17758,Strawberry Rhubarb Yoghurt,dairy eggs,0.35,categoria
+17789,Soy Free Buttery Spread,dairy eggs,0.45,categoria
+17794,Carrots,produce,0.91,revisado
+17795,Organic Green Leaf Lettuce,produce,0.45,categoria
+17807,Gluten Free Blueberry Waffles,frozen,0.29,categoria
+17835,Thin & Light Tortilla Chips,snacks,0.2,categoria
+17862,Minced Garlic,canned goods,0.42,categoria
+17872,Total 2% Lowfat Plain Greek Yogurt,dairy eggs,0.17,categoria
+17878,Grilled Chicken Breast Strips,meat seafood,0.91,categoria
+17902,Liquid Egg Whites,dairy eggs,0.47,categoria
+17948,Frozen Organic Wild Blueberries,frozen,0.45,revisado
+17949,Mild Cheddar Cheese Sticks,dairy eggs,0.23,categoria
+18019,Macaroni & Cheese Dinner Original Flavor,dry goods pasta,0.45,categoria
+18023,Organic Coconut Water,beverages,1.05,categoria
+18027,Ezekiel 4:9 Bread Organic Sprouted Whole Grain,bakery,0.68,categoria
+18078,Wild Arugula,produce,0.14,categoria
+18232,Beef Skirt Steak,meat seafood,0.45,categoria
+18234,Organic Spinach Bunch,produce,0.28,categoria
+18288,Sea Salt Potato Chips,snacks,0.2,categoria
+18337,Classic Mild Cheddar Macaroni & Cheese,dry goods pasta,0.45,categoria
+18339,100% Lemon Juice,beverages,1.9,categoria
+18352,Flax Plus Organic Pumpkin Flax Granola,breakfast,0.34,categoria
+18362,Organic Bread with 21 Whole Grains,bakery,0.68,revisado
+18370,Organic Shredded Mozzarella,dairy eggs,0.23,categoria
+18382,Saltine Crackers,snacks,0.23,categoria
+18389,Blood Orange Italian Soda,beverages,2.1,categoria
+18394,Asian Chopped Salad with Dressing,produce,0.14,categoria
+18418,Ginger Ale Soda,beverages,2.1,categoria
+18434,Organic Whole Crimini Mushrooms,produce,0.23,categoria
+18439,Sliced Sourdough Bread,bakery,0.68,categoria
+18441,Organic Ketchup,pantry,0.57,categoria
+18465,Organic Grade A Free Range Large Brown Eggs,dairy eggs,0.7,revisado
+18479,Organic Low Sodium Vegetable Broth,canned goods,0.95,categoria
+18523,Total 2% All Natural Greek Strained Yogurt with Honey,dairy eggs,0.15,revisado
+18531,Organic Heavy Whipping Cream,dairy eggs,0.47,revisado
+18534,Grade A Extra Large Eggs,dairy eggs,0.7,categoria
+18564,Diet Ginger Ale All Natural Soda,beverages,2.1,categoria
+18594,Emmentaler Swiss Slices,dairy eggs,0.35,categoria
+18599,Garlic Couscous,dry goods pasta,0.28,categoria
+18610,Cola Soda,beverages,2.1,categoria
+18618,Baked Caesar Snapea Crisps,snacks,0.15,categoria
+18656,Organic Red Potato,produce,0.25,categoria
+18670,Original Enriched Rice Drink,dairy eggs,0.35,categoria
+18689,Dairy-Free Chive Cream Cheese,dairy eggs,0.23,categoria
+18721,"Baked Rice and Corn Puffs, Aged White Cheddar",snacks,0.14,categoria
+18811,Organic Apple Juice,beverages,1.9,categoria
+18880,Organic Free Range Low Sodium Chicken Broth,canned goods,0.95,categoria
+18883,Honeydew Chunks,produce,0.3,categoria
+18918,Organic Chopped Spinach,frozen,0.28,categoria
+18926,Fat Free Strawberry Yogurt,dairy eggs,0.17,categoria
+18963,Apple Cider Vinegar,pantry,0.52,categoria
+18987,Hot Dog Buns,bakery,0.4,categoria
+19003,Celery,produce,0.5,categoria
+19006,Dark Chocolate Pretzels with Sea Salt,snacks,0.28,categoria
+19019,Uncured Slow Cooked Ham,deli,0.23,categoria
+19048,Organic Butternut Squash,produce,0.9,categoria
+19049,Peeled Garlic,produce,0.06,categoria
+19051,"Pita Chips, Simply Naked, Party Size",snacks,0.2,categoria
+19057,Organic Large Extra Fancy Fuji Apple,produce,0.25,revisado
+19068,Boneless And Skinless Chicken Breast,meat seafood,0.91,categoria
+19125,Extra Ginger Brew Jamaican Style Ginger Beer,beverages,1.05,categoria
+19156,Fat Free Blueberry Yogurt,dairy eggs,0.17,categoria
+19173,Orange Calcium & Vitamin D Pulp Free,beverages,1.05,categoria
+19348,Fat Free Milk,dairy eggs,1.9,revisado
+19370,Roasted Tomato Salsa,pantry,0.45,categoria
+19389,Shredded Low-Moisture Part-Skim Mozzarella Cheese,dairy eggs,0.23,categoria
+19468,Classic Yellow Mustard,pantry,0.28,categoria
+19478,Organic Marinara Pasta Sauce,dry goods pasta,0.45,categoria
+19488,Select-A-Size White Paper Towels,household,1.2,categoria
+19508,Corn Tortillas,bakery,0.45,categoria
+19511,Half And Half,dairy eggs,0.95,categoria
+19604,Medium Scarlet Raspberries,produce,0.3,categoria
+19660,Spring Water,beverages,1.0,revisado
+19677,Original Pure Creamy Almond Milk,dairy eggs,1.9,categoria
+19678,Organic Russet Potato,produce,0.25,revisado
+19691,Green Seedless Grapes,produce,0.91,categoria
+19734,Classic Mix Variety,snacks,0.25,categoria
+19816,Sonoma Traditional Flour Tortillas 10 Count,bakery,0.38,nombre
+19863,Classic Potato Chips,snacks,0.2,categoria
+19894,Enlightened Organic Raw Kombucha,beverages,0.48,categoria
+19895,Sliced Prosciutto,deli,0.28,categoria
+20015,Grandma's Hummus,deli,0.28,categoria
+20082,Organic Whole Milk with DHA Omega-3,dairy eggs,1.9,categoria
+20113,Organic Gluten Free Buckwheat Wildberry Waffles,frozen,0.29,categoria
+20114,Jalapeno Peppers,produce,0.05,revisado
+20119,Sparkling Water Berry,beverages,2.9,categoria
+20345,Thin Crust Pepperoni Pizza,frozen,0.5,categoria
+20378,Chicken Broth,canned goods,0.95,categoria
+20512,Original Cereal,breakfast,0.4,categoria
+20520,Mild Diced Green Chiles,canned goods,0.42,categoria
+20549,Organic Orzo,dry goods pasta,0.45,categoria
+20561,Brownberry 100% 12 Grain Bread,bakery,0.68,categoria
+20574,Roasted Turkey,deli,0.23,categoria
+20580,Original Real Vegetable Chips,snacks,0.2,categoria
+20583,Sourdough Baguette,bakery,0.28,categoria
+20632,Mache Rosettes French Salad Mix,produce,0.14,categoria
+20670,Organic Lentil Vegetable Soup,canned goods,0.52,categoria
+20734,Organic Medjool Dates,snacks,0.25,categoria
+20738,Plain Bagels,bakery,0.5,categoria
+20754,Mediterranean Mint Gelato,frozen,0.47,categoria
+20842,Total 0% Greek Yogurt,dairy eggs,0.17,revisado
+20876,Crunchy Peanut Butter Energy Bar,snacks,0.25,categoria
+20899,Goo Berry Pie Probugs Kefir,dairy eggs,0.95,categoria
+20919,Baby Spinach Salad,produce,0.14,categoria
+20940,Organic Low Fat Milk,dairy eggs,1.9,categoria
+20955,Cereal,breakfast,0.4,categoria
+20995,Organic Broccoli Florets,frozen,0.34,revisado
+21009,"Crispy Wheat, Crackers",snacks,0.15,categoria
+21019,Roasted Red Pepper Hummus,deli,0.28,revisado
+21077,Cara Cara Navel Orange,produce,0.2,categoria
+21137,Organic Strawberries,produce,0.45,revisado
+21162,Organic Mixed Berry Yogurt & Fruit Snack,babies,0.11,categoria
+21174,I Heart Baby Kale,produce,0.23,categoria
+21195,Organic Extra Virgin Olive Oil,pantry,0.95,categoria
+21267,Sourdough Bread,bakery,0.68,categoria
+21288,Blackberries,produce,0.17,revisado
+21292,Rainbow Bell Peppers,produce,0.2,categoria
+21295,Organic Spaghetti Squash,produce,0.9,categoria
+21333,Original Whipped Cream Cheese,dairy eggs,0.23,categoria
+21376,Pretzel Crisps Original Deli Style Pretzel Crackers,snacks,0.15,categoria
+21386,Smartwater,beverages,1.05,categoria
+21405,"Organic Red Radish, Bunch",produce,0.17,revisado
+21417,Organic Creamy Tomato Soup,canned goods,0.52,categoria
+21463,Vanilla Bean Light Ice Cream,frozen,0.47,categoria
+21497,White Sandwich Bread,bakery,0.68,categoria
+21513,Heart to Heart Honey Toasted Oat Cereal,breakfast,0.4,categoria
+21543,Organic Quick Oats,breakfast,0.51,categoria
+21553,Lowfat 2% Milkfat Cottage Cheese,dairy eggs,1.9,categoria
+21572,Cheez-It Cheddar Cracker,snacks,0.23,categoria
+21573,Roasted Pine Nut Hummus,deli,0.28,categoria
+21614,Crackers Harvest Whole Wheat,snacks,0.23,categoria
+21616,Organic Baby Arugula,produce,0.14,revisado
+21709,Sparkling Lemon Water,beverages,2.9,revisado
+21783,Coconut Milk Vanilla Mini Sandwiches,frozen,0.4,categoria
+21841,"Tortillas, Brown Rice",bakery,0.45,categoria
+21872,Organic Italian Salad,produce,0.14,categoria
+21903,Organic Baby Spinach,produce,0.14,revisado
+21927,Organic Boneless Skinless Chicken Breast,meat seafood,0.91,categoria
+21938,Green Bell Pepper,produce,0.2,revisado
+21955,All Natural Marinara Pasta Sauce,dry goods pasta,0.45,categoria
+22025,YoBaby Blueberry Apple Yogurt,dairy eggs,0.17,categoria
+22031,Zucchini Noodles,produce,0.25,categoria
+22035,Organic Whole String Cheese,dairy eggs,0.34,revisado
+22089,Vitamin D Milk,dairy eggs,1.9,categoria
+22124,Total 0% Raspberry Yogurt,dairy eggs,0.17,categoria
+22142,100% Pure Pumpkin,pantry,0.45,categoria
+22151,Tart Cherry Yoghurt,dairy eggs,0.35,categoria
+22247,Organic Chives,produce,0.3,categoria
+22260,Organic Rolled Oats,bulk,0.45,categoria
+22281,Chicken Noodle Soup,deli,0.28,categoria
+22312,Organic Cherry Tomatoes,produce,0.45,categoria
+22395,Tomato Sauce,canned goods,0.42,categoria
+22474,Cheddar Bunnies Snack Crackers,snacks,0.23,categoria
+22504,Organic Mountain Forest Amber Honey,pantry,0.45,categoria
+22556,All Natural Apricot Sparkling Water,beverages,2.9,categoria
+22559,Kitchen Cheese Enchilada,frozen,0.4,categoria
+22788,Singles American Cheese Slices,dairy eggs,0.23,categoria
+22802,Mineral Water,beverages,1.05,categoria
+22825,Organic D'Anjou Pears,produce,0.2,revisado
+22828,Sea Salt Caramel Ice Cream,frozen,0.47,categoria
+22849,Bunny-Luv Fresh Organic Carrots,produce,0.45,categoria
+22882,Light Mozzarella String Cheese,dairy eggs,0.34,categoria
+22888,90% Lean Ground Beef,meat seafood,0.45,categoria
+22890,Toll House Semi-Sweet Chocolate Morsels,pantry,0.12,categoria
+22922,Organic Canola Oil,pantry,0.95,categoria
+22935,Organic Yellow Onion,produce,0.2,revisado
+22952,Farfalle Pasta,dry goods pasta,0.45,categoria
+22959,Reduced Fat Milk 100% Lactose Free,dairy eggs,1.9,categoria
+22963,Organic Roasted Turkey Breast,deli,0.23,revisado
+22993,Super Seed Crispy Crackers,snacks,0.15,categoria
+23029,Organic Uncured Sliced Black Forest Ham,deli,0.23,categoria
+23032,Sriracha Chili Sauce,international,0.45,categoria
+23044,Cream Top Smooth & Creamy Vanilla Yogurt,dairy eggs,0.47,categoria
+23094,Organic Lentil Soup,canned goods,0.52,categoria
+23165,Organic Leek,produce,0.25,categoria
+23178,Pure Lemon Juice,beverages,1.9,categoria
+23233,California Sourdough Bread,bakery,0.68,categoria
+23236,Chopped Spinach,frozen,0.28,categoria
+23288,Distilled Water,beverages,3.8,revisado
+23291,Coconut Chia Bar,snacks,0.25,categoria
+23296,Blueberry on the Bottom Nonfat Greek Yogurt,dairy eggs,0.17,categoria
+23322,Golden Delicious Apple,produce,0.2,categoria
+23339,Sweet Corn On The Cob,produce,0.3,categoria
+23341,Large Grade AA Eggs,dairy eggs,0.7,categoria
+23375,Marinara Sauce,dry goods pasta,0.45,categoria
+23405,Pure Baking Soda,pantry,0.45,categoria
+23516,Organic Unbleached All-Purpose Flour,pantry,2.27,categoria
+23537,Light Brown Sugar,pantry,1.81,categoria
+23543,Organic Extra Large Brown Eggs,dairy eggs,0.7,categoria
+23554,Organic Vanilla Bean Ice Cream,frozen,0.47,categoria
+23579,Peanut Butter Chocolate Chip Fruit & Nut Food Bar,snacks,0.2,categoria
+23594,Medium Salsa,pantry,0.45,categoria
+23622,Organic Hot House Tomato,produce,0.2,categoria
+23634,Dairy-Free Cheddar Style Shreds,dairy eggs,0.35,categoria
+23644,Sharp Cheddar Thick Slices Cheese,dairy eggs,0.23,categoria
+23645,Sour Cream & Onion Potato Chips,snacks,0.2,categoria
+23734,Sour Cream,dairy eggs,0.45,revisado
+23765,Organic Smoked Turkey Breast,deli,0.23,categoria
+23801,Fusilli No. 34,dry goods pasta,0.45,categoria
+23888,Hamburger Buns,bakery,0.4,categoria
+23909,2% Reduced Fat Milk,dairy eggs,1.9,revisado
+24009,Organic Long Grain White Rice,dry goods pasta,0.91,categoria
+24010,Wheat Gluten Free Waffles,frozen,0.29,categoria
+24024,1% Lowfat Milk,dairy eggs,1.9,categoria
+24035,Coconut  Chocolate Bar,snacks,0.25,categoria
+24082,Organic Dark Sweet Cherries,frozen,0.4,categoria
+24097,Rotini Pasta,dry goods pasta,0.45,categoria
+24135,Oranges,produce,0.2,categoria
+24184,Red Peppers,produce,0.2,revisado
+24186,Slim Can Pink Grapefruit Natural Mineral Water,beverages,1.05,categoria
+24221,Organic Red Grapes,produce,0.91,categoria
+24231,Tahitian Vanilla Bean Gelato,frozen,0.47,categoria
+24235,Honey Wheat Enriched Bread,bakery,0.68,categoria
+24253,Go Lean Cereal,breakfast,0.4,categoria
+24382,Ranch Dressing,pantry,0.45,categoria
+24390,Pomegranate,produce,0.3,categoria
+24427,Snacks String Cheese Natural Mozzarella Cheese,dairy eggs,0.34,categoria
+24489,Organic Whole Strawberries,frozen,0.45,revisado
+24518,Gluten Free Lemonzest Nutrition bar,snacks,0.25,categoria
+24535,Plain Whole Milk Yogurt,dairy eggs,1.9,categoria
+24561,Organic Cheese Frozen Pizza,frozen,0.5,categoria
+24622,Green Cabbage,produce,1.0,categoria
+24631,Light & Lean Spinach Lasagna,frozen,0.28,categoria
+24759,Club Soda,beverages,1.05,categoria
+24799,Vanilla Skyr Nonfat Yogurt,dairy eggs,0.17,categoria
+24810,Organic Lightly Salted Brown Rice Cakes,snacks,0.25,categoria
+24830,Organic Romaine,produce,0.45,revisado
+24838,Unsweetened Almondmilk,dairy eggs,1.9,revisado
+24841,Aged White Cheddar Baked Rice & Corn Puffs Gluten Free Lunch Packs,snacks,0.14,categoria
+24850,Organic Super Fruit Punch Juice Drink,beverages,1.9,categoria
+24852,Banana,produce,0.12,revisado
+24954,Total 0% with Honey Nonfat Greek Strained Yogurt,dairy eggs,0.17,categoria
+24964,Organic Garlic,produce,0.06,revisado
+25005,Organic Green Lentils,dry goods pasta,0.45,categoria
+25043,Instant Oatmeal Variety Pack,breakfast,0.51,categoria
+25072,Organic Cheddar Snack Mix,snacks,0.25,categoria
+25093,Colby Jack Cheese,dairy eggs,0.23,categoria
+25133,Organic String Cheese,dairy eggs,0.34,categoria
+25138,Organic Plain Greek Whole Milk Yogurt,dairy eggs,1.9,categoria
+25146,Original Orange Juice,beverages,1.9,revisado
+25197,Iced Oatmeal Cookie Kid Z Bar,snacks,0.3,categoria
+25199,Classic Chicken Salad,deli,0.28,categoria
+25256,Cultured Low Fat Buttermilk,dairy eggs,0.45,categoria
+25272,Small Macintosh Apple,produce,0.2,categoria
+25340,Large Yellow Flesh Nectarine,produce,0.18,categoria
+25466,Water,beverages,1.05,categoria
+25513,Boomchickapop Sea Salt Popcorn,snacks,0.15,categoria
+25533,Vegan Chao Creamy Original Cheese Slices,dairy eggs,0.47,categoria
+25544,Fresh Cut Golden Sweet Whole Kernel Corn,canned goods,0.42,categoria
+25588,Seedless Small Watermelon,produce,2.7,categoria
+25659,Organic Coconut Milk,dairy eggs,1.9,revisado
+25705,Butterhead Lettuce,produce,0.45,categoria
+25718,Cold Brew Coffee,beverages,0.34,categoria
+25753,Organic Homestyle Waffles,frozen,0.29,categoria
+25783,Lemon Lime Thirst Quencher,beverages,1.05,categoria
+25824,Pita Chips Simply Naked,snacks,0.2,categoria
+25837,Mini Babybel Light Semisoft Edam Cheeses,dairy eggs,0.23,categoria
+25890,Boneless Skinless Chicken Breasts,meat seafood,0.91,revisado
+25919,Parmesan Shredded Cheese,dairy eggs,0.23,categoria
+25931,Organic Baby Spinach Salad,produce,0.14,categoria
+25949,Cream Top Smooth & Creamy Maple Yogurt,dairy eggs,0.47,categoria
+25952,Original Potato Chips,snacks,0.2,categoria
+25985,Chicken & Apple Smoked Chicken Sausage,meat seafood,0.91,categoria
+26032,Dairy Free Mozarella Style Shreds,dairy eggs,0.35,categoria
+26040,"Deli Fresh Honey Ham, 97% Fat Free, Gluten Free",deli,0.23,categoria
+26047,Tuna Salad,deli,0.34,categoria
+26096,"Organic Gala Apples, Bag",produce,1.36,categoria
+26128,Organic Mango Chunks,frozen,0.4,categoria
+26131,Mixed Berries Whole Milk Icelandic Style Skyr Yogurt,dairy eggs,1.9,categoria
+26165,Electrolyte Enhanced Water,beverages,1.05,revisado
+26172,Light Sour Cream,dairy eggs,0.45,categoria
+26177,Organic Honey Nut O's Cereal,breakfast,0.4,categoria
+26201,Chicken Taquitos,frozen,0.4,categoria
+26209,Limes,produce,0.07,revisado
+26283,White Corn,produce,0.3,categoria
+26315,Organic White Corn & Wheat Tortillas,bakery,0.45,categoria
+26317,Organic Lemonade,beverages,1.9,categoria
+26324,Grass Fed Ground Beef,meat seafood,0.45,categoria
+26346,Organic Skim Milk,dairy eggs,1.9,categoria
+26348,Mixed Fruit Fruit Snacks,snacks,0.23,categoria
+26369,Organic Roma Tomato,produce,0.1,revisado
+26384,Large Brown Eggs,dairy eggs,0.7,categoria
+26497,Romaine Lettuce,produce,0.45,categoria
+26604,Organic Blackberries,produce,0.17,revisado
+26620,Peach Pear Flavored Sparkling Water,beverages,2.9,revisado
+26629,Cherry Pie Fruit & Nut Bar,snacks,0.25,categoria
+26634,"Cookies, Chocolate Chip Walnut",snacks,0.2,categoria
+26648,Ataulfo Mango,produce,0.35,categoria
+26668,Cannellini White Kidney Beans No Salt Added,canned goods,0.42,categoria
+26751,Organic Tomato Basil Sauce,dry goods pasta,0.45,categoria
+26790,Organic AppleApple,canned goods,0.42,categoria
+26800,Organic Baby Kale Mix,produce,0.23,categoria
+26856,Organic Ezekiel 4:9 Sesame Bread,bakery,0.68,categoria
+26882,Russet Potatoes,produce,0.25,categoria
+26914,Bean & Cheese Burrito,frozen,0.17,categoria
+26940,Organic Large Green Asparagus,produce,0.45,categoria
+27012,Organic Baby Spring Mix,produce,0.14,categoria
+27020,Mandarins Bag,produce,1.36,categoria
+27086,Half & Half,dairy eggs,0.95,revisado
+27104,Fresh Cauliflower,produce,0.8,revisado
+27156,Organic Black Beans,canned goods,0.42,revisado
+27179,Rising Crust Pepperoni Pizza,frozen,0.5,categoria
+27196,Pure & Natural Light Sour Cream,dairy eggs,0.45,categoria
+27243,Premium Pure Cane Granulated Sugar,pantry,1.81,categoria
+27288,Chocolate Chip Cookie Dough,pantry,0.12,categoria
+27307,Cage Free Grade A Large Brown Eggs,dairy eggs,0.7,categoria
+27316,"Trop50 No Pulp Orange Juice w/ Calcium + Vitamin D, 50% Less Sugar & Calories",beverages,1.9,categoria
+27323,Pure & Natural Sour Cream,dairy eggs,0.45,categoria
+27325,Alpine Spring Water,beverages,1.05,categoria
+27336,Organic Rainbow Carrots,produce,0.45,categoria
+27344,Uncured Genoa Salami,deli,0.17,revisado
+27356,French Onion Dip,deli,0.28,categoria
+27360,Boneless Skinless Chicken Breast Fillets,meat seafood,0.91,categoria
+27451,Almond Meal/Flour,pantry,2.27,categoria
+27509,Organic Seasoned Yukon Select Potatoes Hashed Browns,frozen,0.4,categoria
+27521,Organic Lacinato (Dinosaur) Kale,produce,0.23,revisado
+27544,Lemon Verbena Hand Soap,personal care,0.3,categoria
+27548,Original Semisoft Cheese,dairy eggs,0.23,categoria
+27663,GOLEAN Crunch! Cereal,breakfast,0.4,categoria
+27683,Black Beans No Salt Added,canned goods,0.42,categoria
+27690,Apple Cinnamon GoGo Squeez,snacks,0.25,categoria
+27695,Natural Chicken & Sage Breakfast Sausage,meat seafood,0.91,categoria
+27730,Almond Breeze Original Almond Milk,dairy eggs,1.9,categoria
+27744,Organic Whipping Cream,dairy eggs,0.47,categoria
+27796,Real Mayonnaise,pantry,0.45,categoria
+27801,Philadelphia Cream Cheese Spread,dairy eggs,0.23,categoria
+27845,Organic Whole Milk,dairy eggs,1.9,revisado
+27925,Organic Red Bartlett Pear,produce,0.2,categoria
+27966,Organic Raspberries,produce,0.17,revisado
+27985,Smartwater Electrolyte Enhanced Water,beverages,1.05,categoria
+27999,Organic Brussel Sprouts,produce,0.45,categoria
+28123,Organic Cut Green Beans,frozen,0.4,categoria
+28156,Total 0% Nonfat Plain Greek Yogurt,dairy eggs,0.17,categoria
+28199,"Clementines, Bag",produce,1.36,revisado
+28204,Organic Fuji Apple,produce,0.2,revisado
+28278,Organic Penne Rigate,dry goods pasta,0.45,categoria
+28289,Organic Shredded Carrots,produce,0.28,revisado
+28373,Original Rotisserie Chicken,deli,0.28,categoria
+28413,Bunny-Luv Organic Carrots,produce,0.45,categoria
+28427,Vitamin D Whole Milk,dairy eggs,1.9,categoria
+28465,Icelandic Style Skyr Blueberry Non-fat Yogurt,dairy eggs,0.17,categoria
+28476,Organic Small Curd Cottage Cheese,dairy eggs,0.23,categoria
+28535,Cucumber & Garlic  Tzatziki,pantry,0.45,categoria
+28553,Whole Strawberries,frozen,0.4,categoria
+28597,Organic Stoneground Wheat Crackers,snacks,0.23,categoria
+28601,Collard Greens,produce,0.23,categoria
+28682,Chocolate Peanut Butter Cup Gelato,frozen,0.47,categoria
+28745,Oven Roasted Turkey,deli,0.23,categoria
+28785,Organic Tahini,pantry,0.45,categoria
+28836,Grapefruit Juice,beverages,1.9,categoria
+28842,Bunched Cilantro,produce,0.06,revisado
+28849,No Salt Added Black Beans,canned goods,0.42,revisado
+28918,Marcona Almonds,snacks,0.45,categoria
+28928,Uncured Black Forest Ham,deli,0.23,categoria
+28934,Frozen Broccoli Florets,frozen,0.34,categoria
+28985,Michigan Organic Kale,produce,0.23,revisado
+28986,Mild Italian Chicken Sausage,meat seafood,0.91,categoria
+28993,Iceberg Lettuce,produce,0.45,categoria
+29077,Organic Milk Chocolate Peanut Butter Cups,snacks,0.45,categoria
+29127,Dairy Free Unsweetened Coconut Milk,dairy eggs,1.9,categoria
+29223,Golden Pineapple,produce,1.4,categoria
+29307,Baby Arugula,produce,0.14,categoria
+29370,Organic White Cheddar Popcorn,snacks,0.15,categoria
+29447,"Milk, Organic, Vitamin D",dairy eggs,1.9,categoria
+29487,Roma Tomato,produce,0.1,revisado
+29553,Super Soft Taco Flour Tortillas,bakery,0.45,categoria
+29594,YoKids Strawberry Banana/Strawberry Yogurt,dairy eggs,0.17,categoria
+29615,"Bread, Country Buttermilk",bakery,0.68,categoria
+29628,Ultra Strong Toilet Paper Double Rolls Bathroom Tissue,household,2.0,categoria
+29662,Potato Yukon Gold Organic,produce,0.25,categoria
+29675,Organic Bagged Carrots,produce,1.36,categoria
+29898,Organic Spaghetti Pasta,dry goods pasta,0.45,categoria
+29926,Roasted & Salted Almonds,snacks,0.45,categoria
+29941,Red Plums,produce,0.15,categoria
+29987,Shredded Mozzarella,dairy eggs,0.23,revisado
+29993,Organic Low Fat Chocolate Milk,dairy eggs,1.9,categoria
+30021,Distilled White Vinegar,pantry,0.52,categoria
+30169,Total 2% All Natural Plain Greek Yogurt,dairy eggs,0.17,categoria
+30183,Quaker Life Cinnamon Cereal,breakfast,0.4,categoria
+30233,Organic Large Brown Grade AA Cage Free Eggs,dairy eggs,0.7,revisado
+30290,100% Recycled Bath Tissue Rolls,household,2.0,categoria
+30305,Fancy Eggplant,produce,0.45,categoria
+30340,Oatmeal Squares Brown Sugar,breakfast,0.51,categoria
+30353,Curate Cherry Lime Sparkling Water,beverages,2.9,categoria
+30391,Organic Cucumber,produce,0.3,revisado
+30406,Butternut Squash,produce,0.9,categoria
+30442,Low Fat Vanilla Yogurt,dairy eggs,0.17,categoria
+30450,Creamy Almond Butter,pantry,0.45,revisado
+30480,"Tomatoes, Whole Peeled",canned goods,0.42,categoria
+30489,Original Hummus,deli,0.28,revisado
+30561,Plain Bagelettes,bakery,0.5,categoria
+30639,Organic Orange Juice,beverages,1.9,categoria
+30696,Eggo Homestyle Waffles,frozen,0.29,categoria
+30720,Sugar Snap Peas,produce,0.3,categoria
+30776,Organic Raw Kombucha Gingerade,beverages,0.48,revisado
+30827,Seedless Cucumbers,produce,0.3,categoria
+30850,French Roast Ground Coffee,beverages,0.34,categoria
+30949,Organic YoKids Smoothie Strawberry Banana Lowfat Yogurt,dairy eggs,0.17,categoria
+31040,Sea Salt Pita Chips,snacks,0.2,categoria
+31066,Aluminum Foil,household,0.45,categoria
+31102,Sugar Free Energy Drink,beverages,0.26,categoria
+31215,Lemon Yogurt,dairy eggs,0.17,categoria
+31231,Vitamin Water Zero Rise Orange,beverages,1.05,categoria
+31268,Sandwich Bags,household,0.5,categoria
+31338,Classic Almond Butter,pantry,0.45,categoria
+31343,Shredded Mild Cheddar Cheese,dairy eggs,0.23,revisado
+31371,Whole Wheat English Muffins,bakery,0.4,categoria
+31404,Vanilla Yoghurt,dairy eggs,0.35,categoria
+31433,Organic Cinnamon Crunch Cereal,breakfast,0.4,categoria
+31506,Extra Virgin Olive Oil,pantry,0.95,revisado
+31553,Fresh Ginger Root,produce,0.1,revisado
+31562,Sweet Onions,produce,0.2,categoria
+31564,Crackers,snacks,0.23,categoria
+31618,Thick Medium Cheddar Slices,dairy eggs,0.35,categoria
+31635,Vanilla Almond Milk Yogurt,dairy eggs,1.9,categoria
+31640,Original Puffins Cereal,breakfast,0.4,categoria
+31651,Extra Fancy Unsalted Mixed Nuts,snacks,0.45,categoria
+31663,Vanilla Blueberry Clusters With Flax Seeds Granola,breakfast,0.34,categoria
+31683,Original No Pulp 100% Florida Orange Juice,beverages,1.9,revisado
+31717,Organic Cilantro,produce,0.06,revisado
+31720,Organic  Whole Milk,dairy eggs,1.9,categoria
+31759,Cherrios Honey Nut,breakfast,0.4,categoria
+31766,Cheese Pizza Snacks,frozen,0.5,categoria
+31805,Gourmet Tomato Medley,produce,0.2,categoria
+31869,Organic Edamame,frozen,0.4,categoria
+31883,Vegetable Lasagna,frozen,0.34,categoria
+31915,Organic Red Delicious Apple,produce,0.2,categoria
+31927,Four Cheese Pasta Sauce,dry goods pasta,0.45,categoria
+31964,Passionfruit Sparkling Water,beverages,2.9,categoria
+31981,1% Low Fat Milk,dairy eggs,1.9,categoria
+32030,Extra Sharp White Cheddar,dairy eggs,0.35,categoria
+32079,Shredded Parmigiano Reggiano,dairy eggs,0.23,categoria
+32139,Hommus Classic Original,deli,0.28,categoria
+32156,Cranberry Juice Cocktail,beverages,1.9,categoria
+32177,Blood Oranges,produce,0.2,categoria
+32211,Whole Grains Oatnut Bread,bakery,0.68,categoria
+32299,Dijon Mustard,pantry,0.28,categoria
+32303,Red Seedless Grapes,produce,0.91,categoria
+32331,Flip™ Low-Fat Almond Coco Loco Lowfat Greek Yogurt,dairy eggs,0.17,categoria
+32338,Natural Jif Creamy Peanut Butter Spread,pantry,0.51,categoria
+32360,Creamy Deluxe Shells & Real Aged Cheddar Sauce,dry goods pasta,0.45,categoria
+32403,Fat Free Skim Milk,dairy eggs,1.9,categoria
+32429,Red Mango,produce,0.35,categoria
+32433,Green Peas,frozen,0.34,categoria
+32446,Bunched Carrots,produce,0.45,categoria
+32455,Whole Grain Cheddar Baked Snack Crackers,snacks,0.23,categoria
+32465,Sliced White Mushrooms,produce,0.23,categoria
+32467,Organic Living Butter Lettuce,produce,0.45,categoria
+32478,Reduced Fat 2% Milk,dairy eggs,1.9,categoria
+32553,"Country Stand Juice, Medium Pulp",beverages,1.9,categoria
+32566,Dha Omega 3 Vitamin D Milk,dairy eggs,1.9,categoria
+32573,Pretzel Sticks,snacks,0.28,categoria
+32578,Organic Fresh Squeezed Orange Juice,beverages,1.9,categoria
+32605,Glory's Sweet Cherry Tomatoes,produce,0.45,categoria
+32650,White Giant Paper Towel Rolls,household,1.2,categoria
+32655,Organic Large Grade AA Brown Eggs,dairy eggs,0.7,revisado
+32665,Organic Ezekiel 49 Bread Cinnamon Raisin,bakery,0.68,categoria
+32689,Romaine Hearts,produce,0.6,revisado
+32691,Vanilla Ice Cream,frozen,0.47,categoria
+32717,Baked Beans,canned goods,0.42,categoria
+32734,Spaghetti,dry goods pasta,0.45,categoria
+32740,Cold-Brew Black Coffee,beverages,0.34,categoria
+32747,Low Fat 1% Milk,dairy eggs,1.9,categoria
+32784,Natural Shredded Mexican Style Four Cheese,dairy eggs,0.23,categoria
+32864,Organic Baby Rainbow Carrots,produce,0.45,revisado
+33000,Pure Irish Butter,dairy eggs,0.25,revisado
+33043,Crescent Rolls,pantry,0.45,categoria
+33055,Organic Golden Delicious Apple,produce,0.2,categoria
+33065,Cabernet Sauvignon,alcohol,1.3,categoria
+33081,Chicken Apple Sausage,meat seafood,0.91,categoria
+33120,Organic Egg Whites,dairy eggs,0.47,revisado
+33129,Classic Hummus,deli,0.28,categoria
+33147,Organic Crimini Mushrooms,produce,0.23,categoria
+33198,Sparkling Natural Mineral Water,beverages,1.05,revisado
+33232,Unsweetened Cashew Milk,dairy eggs,1.9,categoria
+33279,Low Sodium Bacon,meat seafood,0.34,categoria
+33290,Lemon Verbena Dish Soap,household,0.71,categoria
+33303,Organic Hummus,produce,0.3,categoria
+33351,Light Multi-Grain English Muffins,bakery,0.4,categoria
+33352,Organic Kale Greens,produce,0.23,categoria
+33401,Goat Cheese Crumbles,dairy eggs,0.17,categoria
+33438,Rosemary & Olive Oil Quinoa Blend,dry goods pasta,0.45,categoria
+33452,Fruit Punch Sports Drink,beverages,0.62,categoria
+33493,Cotton Swabs,personal care,0.3,categoria
+33548,Peach on the Bottom Nonfat Greek Yogurt,dairy eggs,0.17,categoria
+33572,Lactose Free 2% Reduced Fat Milk,dairy eggs,1.9,categoria
+33636,Organic Shells And White Cheddar,dry goods pasta,0.45,categoria
+33647,Blue Chips Corn Tortilla Chips,snacks,0.2,categoria
+33651,Harvest Cheddar Multigrain Chips,snacks,0.2,categoria
+33716,Apple Pie Fruit & Nut Food Bar,snacks,0.25,categoria
+33731,Grated Parmesan,dairy eggs,0.23,revisado
+33754,Total 2% with Strawberry Lowfat Greek Strained Yogurt,dairy eggs,0.15,revisado
+33768,Sinfully Sweet Campari Tomatoes,produce,0.2,categoria
+33787,Total 2% Lowfat Greek Strained Yogurt with Peach,dairy eggs,0.17,categoria
+33791,Raspberry on the Bottom Nonfat Greek Yogurt,dairy eggs,0.17,categoria
+33845,Organic YoBaby Vanilla Yogurt,dairy eggs,0.17,categoria
+33846,Roasted Garlic Hummus,deli,0.28,categoria
+33894,Goldfish Cheddar Baked Snack Crackers Multi Packs,snacks,0.23,categoria
+33957,Mexican Casserole Bowl,frozen,0.4,categoria
+34005,Black Seedless Grapes,produce,0.91,categoria
+34024,Classic Soda,beverages,2.1,categoria
+34034,Roasted Garlic Pasta Sauce,dry goods pasta,0.45,categoria
+34050,Orange Juice,beverages,1.9,categoria
+34126,Organic Italian Parsley Bunch,produce,0.06,revisado
+34128,Tzatziki,deli,0.28,categoria
+34134,Spinach Peas & Pear Stage 2 Baby Food,babies,0.11,categoria
+34137,Chocolate Sea Salt,snacks,0.12,categoria
+34197,Goat Milk,dairy eggs,1.9,categoria
+34217,Pesto Tortellini  Bowls,frozen,0.4,categoria
+34234,Grade AA Large White Eggs,dairy eggs,0.7,categoria
+34243,Organic Baby Broccoli,produce,0.28,revisado
+34262,Hint Of Sea Salt Almond Nut Thins,snacks,0.45,categoria
+34270,"Cold-pressed, Deliciously Hydrating Watermelon Water",beverages,1.05,categoria
+34335,Ruby Red Grapefruit Juice,beverages,1.9,categoria
+34358,Garlic,produce,0.06,revisado
+34429,Kumato Tomatoes,produce,0.2,categoria
+34448,Original Veggie Straws,snacks,0.25,categoria
+34466,Sweet Potatoes,frozen,0.4,categoria
+34487,Hass Avocado Bag,produce,1.36,categoria
+34530,Organic Chicken Thighs,meat seafood,0.91,categoria
+34551,Organic Cane Sugar,pantry,1.81,categoria
+34565,Peanut Butter Whole Grain Clusters,breakfast,0.4,categoria
+34584,Organic Sliced Peaches,frozen,0.34,categoria
+34590,Pitted Dates,snacks,0.25,categoria
+34668,Organic Large Grade AA Omega-3 Eggs,dairy eggs,0.7,categoria
+34862,Tiny Twists Pretzels,snacks,0.28,categoria
+34969,Red Vine Tomato,produce,0.2,revisado
+34993,Mango Yoghurt,dairy eggs,0.35,categoria
+35004,Macaroni Shells & White Cheddar Cheese,dry goods pasta,0.45,categoria
+35042,Black Beans,canned goods,0.42,categoria
+35045,Original No Pulp Pure 100% Florida Orange Juice,beverages,1.9,categoria
+35108,Salted Butter,dairy eggs,0.45,revisado
+35121,Lemon Ginger Sparkling Probiotic Drink,beverages,0.5,categoria
+35140,Organic Whole Cashews,snacks,0.45,categoria
+35163,Red Leaf Lettuce,produce,0.45,categoria
+35167,Organic Spicy Taco Seasoning,international,0.4,categoria
+35168,Ezekiel 4:9 Sprouted Grain Tortillas,bakery,0.45,categoria
+35176,Cream Cheese Cream Cheese Spread,dairy eggs,0.23,categoria
+35199,100% Apple Juice,beverages,1.9,categoria
+35221,Lime Sparkling Water,beverages,2.9,revisado
+35336,Naked Green Machine Boosted Juice Smoothie,beverages,1.9,categoria
+35383,Classic White Bread,bakery,0.68,categoria
+35503,Organic Vanilla Almond Milk,dairy eggs,1.9,categoria
+35507,Pure Life Purified Water,beverages,1.05,categoria
+35510,Organic Yukon Gold Potato,produce,0.25,categoria
+35535,Organic Red Chard Greens,produce,0.23,categoria
+35547,Organic Baby Kale,produce,0.23,categoria
+35561,Organic Tortilla Chips,snacks,0.2,categoria
+35628,Organic Strawberry Smoothie,dairy eggs,0.35,categoria
+35633,Chocolate Peanut Butter,snacks,0.45,categoria
+35652,Prosciutto Di Parma,deli,0.28,categoria
+35750,Organic Garbanzo Beans No Salt Added,canned goods,0.42,categoria
+35752,Hardwood SmokedCenter Cut Original Bacon,meat seafood,0.34,categoria
+35855,Unbleached All-Purpose Flour,pantry,2.27,categoria
+35887,Organic Mixed Vegetables,frozen,0.34,categoria
+35898,Original Hot Sauce,pantry,0.68,categoria
+35914,Dha Omega 3 Reduced Fat 2% Milk,dairy eggs,1.9,categoria
+35921,Organic Large Grade A Brown Eggs,dairy eggs,0.7,categoria
+35939,Organic Jalapeno Pepper,produce,0.05,revisado
+35948,Tonic Water,beverages,1.05,categoria
+35951,Organic Unsweetened Almond Milk,dairy eggs,1.9,revisado
+35989,Coconut Flavored Sparkling Water,beverages,2.9,categoria
+36011,Organic Fat Free Milk,dairy eggs,1.9,revisado
+36036,Organic Orange Fruit Juice,beverages,1.9,categoria
+36070,"Super Spinach! Baby Spinach, Baby Bok Choy, Sweet Baby Kale",produce,0.14,categoria
+36076,Everything Deli Style Pretzel Crisps Crackers,snacks,0.15,categoria
+36082,Organic Mango,produce,0.35,categoria
+36086,Philadelphia Original Cream Cheese,dairy eggs,0.23,categoria
+36107,smartwater® Electrolyte Enhanced Water,beverages,1.05,categoria
+36127,Freshly Squeezed Orange Juice,beverages,1.9,categoria
+36186,Large Grade AA Organic Eggs,dairy eggs,0.7,categoria
+36316,Lemon Sparkling Water,beverages,2.9,categoria
+36389,Organic Rainbow Chard Vegetable,produce,0.23,categoria
+36406,Essential Greens With Lime  Vegetable and Fruit Juice Blend,beverages,1.9,categoria
+36431,Hardwood Smoked Bacon,meat seafood,0.34,categoria
+36550,Organic Extra Large Grade AA Brown Eggs,dairy eggs,0.7,categoria
+36606,Sprouted Multi-Grain Bread,bakery,0.68,categoria
+36651,Pizza Poppers Uncured Pepperoni,frozen,0.5,categoria
+36695,Organic Hothouse Cucumbers,produce,0.3,revisado
+36724,Organic Sea Salt Roasted Seaweed Snacks,international,0.05,categoria
+36735,Organic Roasted Sliced Chicken Breast,deli,0.28,categoria
+36772,Bunny Pasta with Yummy Cheese Macaroni & Cheese,dry goods pasta,0.45,categoria
+36865,Non Fat Raspberry Yogurt,dairy eggs,0.17,categoria
+36929,"Milk, Vitamin D",dairy eggs,1.9,categoria
+36956,Stringless Sugar Snap Peas,produce,0.3,categoria
+37011,Artichokes,produce,0.35,categoria
+37029,Cream Cheese Spread,dairy eggs,0.23,categoria
+37053,Just Mayo,pantry,0.45,categoria
+37065,Serrano Chile Peppers,produce,0.2,categoria
+37067,Organic Banana,produce,0.12,revisado
+37107,Ground Cumin,pantry,0.45,categoria
+37119,Uncured Pepperoni,deli,0.28,categoria
+37141,Dairy Free Coconut Milk Vanilla Yogurt Alternative,dairy eggs,1.9,categoria
+37158,Chicken & Maple Breakfast Sausage,frozen,0.34,categoria
+37215,100% Cranberry Juice,beverages,1.9,categoria
+37220,Organic Strawberry Fruit Spread,pantry,0.45,categoria
+37229,"Bathroom Tissue Softness & Strength, Double Rolls",household,0.6,categoria
+37250,Cut Green Beans,frozen,0.4,categoria
+37276,"Bar, Toffee & Almonds in Milk Chocolate",snacks,0.25,categoria
+37317,Wonderful 100% Pomegranate Juice,beverages,1.9,categoria
+37464,Apple Cinnamon Instant Oatmeal,breakfast,0.51,categoria
+37524,Fresh Mozzarella Ball,dairy eggs,0.35,categoria
+37552,Sparkling Blackberry Juice,beverages,1.9,categoria
+37646,Organic Gala Apples,produce,0.2,revisado
+37687,Organic Spring Mix,produce,0.14,revisado
+37710,Trail Mix,snacks,0.34,categoria
+37718,Blueberry Whole Milk Yogurt Pouch,dairy eggs,1.9,categoria
+37766,XL Emerald White Seedless Grapes,produce,0.91,categoria
+37825,Organic Whole Wheat Fusilli,dry goods pasta,0.45,categoria
+37940,Original Strawberry Low Fat Yogurt,dairy eggs,0.17,categoria
+38028,White Sliced Mushrooms,produce,0.23,categoria
+38159,Organic Yellow Peaches,produce,0.18,categoria
+38164,Almonds & Sea Salt in Dark Chocolate,snacks,0.45,categoria
+38185,Hint of Lime Flavored Tortilla Chips,snacks,0.2,categoria
+38200,Apple Juice,beverages,1.9,categoria
+38273,Marinara Pasta Sauce,dry goods pasta,0.45,categoria
+38274,Ice Cream Sandwiches Vanilla,frozen,0.47,categoria
+38288,Pizza Sauce,dry goods pasta,0.45,categoria
+38293,Ground Turkey Breast,meat seafood,0.45,revisado
+38300,Tall Kitchen Bag With Febreze Odor Shield,household,0.5,categoria
+38312,Almond Milk Strawberry Yogurt,dairy eggs,1.9,categoria
+38371,Plus Lotion Facial Tissues,household,0.6,categoria
+38374,Milk and Cookies Ice Cream,frozen,0.47,categoria
+38383,Organic White Onions,produce,0.2,revisado
+38400,Asparation/Broccolini/Baby Broccoli,produce,0.4,categoria
+38419,Parsnip,produce,0.3,categoria
+38444,Chardonnay,alcohol,1.3,categoria
+38456,Large Grapefruit,produce,0.4,revisado
+38510,Organic Celery Bunch,missing,0.35,categoria
+38544,Organic Whole Milk Strawberry Beet Berry Yogurt Pouch,dairy eggs,1.9,categoria
+38557,Citrus Mandarins Organic,produce,0.3,categoria
+38562,Pomegranate Arils,produce,0.3,categoria
+38647,Organic Raw Sharp Cheddar Cheese,dairy eggs,0.23,categoria
+38650,Organic Red Lentils,dry goods pasta,0.45,categoria
+38656,Gluten Free Peanut Butter Dark Chocolate Chewy With a Crunch Granola Bars,snacks,0.25,categoria
+38662,Roasted Almond Butter,other,0.35,categoria
+38689,Organic Reduced Fat Milk,dairy eggs,1.9,revisado
+38693,Meyer Lemon,produce,0.1,categoria
+38739,Hass Avocado,produce,0.2,revisado
+38768,Sweet Kale Salad Mix,produce,0.14,categoria
+38772,Provolone,dairy eggs,0.35,categoria
+38777,Organic Green Seedless Grapes,produce,0.91,categoria
+38890,No Pulp Calcium & Vitamin D Pure Premium 100% Pure Orange Juice,beverages,1.9,categoria
+38928,0% Greek Strained Yogurt,dairy eggs,0.17,categoria
+38944,Seven Grain Crispy Tenders,frozen,0.4,categoria
+38996,Grape Tomatoes,produce,0.91,categoria
+39024,Edamame In Pod,frozen,0.4,categoria
+39032,Hearts Of Romaine,produce,0.45,categoria
+39040,Organic Sliced Crimini Mushrooms,produce,0.23,categoria
+39041,Original Wheat Thins,snacks,0.25,categoria
+39046,Smok Cured Turkey Bacon,meat seafood,0.34,categoria
+39097,Gluten Free White Sandwich Bread,bakery,0.68,categoria
+39108,Pulp Free Orange Juice,beverages,1.9,categoria
+39121,Organic Jasmine Rice,frozen,0.4,categoria
+39180,Organic Lowfat 1% Milk,dairy eggs,1.9,categoria
+39190,Vanilla Unsweetened Almond Milk,dairy eggs,1.9,categoria
+39216,Original Multigrain Spoonfuls Cereal,breakfast,0.4,categoria
+39275,Organic Blueberries,produce,0.17,revisado
+39276,Bananas,produce,0.12,categoria
+39408,Gala Apples,produce,0.2,revisado
+39409,"Ginger Root Beer, Naturally Flavored Zero Calorie Soda, Caffeine Free",beverages,2.1,categoria
+39411,Organic Cinnamon Harvest Cereal,breakfast,0.4,categoria
+39430,New Mexico Taco Skillet Sauce For Chicken,international,0.45,categoria
+39475,Total Greek Strained Yogurt,dairy eggs,0.17,revisado
+39491,Pirate's Booty Aged White Cheddar Baked Rice and Corn Puffs,snacks,0.14,categoria
+39558,Gold Potato,produce,0.25,categoria
+39560,Go Lean Crunch! Honey Almond Flax Cereal,breakfast,0.4,categoria
+39561,Crackers Cheddar Bunnies Snack Packs,snacks,0.23,categoria
+39581,French Vanilla Creamer,dairy eggs,0.95,categoria
+39619,Organic Tomato Basil Pasta Sauce,dry goods pasta,0.45,categoria
+39657,Milk Chocolate Almonds,snacks,0.45,categoria
+39719,"Freshly Made. Filled with Creamy Ricotta, Aged Parmesan and Romano Cheeses Three Cheese Tortellini",dry goods pasta,0.45,categoria
+39812,Organic Thyme,produce,0.06,categoria
+39844,Mini Sweet Peppers,produce,0.2,categoria
+39877,Organic Granny Smith Apple,produce,0.2,revisado
+39921,Lemon Lime Soda,beverages,2.1,categoria
+39922,Celery Sticks,produce,0.5,categoria
+39928,Organic Kiwi,produce,0.08,revisado
+39947,Blackberry Cucumber Sparkling Water,beverages,2.9,categoria
+39984,Organic Dill,produce,0.06,categoria
+39993,Vine Ripe Tomatoes,produce,0.2,categoria
+40001,Vanilla 0% Milkfat Yogurt,dairy eggs,1.9,categoria
+40002,Strawberry Ice Cream,frozen,0.47,categoria
+40009,Red Seedless Grapes Bunch,produce,0.91,categoria
+40063,Gluten Free Chocolate Chip Cookies,snacks,0.2,categoria
+40136,Original Taco Seasoning Mix,pantry,0.05,categoria
+40174,2% Reduced Fat Organic Milk,dairy eggs,1.9,categoria
+40198,Blueberry Yoghurt,dairy eggs,0.35,categoria
+40199,Chocolate Chip Cookies,snacks,0.2,categoria
+40229,Organic Whole Wheat Penne Rigate,dry goods pasta,0.45,categoria
+40233,Organic Kosher Dill Pickles,pantry,0.45,categoria
+40261,Extra Crunchy Peanut Butter,pantry,0.51,categoria
+40268,Organic Wheat-Free & Gluten-Free Original Crackers,snacks,0.23,categoria
+40310,Oven Roasted Turkey Breast,deli,0.23,revisado
+40332,"Cage Free Brown Eggs-Large, Grade A",dairy eggs,0.7,categoria
+40338,Leafy Green Romaine Lettuce,produce,0.45,categoria
+40348,Large Burrito Flour Tortillas,bakery,0.45,categoria
+40354,California Clementines,produce,0.3,categoria
+40377,Unrefined Virgin Coconut Oil,pantry,0.95,categoria
+40396,Guacamole,deli,0.23,categoria
+40516,Organic Romaine Hearts,produce,0.45,categoria
+40545,Berry Medley,frozen,0.45,categoria
+40571,Total 2% Greek Strained Yogurt with Cherry 5.3 oz,dairy eggs,0.18,nombre
+40593,Cream Cheese,dairy eggs,0.23,categoria
+40604,Feta Cheese Crumbles,dairy eggs,0.17,revisado
+40706,Organic Grape Tomatoes,produce,0.28,revisado
+40709,Sea Salt & Vinegar Potato Chips,snacks,0.2,categoria
+40723,Organic Cripps Pink Apples,produce,0.2,categoria
+40852,Lactose Free Fat Free Milk,dairy eggs,1.9,categoria
+40910,Root Beer,beverages,2.1,categoria
+40939,Drinking Water,beverages,1.05,categoria
+40992,Chopped Tomatoes,canned goods,0.42,categoria
+41065,Organic Yellow Squash,produce,0.9,categoria
+41149,Organic Riced Cauliflower,missing,0.34,revisado
+41165,Cheese Puffs,snacks,0.14,categoria
+41177,Sea Salt Roasted Seaweed,snacks,0.05,categoria
+41220,Organic Romaine Lettuce,produce,0.45,revisado
+41238,Parmesan Couscous Mix,dry goods pasta,0.45,categoria
+41259,Poblano Pepper,produce,0.2,categoria
+41273,Broccoli Florets,produce,0.4,categoria
+41276,Energy Drink,beverages,0.26,categoria
+41290,Lemonade,beverages,1.9,revisado
+41319,Sea Salt Caramel Gelato,frozen,0.47,categoria
+41351,Family Size Naturally Flavored Whole Grain Oats Cereal,breakfast,0.4,categoria
+41400,Crunchy Oats 'n Honey Granola Bars,snacks,0.25,categoria
+41540,Organic Whole White Mushrooms,produce,0.23,categoria
+41544,Organic Crushed Fire Roasted Tomatoes,canned goods,0.42,categoria
+41570,Active Dry Yeast,pantry,0.45,categoria
+41588,Firm Tofu,deli,0.4,categoria
+41593,Blue Cheese Crumbles,dairy eggs,0.17,categoria
+41658,Authentic French Brioche Hamburger Buns,bakery,0.4,categoria
+41665,Organic Mexican Blend Finely Shredded Cheese,dairy eggs,0.23,categoria
+41690,California Cauliflower,produce,0.8,categoria
+41757,Organic Air Chilled Whole Chicken,meat seafood,0.91,categoria
+41787,Bartlett Pears,produce,0.2,revisado
+41844,Honey Nut Cheerios,breakfast,0.37,revisado
+41950,Organic Tomato Cluster,produce,0.45,revisado
+42110,Organic Macaroni Shells & Real Aged Cheddar,dry goods pasta,0.45,categoria
+42240,Ultra Soft Facial Tissues,household,0.6,categoria
+42244,Total 2% All Natural Low Fat 2% Milkfat Greek Strained Yogurt,dairy eggs,1.9,categoria
+42265,Organic Baby Carrots,produce,0.45,revisado
+42342,Roasted Turkey Breast,deli,0.23,revisado
+42356,Strawberry Preserves,pantry,0.45,categoria
+42445,Organic Plain Whole Milk Yogurt,dairy eggs,1.9,categoria
+42450,Macaroni & Cheese,frozen,0.4,categoria
+42460,Plain Mini Bagels,bakery,0.5,categoria
+42475,Unsalted Butter Quarters,dairy eggs,0.45,categoria
+42495,Pink Lady (Cripps) Apple,produce,0.2,categoria
+42500,Orange & Lemon Flavor Variety Pack Sparkling Fruit Beverage,beverages,1.05,categoria
+42557,Crunchy Almond Butter,pantry,0.45,categoria
+42585,Organic Extra Firm Tofu,deli,0.4,revisado
+42625,"Flat Parsley, Bunch",produce,0.06,categoria
+42633,Red Delicious Apple,produce,0.2,categoria
+42701,Organic Sour Cream,dairy eggs,0.45,revisado
+42719,Natural Premium Coconut Water,beverages,1.05,categoria
+42731,Original Citrus Sparkling Flavored Soda,beverages,2.1,categoria
+42736,Unsalted Butter,dairy eggs,0.45,revisado
+42768,Organic Garbanzo Beans,canned goods,0.42,revisado
+42803,Organic Apple Slices,snacks,0.25,categoria
+42828,Whipped Cream Cheese,dairy eggs,0.23,revisado
+43014,Sliced Baby Bella Mushrooms,produce,0.23,categoria
+43086,Super Greens Salad,produce,0.14,categoria
+43122,Organic Bartlett Pear,produce,0.2,revisado
+43129,Panko Bread Crumbs,pantry,0.45,categoria
+43154,Sparkling Mineral Water,beverages,1.05,categoria
+43183,Deli Fresh Shaved Smoked Turkey Breast,deli,0.23,categoria
+43192,Dark with 70% Cacao Content Organic Chocolate Bar,snacks,0.25,categoria
+43262,Original Sauce,pantry,0.68,categoria
+43263,Crunchy Oats N' Honey Granola Bars,snacks,0.25,categoria
+43279,Non-Fat Greek Yogurt With Strawberries on the Bottom,dairy eggs,0.17,categoria
+43295,Unsweetened Vanilla Almond Milk,dairy eggs,1.9,revisado
+43352,Raspberries,produce,0.17,revisado
+43394,Organic Lactose Free Whole Milk,dairy eggs,1.9,categoria
+43409,Frosted Mini-Wheats Original Cereal,breakfast,0.4,categoria
+43504,Organic Chicken Strips,frozen,0.4,categoria
+43565,Lean Ground Turky,meat seafood,0.45,categoria
+43631,Diet Coke,beverages,1.05,categoria
+43643,Organic Strawana Probugs Kefir,dairy eggs,0.95,categoria
+43654,Whole Milk Greek Blended Vanilla Bean Yogurt,dairy eggs,1.9,categoria
+43662,"Yogurt, Strained Low-Fat, Coconut",dairy eggs,0.17,categoria
+43712,Creme Fraiche,dairy eggs,0.35,categoria
+43713,Organic Creamy Peanut Butter,pantry,0.51,categoria
+43735,Tomato Kumato,produce,0.2,categoria
+43768,Organic Bell Pepper,produce,0.2,revisado
+43772,Cherubs Heavenly Salad Tomatoes,produce,0.28,revisado
+43789,Organic Basil,produce,0.06,revisado
+43858,Original Coconut Milk Beverage,dairy eggs,1.9,categoria
+43867,100% Grated Parmesan Cheese,dairy eggs,0.23,categoria
+43875,Baby Food Stage 2 Blueberry Pear & Purple Carrot,babies,0.11,categoria
+43889,Dark Chocolate Covered Banana,frozen,0.4,categoria
+43961,Organic Peeled Whole Baby Carrots,produce,0.45,revisado
+43967,Raspberry Lemonade,beverages,1.9,categoria
+44008,Organic Greek Whole Milk Blended Vanilla Bean Yogurt,dairy eggs,1.9,categoria
+44014,Authentic Red Curry Paste,pantry,0.45,categoria
+44042,Premium Italian Bread,bakery,0.68,categoria
+44085,Vanilla Light & Fit Greek Yogurt,dairy eggs,0.17,categoria
+44098,Appley Ever After Organic Juice Drink,beverages,1.9,categoria
+44116,Goodness Grapeness Organic Juice Drink,beverages,1.9,categoria
+44142,Red Onion,produce,0.2,revisado
+44156,Strawberry on the Bottom Nonfat Greek Yogurt,dairy eggs,0.17,categoria
+44234,Squeeze Tomato Ketchup,pantry,0.57,categoria
+44245,Honey Maid Graham Crackers,snacks,0.23,categoria
+44292,Premium Unsweetened Iced Tea,beverages,0.25,categoria
+44303,Organic Shredded Unsweetened Coconut,pantry,0.45,categoria
+44310,Soft Pretzel Mini Buns,bakery,0.4,categoria
+44359,Organic Small Bunch Celery,produce,0.5,revisado
+44368,Fresh Mozzarella Cheese,dairy eggs,0.23,categoria
+44375,Canned Aranciata Orange,beverages,1.05,categoria
+44422,Organic Old Fashioned Rolled Oats,breakfast,0.51,categoria
+44449,Organic Tomato Sauce,canned goods,0.42,categoria
+44471,Free & Clear Unscented Baby Wipes,babies,0.9,categoria
+44479,Organic Stringles Mozzarella String Cheese,dairy eggs,0.34,categoria
+44487,Lightly Salted Rice Cakes,snacks,0.25,categoria
+44514,Yellow Straightneck Squash,produce,0.9,categoria
+44548,Barbecue Potato Chips,snacks,0.2,categoria
+44560,Kids Organic Chocolate Chip ZBars,snacks,0.2,categoria
+44570,Kale Greens,produce,0.23,categoria
+44580,Baby Bok Choy,produce,0.3,categoria
+44628,Organic Dijon Mustard,pantry,0.28,categoria
+44632,Sparkling Water Grapefruit,beverages,2.9,revisado
+44661,Bicolor Sweet Corn,produce,0.3,categoria
+44683,Brussels Sprouts,produce,0.45,revisado
+44765,Colby Cheese Sticks,dairy eggs,0.23,categoria
+44795,Minneola Tangelo,produce,0.3,categoria
+44799,Fresh CA Grown Eggs,dairy eggs,0.7,categoria
+44843,Traditional Chicken Noodle Soup,canned goods,0.52,categoria
+44910,Organic Spring Mix Salad,produce,0.14,revisado
+44912,Baking Powder,pantry,0.45,categoria
+44949,Organic Lowfat French Vanilla Yogurt,dairy eggs,0.17,categoria
+44987,Heavy Whipping Cream,dairy eggs,0.47,revisado
+45002,Organic Balsamic Vinegar Of Modena,pantry,0.52,categoria
+45007,Organic Zucchini,produce,0.25,revisado
+45013,Apple Sauce,canned goods,0.42,categoria
+45051,Pub Mix,snacks,0.25,categoria
+45061,Natural Vanilla Ice Cream,frozen,0.47,categoria
+45063,Organic Baby Bella Mushrooms,produce,0.23,categoria
+45064,Honey Wheat Bread,bakery,0.68,categoria
+45066,Honeycrisp Apple,produce,0.22,revisado
+45104,ALMONDBREEZE UNSWEETENED,dairy eggs,0.35,categoria
+45106,Low Fat Strawberry Yogurt Tubes,dairy eggs,0.17,categoria
+45123,Organic 21 Grain Thin Sliced Bread,bakery,0.68,categoria
+45149,Chunk Light Tuna In Water,canned goods,0.14,categoria
+45190,Vodka,alcohol,1.1,categoria
+45200,Organic Cauliflower,produce,0.8,categoria
+45210,Organic Greek Lowfat Yogurt With Blueberries,dairy eggs,0.17,categoria
+45290,Thin Spaghetti Pasta,dry goods pasta,0.45,categoria
+45364,California Veggie Burgers - 4 CT,frozen,0.31,nombre
+45445,Organic Bagged Mini Dark Peanut Butter,snacks,0.45,categoria
+45504,Whole Organic Omega 3 Milk,dairy eggs,1.9,categoria
+45535,Organic Low Sodium Chicken Broth,canned goods,0.95,categoria
+45570,Organic Greek Plain Nonfat Yogurt,dairy eggs,0.17,categoria
+45603,Trilogy Kombucha Drink,beverages,0.48,categoria
+45613,Pad Thai,frozen,0.4,categoria
+45622,"Paper Towels Choose-A-Sheet, Mega Rolls, One-Ply",household,1.2,categoria
+45633,Organic Beef Hot Dogs,meat seafood,0.45,categoria
+45646,Grated Parmesan Cheese,dairy eggs,0.23,categoria
+45681,Americone Dream® Ice Cream,frozen,0.47,categoria
+45747,Curate Melon Pomelo Sparking Water,beverages,1.05,categoria
+45763,Mini Seedless Cucumbers,produce,0.3,categoria
+45788,Garlic Lovers Hommus,deli,0.28,categoria
+45840,100% Pure Apple Juice,beverages,1.9,categoria
+45866,Fig Newmans Fruit Filled Cookies,snacks,0.3,categoria
+45948,Gluten Free 7 Grain Bread,bakery,0.68,categoria
+45965,Steel Cut Oats,breakfast,0.51,categoria
+46041,Beef Franks,meat seafood,0.45,categoria
+46049,Salt & Pepper Krinkle Chips,snacks,0.2,categoria
+46061,Popcorn,snacks,0.15,categoria
+46069,Supergreens!,produce,0.3,categoria
+46088,Beer,alcohol,3.3,categoria
+46149,Zero Calorie Cola,beverages,2.1,categoria
+46175,Half Baked® Ice Cream,frozen,0.47,categoria
+46206,Red Grapefruit,produce,0.91,categoria
+46226,Thick & Crispy Tortilla Chips,snacks,0.2,categoria
+46260,"Tortilla Chips, Mexican Kitchen Style, Salted",snacks,0.2,categoria
+46346,Sweet Potato Fries with Sea Salt,frozen,0.45,categoria
+46473,Pure Vanilla Extract,pantry,0.06,categoria
+46505,Organic Long Grain Brown Rice,dry goods pasta,0.91,categoria
+46522,Spaghetti Pasta,dry goods pasta,0.45,categoria
+46572,Sweet Rolls,bakery,0.4,categoria
+46584,YoKids Blueberry & Strawberry/Vanilla Yogurt,dairy eggs,0.17,categoria
+46616,Organic Dark Chocolate Peanut Butter Cups,snacks,0.45,categoria
+46650,Special Reserve Extra Sharp Cheddar Cheese,dairy eggs,0.23,categoria
+46654,Organic Grade A Large Brown Eggs,dairy eggs,0.7,revisado
+46667,Organic Ginger Root,produce,0.1,revisado
+46676,Total 0% Nonfat Greek Yogurt,dairy eggs,0.17,revisado
+46692,Multigrain Tortilla Chips,snacks,0.2,categoria
+46709,Gluten Free Old Fashioned Rolled Oats,breakfast,0.51,categoria
+46720,Organic Free Range Chicken Broth,canned goods,0.95,categoria
+46802,Pineapple Chunks,frozen,0.45,revisado
+46817,Non Fat Black Cherry on the Bottom Greek Yogurt,dairy eggs,0.17,categoria
+46820,Vanilla Pure Almond Milk,dairy eggs,1.9,categoria
+46842,Plain Pre-Sliced Bagels,bakery,0.5,categoria
+46886,Raspberry Yoghurt,dairy eggs,0.35,categoria
+46900,Organic Chicken Noodle Soup,canned goods,0.52,categoria
+46906,Grape White/Green Seedless,produce,0.91,revisado
+46941,Provolone Slices,dairy eggs,0.35,categoria
+46969,Organic Bosc Pear,produce,0.2,categoria
+46979,Asparagus,produce,0.45,revisado
+46990,Ground Buffalo,meat seafood,0.45,categoria
+47029,Organic Greek Nonfat Yogurt With Mixed Berries,dairy eggs,0.17,categoria
+47042,Organic Red On the Vine Tomato,produce,0.2,categoria
+47087,Total 0% Blueberry Acai Greek Yogurt,dairy eggs,0.17,categoria
+47119,Rice Mac & Cheese,frozen,0.4,categoria
+47141,Cola,beverages,2.1,categoria
+47144,Unsweetened Original Almond Breeze Almond Milk,dairy eggs,1.9,revisado
+47156,Coconut Almond Unsweetened Creamer Blend,dairy eggs,0.95,categoria
+47209,Organic Hass Avocado,produce,0.2,revisado
+47226,Taco Seasoning Mix Original,pantry,0.05,categoria
+47229,Bag of Organic Fuji Apples,produce,1.36,categoria
+47280,California Orange Juice,beverages,1.9,categoria
+47357,Original Restaurant Style Tortilla Chips,snacks,0.2,categoria
+47388,Organic Plain Kefir,dairy eggs,0.95,categoria
+47492,Organic Berry Blend,frozen,0.45,categoria
+47526,Goat Cheese Log,dairy eggs,0.23,categoria
+47601,Unsalted Cultured Butter,dairy eggs,0.45,categoria
+47626,Large Lemon,produce,0.1,revisado
+47630,Medium Navel Orange,produce,0.18,revisado
+47652,Coconut Almond Minis Frozen Dessert Bars,frozen,0.35,categoria
+47672,Uncured Hickory Smoked Sunday Bacon,meat seafood,0.34,revisado
+47717,Peanut Butter Cookie,snacks,0.3,categoria
+47734,Organic Green Cabbage,produce,1.0,revisado
+47759,Mandarin Oranges,produce,0.2,categoria
+47766,Organic Avocado,produce,0.2,revisado
+47788,Honeydew Melon,produce,1.5,categoria
+47792,Organic Beans & Rice Cheddar Cheese Burrito,frozen,0.17,categoria
+47866,Jalapeno Potato Chips,snacks,0.2,categoria
+47877,Coke Zero,beverages,1.05,categoria
+47890,Whole White Mushrooms,produce,0.23,categoria
+47900,"Uncured, No Sugar, Hickory Smoked Bacon",meat seafood,0.34,categoria
+47912,Vanilla Skyr Style Yogurt,dairy eggs,0.17,categoria
+47966,Old Fashioned Rolled Oats,breakfast,0.51,categoria
+47977,Grapefruit Sparkling Water,beverages,2.9,categoria
+47990,White Chocolate Macadamia Nut Energy Bar,snacks,0.25,categoria
+47993,Cherry Garcia Ice Cream,frozen,0.47,categoria
+48057,"Hummus, Hope, Original Recipe",deli,0.28,categoria
+48094,Crushed Tomatoes With Basil,canned goods,0.42,categoria
+48104,Organic Lite Coconut Milk,dairy eggs,1.9,categoria
+48109,"Tortilla Chips, Clasico, Jalapeno Lime",snacks,0.2,categoria
+48171,Shredded Hash Browns,frozen,0.4,categoria
+48183,Flour Tortillas,bakery,0.45,categoria
+48186,Lactose Free Half & Half,dairy eggs,0.95,categoria
+48205,Spinach,produce,0.28,revisado
+48287,Natural Chicken & Maple Breakfast Sausage Patty,frozen,0.34,categoria
+48299,Baby Cut Carrots,produce,0.45,categoria
+48364,Sweet Onion,produce,0.25,revisado
+48370,Sensitive Toilet Paper,household,2.0,categoria
+48395,Original Rice Pilaf Mix,dry goods pasta,0.91,categoria
+48523,Birthday Cake Light Ice Cream,frozen,0.47,categoria
+48527,Avocado,produce,0.2,categoria
+48559,Synergy Organic Kombucha Gingerberry,beverages,0.48,categoria
+48595,Organic Wheat Square Crackers,snacks,0.23,categoria
+48628,Organic Whole Wheat Bread,bakery,0.68,categoria
+48679,Organic Garnet Sweet Potato (Yam),produce,0.3,revisado
+48697,Canola Oil,pantry,0.95,categoria
+48720,Shoestring Fries,frozen,0.45,categoria
+48726,Organic Nonfat Greek Yogurt With Peaches,dairy eggs,0.17,categoria
+48745,Globe Eggplant,produce,0.45,categoria
+48775,Organic Red Cabbage,produce,1.0,categoria
+48812,Variety Pack,household,0.6,categoria
+48825,Bag of Organic Lemons,produce,1.36,categoria
+48857,Authentic French Brioche,bakery,0.45,categoria
+48871,Natural Tomato Paste,canned goods,0.42,categoria
+49054,Original Chocolate Chip Cookies,snacks,0.2,categoria
+49075,Organic Brown Rice,frozen,0.4,categoria
+49098,Golden Sweet Potato,produce,0.25,categoria
+49111,Original Instant Oatmeal,breakfast,0.51,categoria
+49113,Tall Kitchen Drawstring Bags,household,0.5,categoria
+49131,Smoked Turkey Breast Slices,deli,0.23,categoria
+49139,Salsa Con Queso Medium,pantry,0.45,categoria
+49175,Organic Pinto Beans,canned goods,0.42,categoria
+49191,Cran Raspberry Sparkling Water,beverages,2.9,categoria
+49215,Kids Sensible Foods Broccoli Littles,babies,0.11,categoria
+49235,Organic Half & Half,dairy eggs,0.95,revisado
+49236,80% Lean Ground Beef,meat seafood,0.45,categoria
+49247,Coconut Yoghurt,dairy eggs,0.35,categoria
+49381,Zucchini Squash,produce,0.9,categoria
+49383,Organic Bunch Beets,produce,0.45,categoria
+49416,Organic Gluten Free Non-Dairy Beans & Rice Burrito,frozen,0.17,categoria
+49517,0% Fat Free Organic Milk,dairy eggs,1.9,categoria
+49520,Orange Sparkling Water,beverages,2.9,categoria
+49533,Cane Sugar,pantry,1.81,categoria
+49605,Classic Hummus Family Size,deli,0.28,categoria
+49610,100% Lactose Free Fat Free Milk,dairy eggs,1.9,categoria
+49621,Challah Bread,bakery,0.68,categoria
+49628,Yoghurt Blueberry,dairy eggs,0.35,categoria
+49683,Cucumber Kirby,produce,0.15,revisado

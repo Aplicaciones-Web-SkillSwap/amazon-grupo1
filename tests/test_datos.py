@@ -1,4 +1,4 @@
-import pandas as pd
+import pytest
 
 from almacen import datos
 
@@ -23,10 +23,28 @@ def test_seleccionar_nodos_top_por_zona(carpeta_datos):
 
 def test_info_productos(carpeta_datos):
   nodos = datos.seleccionar_nodos(datos.cargar_datos(carpeta_datos), por_zona=2)
-  info = datos.info_productos(nodos)
+  info = datos.info_productos(nodos, datos.cargar_pesos(carpeta_datos))
   assert info[1] == {"nombre": "Banana", "zona": "A", "departamento": "produce",
-                     "pasillo": 1, "freq": 5}
+                     "pasillo": 1, "freq": 5, "peso": 0.12}
   assert info[6]["zona"] == "C"
+
+
+def test_cargar_pesos(carpeta_datos):
+  pesos = datos.cargar_pesos(carpeta_datos)
+  assert pesos[4] == 1.90 and len(pesos) == 8
+
+
+def test_cargar_pesos_sin_archivo(tmp_path):
+  with pytest.raises(FileNotFoundError, match="pesos.csv"):
+    datos.cargar_pesos(tmp_path)
+
+
+def test_info_productos_sin_peso_da_error_claro(carpeta_datos):
+  nodos = datos.seleccionar_nodos(datos.cargar_datos(carpeta_datos), por_zona=2)
+  pesos = datos.cargar_pesos(carpeta_datos)
+  del pesos[2]
+  with pytest.raises(ValueError, match="Faltan 1 productos en pesos.csv.*Apple"):
+    datos.info_productos(nodos, pesos)
 
 
 def test_pedidos_filtrados(carpeta_datos):

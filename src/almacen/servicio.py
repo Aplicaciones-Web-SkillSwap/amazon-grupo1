@@ -44,9 +44,10 @@ class Resultado:
 class Servicio:
   def __init__(self, nodos, pedidos, g1, pasillos_actual, pasillos_optimizado,
                capacidad=config.CAPACIDAD_PASILLO, pedidos_prueba=None,
-               g1_construccion=None, info_construccion=None):
+               g1_construccion=None, info_construccion=None, pesos=None):
     self.nodos = nodos
-    self.info = datos.info_productos(nodos)
+    self.pesos = pesos
+    self.info = datos.info_productos(nodos, pesos)
     self.pedidos = pedidos
     self.g1 = g1
     # Sin separación explícita, todo se construye y se prueba con los mismos pedidos.
@@ -71,6 +72,7 @@ class Servicio:
 
     fraccion_prueba: parte de los pedidos que se reserva para evaluar (0 = sin separar)."""
     d = datos.cargar_datos(ruta)
+    pesos = datos.cargar_pesos(ruta)
     nodos = datos.seleccionar_nodos(d, por_zona)
     pedidos = datos.pedidos_filtrados(d, nodos)
     if fraccion_prueba:
@@ -88,11 +90,12 @@ class Servicio:
     frecuencias = Counter(p for productos in construccion.values() for p in productos)
     nodos_construccion = nodos.copy()
     nodos_construccion["freq"] = [frecuencias.get(int(p), 0) for p in nodos["product_id"]]
-    info_construccion = datos.info_productos(nodos_construccion)
+    info_construccion = datos.info_productos(nodos_construccion, pesos)
     actual = datos.pasillos_desde_catalogo(nodos)
     optimizado = reubicacion.reubicar(g1_construccion, info_construccion, len(actual), capacidad)
     return cls(nodos, pedidos, g1, actual, optimizado, capacidad, pedidos_prueba=prueba,
-               g1_construccion=g1_construccion, info_construccion=info_construccion)
+               g1_construccion=g1_construccion, info_construccion=info_construccion,
+               pesos=pesos)
 
   # ---------- layouts ----------
   def agregar_layout(self, nombre, pasillos):
