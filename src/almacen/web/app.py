@@ -196,6 +196,16 @@ VELOCIDADES = {"Lenta": 2.2, "Normal": 1.0, "Rápida": 0.4}   # factor sobre el 
 LIMITES = {"Peso (kg)": "peso", "Unidades": "unidades", "Peso y unidades": "ambos"}
 
 
+def stock_texto(s, tope):
+  """Cuánto stock hay en el almacén con ese tope, en unidades y en kilos."""
+  stock = s.stock(tope)
+  unidades = sum(stock.values())
+  kilos = sum(n * s.info[p]["peso"] for p, n in stock.items())
+  agotados = sum(1 for n in stock.values() if n < 1)
+  texto = f"Almacén: **{unidades:,} unidades** · **{kilos:,.0f} kg**"
+  return texto + (f" · {agotados} productos agotados" if agotados else " · sin agotados")
+
+
 def limite_texto(r):
   """Cómo quedó limitado el carrito, para explicar por qué salieron esas vueltas."""
   partes = []
@@ -268,6 +278,17 @@ def pestana_ruteo(s):
           value=int(config.CAPACIDAD_CARRITO_UNIDADES), step=1)
     st.caption(f"Este pedido: **{len(productos)} productos**, "
                f"**{s.peso_pedido(productos):.2f} kg**.")
+
+    st.markdown("#### 5. Stock del almacén")
+    stock_tope = st.number_input(
+        "Unidades del producto más pedido", min_value=1,
+        max_value=int(config.STOCK_PRODUCTO_TOP * 2),
+        value=int(config.STOCK_PRODUCTO_TOP), step=5,
+        help="El stock de cada producto es proporcional a su demanda: el más pedido tiene "
+             "estas unidades y el resto, menos. Con el valor por defecto ningún producto "
+             "está agotado; al bajarlo se agotan primero los menos pedidos y salen del "
+             "pedido.")
+    st.caption(stock_texto(s, stock_tope))
     factor = VELOCIDADES[st.radio("Velocidad de las animaciones", list(VELOCIDADES), index=1,
                                   horizontal=True)]
     calcular = st.button("Calcular ruta", type="primary", width="stretch")
@@ -275,12 +296,13 @@ def pestana_ruteo(s):
     comparar_t = c1.button("Carrera de técnicas", width="stretch")
     comparar_l = c2.button("Carrera de layouts", width="stretch")
 
-  clave = (str(oid), tuple(productos), layout, tecnica, float(capacidad), float(tope))
+  clave = (str(oid), tuple(productos), layout, tecnica, float(capacidad), float(tope),
+           int(stock_tope))
   if calcular:
     try:
       with st.spinner("Calculando la ruta…"):
         st.session_state["res"] = (clave, s.rutear(productos, layout, tecnica, capacidad,
-                                                   tope))
+                                                   tope, stock_tope))
     except ValueError as e:
       st.warning(str(e))
   if comparar_t:
@@ -313,6 +335,12 @@ def pestana_ruteo(s):
                     unsafe_allow_html=True)
     else:
       st.info("Para ver el recorrido, presionar **Calcular ruta** y luego **Reproducir**.")
+    if r and r.omitidos:
+      nombres = ", ".join(s.info[p]["nombre"][:30] for p in r.omitidos[:6])
+      st.warning(f"**{len(r.omitidos)} producto(s) sin stock** y fuera de la ruta: {nombres}"
+                 + (" …" if len(r.omitidos) > 6 else "")
+                 + f". El stock se calcula con un tope de {r.stock_tope} unidades para el "
+                   "producto más pedido; subirlo para que vuelvan a estar disponibles.")
     c1, c2 = st.columns(2)
     acercar = c1.checkbox("Acercar a la ruta", value=False, disabled=r is None)
     metros = c2.checkbox("Mostrar los metros de cada tramo", value=False, disabled=r is None)
