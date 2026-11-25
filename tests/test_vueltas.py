@@ -188,7 +188,7 @@ def test_tope_de_unidades_coincide_con_la_fuerza_bruta():
 
 def test_tope_de_unidades_invalido_da_error():
   m = matriz_aleatoria(2, random.Random(53))
-  with pytest.raises(ValueError, match="al menos un producto"):
+  with pytest.raises(ValueError, match="al menos una unidad"):
     ruteo.dividir_en_vueltas(m, [1, 2], [0.0, 1.0, 1.0], float("inf"), 0)
 
 

@@ -254,7 +254,7 @@ def limite_texto(r):
   if r.capacidad_kg != float("inf"):
     partes.append(f"{r.capacidad_kg:.0f} kg")
   if r.max_unidades is not None:
-    partes.append(f"{r.max_unidades} productos")
+    partes.append(f"{r.max_unidades} unidades")
   limite = " y ".join(partes) if partes else "sin tope"
   return (f"Carrito de {limite}. El pedido lleva {sum(v['unidades'] for v in r.vueltas)} "
           f"productos y pesa {sum(v['kg'] for v in r.vueltas):.2f} kg.")
@@ -310,7 +310,7 @@ def pestana_ruteo(s):
     modo = LIMITES[st.radio("Limitar el carrito por", list(LIMITES), horizontal=True,
                             help="Si el pedido no entra en el carrito, vuelve al depot a "
                                  "descargar y sale de nuevo. Bajar el tope (por ejemplo a "
-                                 "10 kg o a 4 productos) para ver varias vueltas.")]
+                                 "10 kg o a 4 unidades) para ver varias vueltas.")]
     capacidad, tope = float("inf"), float("inf")
     if modo in ("peso", "ambos"):
       capacidad = st.number_input(
@@ -319,7 +319,7 @@ def pestana_ruteo(s):
           value=float(config.CAPACIDAD_CARRITO_KG), step=5.0)
     if modo in ("unidades", "ambos"):
       tope = st.number_input(
-          "Productos por vuelta", min_value=1,
+          "Unidades por vuelta", min_value=1,
           max_value=int(config.CAPACIDAD_CARRITO_UNIDADES),
           value=int(config.CAPACIDAD_CARRITO_UNIDADES), step=1)
     st.caption(f"Este pedido: **{sum(cantidades.values())} unidades** de "

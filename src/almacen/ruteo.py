@@ -322,8 +322,8 @@ def dividir_en_vueltas(m, orden, pesos, capacidad, max_unidades=None, cantidades
   orden y solo hay que decidir dónde cortar.
 
   El carrito se limita de dos formas, que se pueden usar juntas o por separado:
-  `capacidad` son los kg que aguanta y `max_unidades` cuántos productos le caben (None =
-  sin tope). Para limitar solo por unidades, basta pasar capacidad = float("inf").
+  `capacidad` son los kg que aguanta y `max_unidades` cuántas UNIDADES le caben (no
+  productos distintos: 3 unidades de un mismo producto ocupan 3; None = sin tope). Para limitar solo por unidades, basta pasar capacidad = float("inf").
 
   `cantidades` dice cuántas unidades se recogen de cada índice (None = una de cada uno).
   Si de un producto se piden más unidades de las que caben, se reparten entre vueltas y
@@ -353,7 +353,7 @@ def dividir_en_vueltas(m, orden, pesos, capacidad, max_unidades=None, cantidades
     return 0.0, []
 
   if max_unidades is not None and max_unidades < 1:
-    raise ValueError("El carrito tiene que llevar al menos un producto por vuelta")
+    raise ValueError("El carrito tiene que llevar al menos una unidad por vuelta")
   exceso = [i for i in unidades if pesos[i] > capacidad]
   if exceso:
     raise ValueError(
