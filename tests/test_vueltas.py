@@ -372,3 +372,11 @@ def test_comparar_layouts_respeta_el_carrito_y_el_stock(servicio):
   for resultado in comparacion.values():
     assert resultado.omitidos == [2]
     assert all(v["kg"] <= CARRITO_CHICO + 1e-9 for v in resultado.vueltas)
+
+
+def test_comparar_tecnicas_cuenta_solo_los_productos_con_stock(servicio):
+  # con 1 y 2 agotados solo se rutea el 4, asi que ninguna tecnica deberia salir no viable
+  agotados = {1: 0, 2: 0}
+  comparacion = servicio.comparar_tecnicas([1, 2, 4], ACTUAL, stock_excepciones=agotados)
+  assert all(r is not None for r in comparacion.values())
+  assert all(r.productos == [4] for r in comparacion.values())

@@ -350,7 +350,10 @@ class Servicio:
 
     `opciones` son las mismas de rutear (capacidad_kg, max_unidades, stock_base,
     stock_excepciones), para que la comparación use la configuración de la pantalla."""
-    n = len(dict.fromkeys(productos))
+    # cuentan los productos que de verdad se van a rutear: los agotados no entran, y
+    # sin esto una tecnica podia salir "no viable" por productos que ni se recogen
+    disponible = self.stock(opciones.get("stock_base"), opciones.get("stock_excepciones"))
+    n = sum(1 for p in self.unidades_pedidas(productos) if disponible.get(p, 0) >= 1)
     salida = {}
     for nombre in ("backtracking", "dp", "voraz"):
       salida[nombre] = (self.rutear(productos, layout, nombre, **opciones)
