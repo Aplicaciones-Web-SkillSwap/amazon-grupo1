@@ -39,6 +39,9 @@ class Resultado:
   tiempo_s: float           # solo el tiempo del algoritmo de ruteo
   layout: str
   camino: list = field(default_factory=list)   # etiquetas de paso, de "depot" a "depot"
+  vueltas: list = field(default_factory=list)  # una por viaje del carrito: productos, kg y metros
+  costo_total: float = 0.0                     # metros de todas las vueltas (= costo si es una sola)
+  capacidad_kg: float = config.CAPACIDAD_CARRITO_KG
 
 
 class Servicio:
@@ -184,8 +187,15 @@ class Servicio:
     return oid, list(self.pedidos[oid])
 
   # ---------- ruteo ----------
-  def rutear(self, productos, layout=ACTUAL, tecnica="auto"):
-    """Ruta de picking de un pedido. tecnica: "auto" o una clave de TECNICAS."""
+  def peso_pedido(self, productos):
+    """Kilos que suma un pedido."""
+    return sum(self.info[p]["peso"] for p in dict.fromkeys(productos))
+
+  def rutear(self, productos, layout=ACTUAL, tecnica="auto", capacidad_kg=None):
+    """Ruta de picking de un pedido. tecnica: "auto" o una clave de TECNICAS.
+
+    `capacidad_kg` es lo que aguanta el carrito; si el pedido pesa más, la ruta se parte
+    en varias vueltas que pasan por el depot a descargar (ruteo.dividir_en_vueltas)."""
     productos = list(dict.fromkeys(productos))
     if not productos:
       raise ValueError("El pedido está vacío")
@@ -210,9 +220,22 @@ class Servicio:
       nombre = tecnica
     tiempo = time.perf_counter() - t0
 
+    capacidad = config.CAPACIDAD_CARRITO_KG if capacidad_kg is None else float(capacidad_kg)
+    kilos = [0.0] + [self.info[p]["peso"] for p in productos]
+    costo_total, cortes = ruteo.dividir_en_vueltas(m, orden, kilos, capacidad)
+
     visita = [productos[i - 1] for i in orden]
+    vueltas, camino = [], []
+    for indices in cortes:
+      prods = [productos[i - 1] for i in indices]
+      paso = self._camino(dist, prods)
+      vueltas.append({"productos": prods,
+                      "kg": round(ruteo.peso_total(indices, kilos), 2),
+                      "metros": float(ruteo.costo_ciclo(m, indices)),
+                      "camino": paso})
+      camino.extend(paso if not camino else paso[1:])
     return Resultado(productos, visita, float(costo), nombre, tiempo, layout,
-                     self._camino(dist, visita))
+                     camino, vueltas, float(costo_total), capacidad)
 
   @staticmethod
   def _camino(dist, visita):
@@ -243,15 +266,18 @@ class Servicio:
     return ruteo.backtracking_traza(m)[2]
 
   def tramos(self, resultado):
-    """La ruta de un Resultado, tramo por tramo: lista de dicts con desde, hasta (etiquetas:
-    "depot" o product_id), metros del tramo y metros acumulados."""
+    """La ruta de un Resultado, tramo por tramo: lista de dicts con la vuelta a la que
+    pertenece, desde, hasta (etiquetas: "depot" o product_id), metros del tramo y metros
+    acumulados."""
     dist = self.distancias[resultado.layout]
-    paradas = ["depot"] + list(resultado.orden) + ["depot"]
     filas, acumulado = [], 0.0
-    for a, b in zip(paradas, paradas[1:]):
-      metros = float(dist.entre(a, b))
-      acumulado += metros
-      filas.append({"desde": a, "hasta": b, "metros": metros, "acumulado": acumulado})
+    for n_vuelta, vuelta in enumerate(resultado.vueltas, start=1):
+      paradas = ["depot"] + list(vuelta["productos"]) + ["depot"]
+      for a, b in zip(paradas, paradas[1:]):
+        metros = float(dist.entre(a, b))
+        acumulado += metros
+        filas.append({"vuelta": n_vuelta, "desde": a, "hasta": b, "metros": metros,
+                      "acumulado": acumulado})
     return filas
 
   def comparar_tecnicas(self, productos, layout=ACTUAL):

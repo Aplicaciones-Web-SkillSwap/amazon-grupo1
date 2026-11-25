@@ -10,7 +10,7 @@ n productos. Devuelven (costo, orden) con `orden` = índices 1..n en el orden de
   backtracking  permutaciones con poda      O(n!) peor caso, óptimo
   held_karp     programación dinámica       O(n^2 * 2^n)   óptimo
 
-TÉCNICA: VORAZ (voraz), FUERZA BRUTA (fuerza_bruta), BACKTRACKING (backtracking) y PROGRAMACIÓN DINÁMICA (held_karp, held_karp_opt). resolver elige según el tamaño del pedido; Servicio.rutear lo invoca (pestaña Ruteo).
+TÉCNICA: VORAZ (voraz), FUERZA BRUTA (fuerza_bruta), BACKTRACKING (backtracking) y PROGRAMACIÓN DINÁMICA (held_karp, held_karp_opt, dividir_en_vueltas). resolver elige según el tamaño del pedido; Servicio.rutear lo invoca (pestaña Ruteo).
 """
 from itertools import permutations
 from math import inf
@@ -309,6 +309,66 @@ def held_karp_opt(m, poda=False):
   orden.reverse()
   return mejor, orden
 
+
+# ---------------------------------------------------------------------------------------
+# Vueltas del carrito (capacidad en kg)
+# ---------------------------------------------------------------------------------------
+def dividir_en_vueltas(m, orden, pesos, capacidad):
+  """Parte la ruta `orden` en vueltas de a lo más `capacidad` kg, con la menor distancia.
+
+  El carrito sale del depot, recoge los productos de una vuelta y regresa al depot a
+  descargar antes de empezar la siguiente. Como el orden de visita ya viene dado (es la
+  ruta óptima que calculó la técnica de ruteo), cada vuelta es un tramo seguido de ese
+  orden y solo hay que decidir dónde cortar.
+
+  `pesos` se indexa igual que `m`: pesos[i] son los kg del producto i (pesos[0], el depot,
+  no se usa). Devuelve (costo_total, vueltas) con vueltas = lista de listas de índices.
+
+  Programación dinámica, O(n^2):
+      mejor[i] = min sobre k de  mejor[k-1] + costo(depot -> orden[k-1..i-1] -> depot)
+  tomando solo los tramos que no pasan de `capacidad`. Para cada i se recorre el inicio
+  del tramo hacia atrás acumulando el peso y el tramo interno, así cada par (k, i) cuesta
+  O(1) y el total es O(n^2).
+
+  El resultado es el mejor corte *de ese orden*, que es lo que pide el enunciado; no
+  rehace la ruta, así que no es necesariamente el óptimo del problema con capacidad."""
+  n = len(orden)
+  if n == 0:
+    return 0.0, []
+
+  exceso = [i for i in orden if pesos[i] > capacidad]
+  if exceso:
+    raise ValueError(
+        f"El producto {exceso[0]} pesa {pesos[exceso[0]]:.2f} kg y el carrito aguanta "
+        f"{capacidad:.2f} kg: el pedido no se puede recoger")
+
+  mejor = [0.0] + [inf] * n
+  corte = [0] * (n + 1)
+  for i in range(1, n + 1):
+    peso = interno = 0.0
+    for k in range(i, 0, -1):                 # la vuelta cubre orden[k-1 .. i-1]
+      peso += pesos[orden[k - 1]]
+      if peso > capacidad:
+        break
+      if k < i:
+        interno += m[orden[k - 1]][orden[k]]
+      costo = m[0][orden[k - 1]] + interno + m[orden[i - 1]][0]
+      if mejor[k - 1] + costo < mejor[i]:
+        mejor[i] = mejor[k - 1] + costo
+        corte[i] = k - 1
+
+  vueltas, i = [], n
+  while i > 0:
+    j = corte[i]
+    vueltas.append(list(orden[j:i]))
+    i = j
+  vueltas.reverse()
+  return mejor[n], vueltas
+
+
+def peso_total(orden, pesos):
+  """Kilos que suman los productos de una vuelta o de un pedido."""
+  return sum(pesos[i] for i in orden)
 
 # ---------------------------------------------------------------------------------------
 # Selección de la técnica según el tamaño del pedido
