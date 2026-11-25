@@ -164,9 +164,12 @@ def elegir_pedido(s):
       if elegidos:
         st.caption("Unidades de cada producto")
         for prod in elegidos:
+          unitario = s.info[prod]["peso"]
           cuantos[prod] = st.number_input(
-              s.info[prod]["nombre"][:38], min_value=1, max_value=99, value=1, step=1,
-              key=f"cant_{prod}")
+              f'{s.info[prod]["nombre"][:34]} · {unitario:.2f} kg c/u',
+              min_value=1, max_value=99, value=1, step=1, key=f"cant_{prod}")
+          st.caption(f"{cuantos[prod]} × {unitario:.2f} kg = "
+                     f"**{cuantos[prod] * unitario:.2f} kg**")
       if st.button("Usar mi selección"):
         if not elegidos:
           st.warning("Se debe elegir al menos un producto.")
@@ -179,7 +182,8 @@ def elegir_pedido(s):
   cantidades = guardado[2] if len(guardado) > 2 else {p: 1 for p in productos}
   unidades = sum(cantidades.values())
   extra = f" · {unidades} unidades" if unidades != len(productos) else ""
-  st.caption(f"Pedido {oid}: {len(productos)} productos distintos{extra}")
+  st.caption(f"Pedido {oid}: {len(productos)} productos distintos{extra} · "
+             f"{s.peso_pedido(cantidades):.2f} kg")
   return oid, productos, cantidades
 
 
