@@ -276,6 +276,12 @@ class Servicio:
     tope_unidades = config.CAPACIDAD_CARRITO_UNIDADES if max_unidades is None else max_unidades
     tope_unidades = None if tope_unidades in (None, float("inf")) else int(tope_unidades)
     kilos = [0.0] + [self.info[p]["peso"] for p in productos]
+    pesados = [p for p in productos if self.info[p]["peso"] > capacidad]
+    if pesados:
+      nombre_p = self.info[pesados[0]]["nombre"]
+      raise ValueError(
+          f"Una unidad de «{nombre_p}» pesa {self.info[pesados[0]]['peso']:.2f} kg y el "
+          f"carrito aguanta {capacidad:.2f} kg: el pedido no se puede recoger")
     por_indice = {i + 1: llevados[p] for i, p in enumerate(productos)}
     costo_total, cortes = ruteo.dividir_en_vueltas(m, orden, kilos, capacidad, tope_unidades,
                                                    por_indice)
