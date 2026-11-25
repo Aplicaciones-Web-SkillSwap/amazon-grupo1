@@ -213,14 +213,39 @@ VELOCIDADES = {"Lenta": 2.2, "Normal": 1.0, "Rápida": 0.4}   # factor sobre el 
 LIMITES = {"Peso (kg)": "peso", "Unidades": "unidades", "Peso y unidades": "ambos"}
 
 
-def stock_texto(s, tope):
-  """Cuánto stock hay en el almacén con ese tope, en unidades y en kilos."""
-  stock = s.stock(tope)
+def stock_texto(s, base, excepciones=None):
+  """Cuánto stock hay en el almacén, en unidades y en kilos."""
+  stock = s.stock(base, excepciones)
   unidades = sum(stock.values())
   kilos = sum(n * s.info[p]["peso"] for p, n in stock.items())
   agotados = sum(1 for n in stock.values() if n < 1)
   texto = f"Almacén: **{unidades:,} unidades** · **{kilos:,.0f} kg**"
   return texto + (f" · {agotados} productos agotados" if agotados else " · sin agotados")
+
+
+def controles_excepciones(s):
+  """Productos con un stock distinto al del resto. Devuelve {producto: unidades}."""
+  guardadas = st.session_state.setdefault("stock_excep", {})
+  with st.expander(f"Configurar un producto en específico ({len(guardadas)})"):
+    prod = st.selectbox("Buscar producto", sorted(s.info), index=None,
+                        placeholder="Escribir para buscar…",
+                        format_func=lambda p: s.info[p]["nombre"], key="excep_prod")
+    unidades = st.number_input("Unidades de ese producto", min_value=0,
+                               max_value=int(config.STOCK_MAXIMO), value=0, step=1,
+                               key="excep_unidades",
+                               help="0 deja el producto agotado.")
+    c1, c2 = st.columns(2)
+    if c1.button("Guardar", width="stretch", disabled=prod is None):
+      guardadas[prod] = int(unidades)
+    if c2.button("Quitar todas", width="stretch", disabled=not guardadas):
+      guardadas.clear()
+    for p, n in list(guardadas.items()):
+      fila, boton = st.columns([4, 1])
+      fila.write(f"{s.info[p]['nombre'][:30]}: **{n}**" + (" (agotado)" if n == 0 else ""))
+      if boton.button("✕", key=f"quitar_{p}"):
+        del guardadas[p]
+        st.rerun()
+  return dict(guardadas)
 
 
 def limite_texto(r):
@@ -301,15 +326,14 @@ def pestana_ruteo(s):
                f"**{len(productos)} productos**, **{s.peso_pedido(cantidades):.2f} kg**.")
 
     st.markdown("#### 5. Stock del almacén")
-    stock_tope = st.number_input(
-        "Unidades del producto más pedido", min_value=1,
-        max_value=int(config.STOCK_PRODUCTO_TOP * 2),
-        value=int(config.STOCK_PRODUCTO_TOP), step=5,
-        help="El stock de cada producto es proporcional a su demanda: el más pedido tiene "
-             "estas unidades y el resto, menos. Con el valor por defecto ningún producto "
-             "está agotado; al bajarlo se agotan primero los menos pedidos y salen del "
-             "pedido.")
-    st.caption(stock_texto(s, stock_tope))
+    stock_base = st.number_input(
+        "Unidades de cada producto", min_value=0, max_value=int(config.STOCK_MAXIMO),
+        value=int(config.STOCK_BASE), step=10,
+        help="Cantidad que hay de todos los productos del almacén. Abajo se puede "
+             "configurar aparte un producto concreto, por ejemplo dejarlo en 0 para que "
+             "esté agotado.")
+    excepciones = controles_excepciones(s)
+    st.caption(stock_texto(s, stock_base, excepciones))
     factor = VELOCIDADES[st.radio("Velocidad de las animaciones", list(VELOCIDADES), index=1,
                                   horizontal=True)]
     calcular = st.button("Calcular ruta", type="primary", width="stretch")
@@ -318,12 +342,12 @@ def pestana_ruteo(s):
     comparar_l = c2.button("Carrera de layouts", width="stretch")
 
   clave = (str(oid), tuple(sorted(cantidades.items())), layout, tecnica, float(capacidad),
-           float(tope), int(stock_tope))
+           float(tope), int(stock_base), tuple(sorted(excepciones.items())))
   if calcular:
     try:
       with st.spinner("Calculando la ruta…"):
         st.session_state["res"] = (clave, s.rutear(cantidades, layout, tecnica, capacidad,
-                                                   tope, stock_tope))
+                                                   tope, stock_base, excepciones))
     except ValueError as e:
       st.warning(str(e))
   if comparar_t:
@@ -365,8 +389,9 @@ def pestana_ruteo(s):
       nombres = ", ".join(s.info[p]["nombre"][:30] for p in r.omitidos[:6])
       st.warning(f"**{len(r.omitidos)} producto(s) sin stock** y fuera de la ruta: {nombres}"
                  + (" …" if len(r.omitidos) > 6 else "")
-                 + f". El stock se calcula con un tope de {r.stock_tope} unidades para el "
-                   "producto más pedido; subirlo para que vuelvan a estar disponibles.")
+                 + f". El almacén tiene {r.stock_base} unidades de cada producto"
+                 + (f" y {len(r.stock_excepciones)} configurado(s) aparte." if
+                    r.stock_excepciones else "."))
     c1, c2 = st.columns(2)
     acercar = c1.checkbox("Acercar a la ruta", value=False, disabled=r is None)
     metros = c2.checkbox("Mostrar los metros de cada tramo", value=False, disabled=r is None)
