@@ -43,8 +43,9 @@ class Resultado:
   costo_total: float = 0.0                     # metros de todas las vueltas (= costo si es una sola)
   capacidad_kg: float = config.CAPACIDAD_CARRITO_KG
   max_unidades: int = config.CAPACIDAD_CARRITO_UNIDADES
-  omitidos: list = field(default_factory=list)   # productos del pedido que no tenían stock
-  stock_tope: int = config.STOCK_PRODUCTO_TOP
+  omitidos: list = field(default_factory=list)    # productos del pedido que no tenían stock
+  stock_base: int = config.STOCK_BASE             # unidades que hay de cada producto
+  stock_excepciones: dict = field(default_factory=dict)  # productos con stock configurado aparte
   cantidades: dict = field(default_factory=dict)  # producto -> unidades que se recogen
   faltantes: dict = field(default_factory=dict)   # producto -> unidades que no había
 
@@ -200,10 +201,13 @@ class Servicio:
       return {int(p): max(1, int(q)) for p, q in productos.items() if int(q) > 0}
     return {p: 1 for p in dict.fromkeys(productos)}
 
-  def stock(self, tope=None):
-    """Unidades en almacén de cada producto (datos.calcular_stock)."""
-    tope = config.STOCK_PRODUCTO_TOP if tope is None else int(tope)
-    return datos.calcular_stock(self.info, tope)
+  def stock(self, base=None, excepciones=None):
+    """Unidades en almacén de cada producto (datos.calcular_stock).
+
+    `base` es la cantidad que hay de todos los productos y `excepciones` un diccionario
+    {producto: unidades} para los que se configuren aparte."""
+    base = config.STOCK_BASE if base is None else int(base)
+    return datos.calcular_stock(self.info, base, excepciones)
 
   def peso_pedido(self, productos):
     """Kilos que suma un pedido (lista de productos o {producto: unidades})."""
@@ -211,7 +215,7 @@ class Servicio:
                for p, q in self.unidades_pedidas(productos).items())
 
   def rutear(self, productos, layout=ACTUAL, tecnica="auto", capacidad_kg=None,
-             max_unidades=None, stock_tope=None):
+             max_unidades=None, stock_base=None, stock_excepciones=None):
     """Ruta de picking de un pedido. tecnica: "auto" o una clave de TECNICAS.
 
     El carrito se limita por peso (`capacidad_kg`) y por cantidad de productos
@@ -219,9 +223,10 @@ class Servicio:
     ruta se parte en varias vueltas que pasan por el depot a descargar
     (ruteo.dividir_en_vueltas). Para quitar un tope, pasar float("inf") o None.
 
-    `stock_tope` son las unidades del producto más pedido; el stock del resto es
-    proporcional a su demanda. Los productos del pedido que no tengan stock se omiten de
-    la ruta y quedan en Resultado.omitidos."""
+    `stock_base` son las unidades que hay de cada producto y `stock_excepciones` las de
+    los que se configuren aparte. Los productos del pedido que no tengan stock se omiten
+    de la ruta y quedan en Resultado.omitidos; si hay menos de las pedidas se recoge lo
+    que haya y el faltante queda en Resultado.faltantes."""
     pedido = self.unidades_pedidas(productos)
     if not pedido:
       raise ValueError("El pedido está vacío")
@@ -233,8 +238,9 @@ class Servicio:
 
     # el stock se mira después de comprobar que el producto existe, para no confundir
     # "no está en el almacén" con "está agotado"
-    tope_stock = config.STOCK_PRODUCTO_TOP if stock_tope is None else int(stock_tope)
-    disponible = self.stock(tope_stock)
+    base_stock = config.STOCK_BASE if stock_base is None else int(stock_base)
+    excepciones = dict(stock_excepciones or {})
+    disponible = self.stock(base_stock, excepciones)
     llevados, faltantes, omitidos = {}, {}, []
     for p, pedidas in pedido.items():
       hay = disponible[p]
@@ -248,7 +254,7 @@ class Servicio:
     productos = list(llevados)
     if not productos:
       raise ValueError(
-          f"Ningún producto del pedido tiene stock con un tope de {tope_stock} unidades")
+          f"Ningún producto del pedido tiene stock (base de {base_stock} unidades)")
     n = len(productos)
     dist = self.distancias[layout]
     m = dist.matriz(["depot"] + productos)
@@ -288,7 +294,7 @@ class Servicio:
       camino.extend(paso if not camino else paso[1:])
     return Resultado(productos, visita, float(costo), nombre, tiempo, layout,
                      camino, vueltas, float(costo_total), capacidad, tope_unidades,
-                     omitidos, tope_stock, llevados, faltantes)
+                     omitidos, base_stock, excepciones, llevados, faltantes)
 
   @staticmethod
   def _camino(dist, visita):

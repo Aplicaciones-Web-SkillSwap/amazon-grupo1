@@ -13,7 +13,8 @@ DIST_PASILLO = 3.0                  # metros entre pasillos paralelos
 CAPACIDAD_PASILLO = 16              # tope de productos por pasillo en el layout optimizado (UFDS)
 CAPACIDAD_CARRITO_KG = 100.0        # kg que aguanta el carrito; si el pedido pesa más, da varias vueltas
 CAPACIDAD_CARRITO_UNIDADES = 50     # productos que caben en el carrito (el pedido más grande del dataset)
-STOCK_PRODUCTO_TOP = 60             # unidades del producto más pedido; el resto, proporcional a su demanda
+STOCK_BASE = 100                    # unidades que hay de cada producto, salvo las excepciones que se configuren
+STOCK_MAXIMO = 500                  # tope del control de stock en la interfaz
 SEMILLA = 42                        # semilla fija para el muestreo de pedidos
 FRACCION_PRUEBA = 0.3               # pedidos que NO se usan para construir G1 ni las frecuencias (validación)
 

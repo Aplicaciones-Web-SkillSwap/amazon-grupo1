@@ -243,47 +243,45 @@ def test_los_tramos_indican_su_vuelta(servicio):
 # --------------------------------------------------------------------------------------
 # stock del almacén
 # --------------------------------------------------------------------------------------
-def test_stock_es_proporcional_a_la_demanda(servicio):
+def test_todos_los_productos_tienen_la_misma_cantidad_base(servicio):
   stock = servicio.stock()
-  mas, menos = 1, 5                           # 1 es el más pedido del mini dataset
-  assert stock[mas] >= stock[menos]
-  assert stock[mas] == config.STOCK_PRODUCTO_TOP
+  assert set(stock.values()) == {config.STOCK_BASE}
 
 
-def test_con_el_tope_por_defecto_no_hay_agotados(servicio):
-  assert all(n >= 1 for n in servicio.stock().values())
+def test_la_base_se_puede_cambiar(servicio):
+  assert set(servicio.stock(7).values()) == {7}
 
 
-def test_bajar_el_tope_agota_primero_los_menos_pedidos(servicio):
-  bajo = servicio.stock(2)
-  agotados = [p for p, n in bajo.items() if n < 1]
-  assert agotados                              # con tope 2 alguno se queda sin stock
-  freq = servicio.info
-  assert max(freq[p]["freq"] for p in agotados) <= min(
-      freq[p]["freq"] for p, n in bajo.items() if n >= 1)
+def test_una_excepcion_solo_afecta_a_su_producto(servicio):
+  stock = servicio.stock(excepciones={1: 5})
+  assert stock[1] == 5
+  assert all(n == config.STOCK_BASE for p, n in stock.items() if p != 1)
+
+
+def test_una_excepcion_en_cero_deja_el_producto_agotado(servicio):
+  assert servicio.stock(excepciones={2: 0})[2] == 0
 
 
 def test_stock_negativo_da_error(servicio):
   with pytest.raises(ValueError, match="no puede ser negativo"):
     datos.calcular_stock(servicio.info, -1)
+  with pytest.raises(ValueError, match="no puede ser negativo"):
+    datos.calcular_stock(servicio.info, 10, {1: -3})
 
 
-def test_rutear_omite_los_productos_sin_stock(servicio):
+def test_rutear_omite_los_productos_agotados(servicio):
   completo = servicio.rutear([1, 2, 4], ACTUAL)
-  assert completo.omitidos == []
-  assert len(completo.productos) == 3
+  assert completo.omitidos == [] and len(completo.productos) == 3
 
-  bajo = servicio.rutear([1, 2, 4], ACTUAL, stock_tope=2)
-  sin_stock = [p for p, n in servicio.stock(2).items() if n < 1]
-  assert bajo.omitidos == [p for p in [1, 2, 4] if p in sin_stock]
-  assert all(p not in bajo.productos for p in bajo.omitidos)
-  assert len(bajo.productos) + len(bajo.omitidos) == 3
+  bajo = servicio.rutear([1, 2, 4], ACTUAL, stock_excepciones={2: 0})
+  assert bajo.omitidos == [2]
+  assert 2 not in bajo.productos
+  assert len(bajo.productos) == 2
 
 
 def test_rutear_sin_ningun_producto_con_stock_da_error_claro(servicio):
-  sin_stock = [p for p, n in servicio.stock(2).items() if n < 1]
   with pytest.raises(ValueError, match="Ningún producto del pedido tiene stock"):
-    servicio.rutear(sin_stock[:2], ACTUAL, stock_tope=2)
+    servicio.rutear([1, 2], ACTUAL, stock_base=0)
 
 
 def test_el_stock_no_se_descuenta_entre_pedidos(servicio):
@@ -341,9 +339,8 @@ def test_cantidades_coincide_con_la_fuerza_bruta():
 
 
 def test_se_recoge_lo_que_haya_cuando_falta_stock(servicio):
-  disponible = servicio.stock()[1]
-  r = servicio.rutear({1: disponible + 5}, ACTUAL)
-  assert r.cantidades == {1: disponible}
+  r = servicio.rutear({1: 9}, ACTUAL, stock_excepciones={1: 4})
+  assert r.cantidades == {1: 4}
   assert r.faltantes == {1: 5}
   assert r.omitidos == []
 
