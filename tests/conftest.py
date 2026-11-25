@@ -12,6 +12,14 @@ PRODUCTOS = (
     "8,Dog food,5,4\n"
 )
 PEDIDOS = {1: [1, 2, 4], 2: [1, 2, 4, 6], 3: [1, 2], 4: [1, 4, 8], 5: [3, 5, 6, 7], 6: [1, 2, 3]}
+# pesos de juguete, con el mismo formato de dataset/pesos.csv
+PESOS = (
+    "product_id,product_name,department,peso_kg,origen\n"
+    "1,Banana,produce,0.12,revisado\n2,Apple,produce,0.20,revisado\n"
+    "3,Kale,produce,0.23,categoria\n4,Milk,dairy eggs,1.90,revisado\n"
+    "5,Eggs,dairy eggs,0.70,revisado\n6,Chips,snacks,0.20,categoria\n"
+    "7,Nuts,snacks,0.45,categoria\n8,Dog food,pets,5.00,categoria\n"
+)
 
 
 @pytest.fixture
@@ -23,4 +31,5 @@ def carpeta_datos(tmp_path):
     for k, p in enumerate(prods, start=1):
       lineas.append(f"{oid},{p},{k},0")
   (tmp_path / "order_products__train.csv").write_text("\n".join(lineas) + "\n")
+  (tmp_path / "pesos.csv").write_text(PESOS)
   return tmp_path

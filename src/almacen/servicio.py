@@ -39,14 +39,24 @@ class Resultado:
   tiempo_s: float           # solo el tiempo del algoritmo de ruteo
   layout: str
   camino: list = field(default_factory=list)   # etiquetas de paso, de "depot" a "depot"
+  vueltas: list = field(default_factory=list)  # una por viaje del carrito: productos, kg y metros
+  costo_total: float = 0.0                     # metros de todas las vueltas (= costo si es una sola)
+  capacidad_kg: float = config.CAPACIDAD_CARRITO_KG
+  max_unidades: int = config.CAPACIDAD_CARRITO_UNIDADES
+  omitidos: list = field(default_factory=list)    # productos del pedido que no tenían stock
+  stock_base: int = config.STOCK_BASE             # unidades que hay de cada producto
+  stock_excepciones: dict = field(default_factory=dict)  # productos con stock configurado aparte
+  cantidades: dict = field(default_factory=dict)  # producto -> unidades que se recogen
+  faltantes: dict = field(default_factory=dict)   # producto -> unidades que no había
 
 
 class Servicio:
   def __init__(self, nodos, pedidos, g1, pasillos_actual, pasillos_optimizado,
                capacidad=config.CAPACIDAD_PASILLO, pedidos_prueba=None,
-               g1_construccion=None, info_construccion=None):
+               g1_construccion=None, info_construccion=None, pesos=None):
     self.nodos = nodos
-    self.info = datos.info_productos(nodos)
+    self.pesos = pesos
+    self.info = datos.info_productos(nodos, pesos)
     self.pedidos = pedidos
     self.g1 = g1
     # Sin separación explícita, todo se construye y se prueba con los mismos pedidos.
@@ -71,6 +81,7 @@ class Servicio:
 
     fraccion_prueba: parte de los pedidos que se reserva para evaluar (0 = sin separar)."""
     d = datos.cargar_datos(ruta)
+    pesos = datos.cargar_pesos(ruta)
     nodos = datos.seleccionar_nodos(d, por_zona)
     pedidos = datos.pedidos_filtrados(d, nodos)
     if fraccion_prueba:
@@ -88,11 +99,12 @@ class Servicio:
     frecuencias = Counter(p for productos in construccion.values() for p in productos)
     nodos_construccion = nodos.copy()
     nodos_construccion["freq"] = [frecuencias.get(int(p), 0) for p in nodos["product_id"]]
-    info_construccion = datos.info_productos(nodos_construccion)
+    info_construccion = datos.info_productos(nodos_construccion, pesos)
     actual = datos.pasillos_desde_catalogo(nodos)
     optimizado = reubicacion.reubicar(g1_construccion, info_construccion, len(actual), capacidad)
     return cls(nodos, pedidos, g1, actual, optimizado, capacidad, pedidos_prueba=prueba,
-               g1_construccion=g1_construccion, info_construccion=info_construccion)
+               g1_construccion=g1_construccion, info_construccion=info_construccion,
+               pesos=pesos)
 
   # ---------- layouts ----------
   def agregar_layout(self, nombre, pasillos):
@@ -181,15 +193,68 @@ class Servicio:
     return oid, list(self.pedidos[oid])
 
   # ---------- ruteo ----------
-  def rutear(self, productos, layout=ACTUAL, tecnica="auto"):
-    """Ruta de picking de un pedido. tecnica: "auto" o una clave de TECNICAS."""
-    productos = list(dict.fromkeys(productos))
-    if not productos:
+  @staticmethod
+  def unidades_pedidas(productos):
+    """Normaliza un pedido: acepta una lista de productos (una unidad de cada uno) o un
+    diccionario {producto: unidades}. Devuelve siempre el diccionario."""
+    if isinstance(productos, dict):
+      return {int(p): max(1, int(q)) for p, q in productos.items() if int(q) > 0}
+    return {p: 1 for p in dict.fromkeys(productos)}
+
+  def stock(self, base=None, excepciones=None):
+    """Unidades en almacén de cada producto (datos.calcular_stock).
+
+    `base` es la cantidad que hay de todos los productos y `excepciones` un diccionario
+    {producto: unidades} para los que se configuren aparte."""
+    base = config.STOCK_BASE if base is None else int(base)
+    return datos.calcular_stock(self.info, base, excepciones)
+
+  def peso_pedido(self, productos):
+    """Kilos que suma un pedido (lista de productos o {producto: unidades})."""
+    return sum(self.info[p]["peso"] * q
+               for p, q in self.unidades_pedidas(productos).items())
+
+  def rutear(self, productos, layout=ACTUAL, tecnica="auto", capacidad_kg=None,
+             max_unidades=None, stock_base=None, stock_excepciones=None):
+    """Ruta de picking de un pedido. tecnica: "auto" o una clave de TECNICAS.
+
+    El carrito se limita por peso (`capacidad_kg`) y por cantidad de productos
+    (`max_unidades`); se pueden usar juntos o por separado. Si el pedido no entra, la
+    ruta se parte en varias vueltas que pasan por el depot a descargar
+    (ruteo.dividir_en_vueltas). Para quitar un tope, pasar float("inf") o None.
+
+    `stock_base` son las unidades que hay de cada producto y `stock_excepciones` las de
+    los que se configuren aparte. Los productos del pedido que no tengan stock se omiten
+    de la ruta y quedan en Resultado.omitidos; si hay menos de las pedidas se recoge lo
+    que haya y el faltante queda en Resultado.faltantes."""
+    pedido = self.unidades_pedidas(productos)
+    if not pedido:
       raise ValueError("El pedido está vacío")
+    productos = list(pedido)
     lo = self.layouts[layout]
     faltan = [p for p in productos if p not in lo.pasillo]
     if faltan:
       raise ValueError(f"Productos que no están en el almacén: {faltan}")
+
+    # el stock se mira después de comprobar que el producto existe, para no confundir
+    # "no está en el almacén" con "está agotado"
+    base_stock = config.STOCK_BASE if stock_base is None else int(stock_base)
+    excepciones = dict(stock_excepciones or {})
+    disponible = self.stock(base_stock, excepciones)
+    llevados, faltantes, omitidos = {}, {}, []
+    for p, pedidas in pedido.items():
+      hay = disponible[p]
+      if hay < 1:
+        omitidos.append(p)
+        faltantes[p] = pedidas
+      else:
+        llevados[p] = min(pedidas, hay)
+        if pedidas > hay:
+          faltantes[p] = pedidas - hay
+    productos = list(llevados)
+    if not productos:
+      raise ValueError(
+          f"Ningún producto del pedido tiene stock (base de {base_stock} unidades)")
     n = len(productos)
     dist = self.distancias[layout]
     m = dist.matriz(["depot"] + productos)
@@ -207,9 +272,35 @@ class Servicio:
       nombre = tecnica
     tiempo = time.perf_counter() - t0
 
+    capacidad = config.CAPACIDAD_CARRITO_KG if capacidad_kg is None else float(capacidad_kg)
+    tope_unidades = config.CAPACIDAD_CARRITO_UNIDADES if max_unidades is None else max_unidades
+    tope_unidades = None if tope_unidades in (None, float("inf")) else int(tope_unidades)
+    kilos = [0.0] + [self.info[p]["peso"] for p in productos]
+    pesados = [p for p in productos if self.info[p]["peso"] > capacidad]
+    if pesados:
+      nombre_p = self.info[pesados[0]]["nombre"]
+      raise ValueError(
+          f"Una unidad de «{nombre_p}» pesa {self.info[pesados[0]]['peso']:.2f} kg y el "
+          f"carrito aguanta {capacidad:.2f} kg: el pedido no se puede recoger")
+    por_indice = {i + 1: llevados[p] for i, p in enumerate(productos)}
+    costo_total, cortes = ruteo.dividir_en_vueltas(m, orden, kilos, capacidad, tope_unidades,
+                                                   por_indice)
+
     visita = [productos[i - 1] for i in orden]
+    vueltas, camino = [], []
+    for indices in cortes:
+      prods = list(dict.fromkeys(productos[i - 1] for i in indices))
+      cuenta = Counter(productos[i - 1] for i in indices)
+      paso = self._camino(dist, prods)
+      vueltas.append({"productos": prods, "cantidades": dict(cuenta),
+                      "unidades": len(indices),
+                      "kg": round(ruteo.peso_total(indices, kilos), 2),
+                      "metros": float(ruteo.costo_ciclo(m, indices)),
+                      "camino": paso})
+      camino.extend(paso if not camino else paso[1:])
     return Resultado(productos, visita, float(costo), nombre, tiempo, layout,
-                     self._camino(dist, visita))
+                     camino, vueltas, float(costo_total), capacidad, tope_unidades,
+                     omitidos, base_stock, excepciones, llevados, faltantes)
 
   @staticmethod
   def _camino(dist, visita):
@@ -240,28 +331,36 @@ class Servicio:
     return ruteo.backtracking_traza(m)[2]
 
   def tramos(self, resultado):
-    """La ruta de un Resultado, tramo por tramo: lista de dicts con desde, hasta (etiquetas:
-    "depot" o product_id), metros del tramo y metros acumulados."""
+    """La ruta de un Resultado, tramo por tramo: lista de dicts con la vuelta a la que
+    pertenece, desde, hasta (etiquetas: "depot" o product_id), metros del tramo y metros
+    acumulados."""
     dist = self.distancias[resultado.layout]
-    paradas = ["depot"] + list(resultado.orden) + ["depot"]
     filas, acumulado = [], 0.0
-    for a, b in zip(paradas, paradas[1:]):
-      metros = float(dist.entre(a, b))
-      acumulado += metros
-      filas.append({"desde": a, "hasta": b, "metros": metros, "acumulado": acumulado})
+    for n_vuelta, vuelta in enumerate(resultado.vueltas, start=1):
+      paradas = ["depot"] + list(vuelta["productos"]) + ["depot"]
+      for a, b in zip(paradas, paradas[1:]):
+        metros = float(dist.entre(a, b))
+        acumulado += metros
+        filas.append({"vuelta": n_vuelta, "desde": a, "hasta": b, "metros": metros,
+                      "acumulado": acumulado})
     return filas
 
-  def comparar_tecnicas(self, productos, layout=ACTUAL):
+  def comparar_tecnicas(self, productos, layout=ACTUAL, **opciones):
     """Corre backtracking, DP optimizada y voraz sobre el mismo pedido.
 
-    Devuelve {tecnica: Resultado, o None si el pedido es demasiado grande para ella}."""
-    n = len(dict.fromkeys(productos))
+    `opciones` son las mismas de rutear (capacidad_kg, max_unidades, stock_base,
+    stock_excepciones), para que la comparación use la configuración de la pantalla."""
+    # cuentan los productos que de verdad se van a rutear: los agotados no entran, y
+    # sin esto una tecnica podia salir "no viable" por productos que ni se recogen
+    disponible = self.stock(opciones.get("stock_base"), opciones.get("stock_excepciones"))
+    n = sum(1 for p in self.unidades_pedidas(productos) if disponible.get(p, 0) >= 1)
     salida = {}
     for nombre in ("backtracking", "dp", "voraz"):
-      salida[nombre] = (self.rutear(productos, layout, nombre)
+      salida[nombre] = (self.rutear(productos, layout, nombre, **opciones)
                         if n <= TECNICAS[nombre][1] else None)
     return salida
 
-  def comparar_layouts(self, productos, tecnica="auto"):
+  def comparar_layouts(self, productos, tecnica="auto", **opciones):
     """El mismo pedido en el layout actual y en el optimizado."""
-    return {nombre: self.rutear(productos, nombre, tecnica) for nombre in (ACTUAL, OPTIMIZADO)}
+    return {nombre: self.rutear(productos, nombre, tecnica, **opciones)
+            for nombre in (ACTUAL, OPTIMIZADO)}

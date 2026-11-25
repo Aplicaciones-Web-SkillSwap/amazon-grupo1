@@ -10,7 +10,7 @@ n productos. Devuelven (costo, orden) con `orden` = índices 1..n en el orden de
   backtracking  permutaciones con poda      O(n!) peor caso, óptimo
   held_karp     programación dinámica       O(n^2 * 2^n)   óptimo
 
-TÉCNICA: VORAZ (voraz), FUERZA BRUTA (fuerza_bruta), BACKTRACKING (backtracking) y PROGRAMACIÓN DINÁMICA (held_karp, held_karp_opt). resolver elige según el tamaño del pedido; Servicio.rutear lo invoca (pestaña Ruteo).
+TÉCNICA: VORAZ (voraz), FUERZA BRUTA (fuerza_bruta), BACKTRACKING (backtracking) y PROGRAMACIÓN DINÁMICA (held_karp, held_karp_opt, dividir_en_vueltas). resolver elige según el tamaño del pedido; Servicio.rutear lo invoca (pestaña Ruteo).
 """
 from itertools import permutations
 from math import inf
@@ -309,6 +309,87 @@ def held_karp_opt(m, poda=False):
   orden.reverse()
   return mejor, orden
 
+
+# ---------------------------------------------------------------------------------------
+# Vueltas del carrito (capacidad en kg)
+# ---------------------------------------------------------------------------------------
+def dividir_en_vueltas(m, orden, pesos, capacidad, max_unidades=None, cantidades=None):
+  """Parte la ruta `orden` en vueltas que entren en el carrito, con la menor distancia.
+
+  El carrito sale del depot, recoge los productos de una vuelta y regresa al depot a
+  descargar antes de empezar la siguiente. Como el orden de visita ya viene dado (es la
+  ruta óptima que calculó la técnica de ruteo), cada vuelta es un tramo seguido de ese
+  orden y solo hay que decidir dónde cortar.
+
+  El carrito se limita de dos formas, que se pueden usar juntas o por separado:
+  `capacidad` son los kg que aguanta y `max_unidades` cuántas UNIDADES le caben (no
+  productos distintos: 3 unidades de un mismo producto ocupan 3; None = sin tope). Para limitar solo por unidades, basta pasar capacidad = float("inf").
+
+  `cantidades` dice cuántas unidades se recogen de cada índice (None = una de cada uno).
+  Si de un producto se piden más unidades de las que caben, se reparten entre vueltas y
+  su ubicación se visita en cada una de ellas.
+
+  `pesos` se indexa igual que `m`: pesos[i] son los kg de UNA unidad del producto i
+  (pesos[0], el depot, no se usa). Devuelve (costo_total, vueltas) con vueltas = lista de
+  listas de índices, repetidos tantas veces como unidades se lleven en esa vuelta.
+
+  Programación dinámica, O(n^2):
+      mejor[i] = min sobre k de  mejor[k-1] + costo(depot -> orden[k-1..i-1] -> depot)
+  tomando solo los tramos que entran en el carrito. Para cada i se recorre el inicio
+  del tramo hacia atrás acumulando el peso y el tramo interno, así cada par (k, i) cuesta
+  O(1) y el total es O(n^2).
+
+  El resultado es el mejor corte *de ese orden*, que es lo que pide el enunciado; no
+  rehace la ruta, así que no es necesariamente el óptimo del problema con capacidad."""
+  # una entrada por unidad a recoger, en el orden de visita
+  if cantidades is None:
+    unidades = list(orden)
+  else:
+    unidades = []
+    for i in orden:
+      unidades.extend([i] * int(cantidades.get(i, 1)))
+  n = len(unidades)
+  if n == 0:
+    return 0.0, []
+
+  if max_unidades is not None and max_unidades < 1:
+    raise ValueError("El carrito tiene que llevar al menos una unidad por vuelta")
+  exceso = [i for i in unidades if pesos[i] > capacidad]
+  if exceso:
+    raise ValueError(
+        f"El producto {exceso[0]} pesa {pesos[exceso[0]]:.2f} kg y el carrito aguanta "
+        f"{capacidad:.2f} kg: el pedido no se puede recoger")
+
+  mejor = [0.0] + [inf] * n
+  corte = [0] * (n + 1)
+  for i in range(1, n + 1):
+    peso = interno = 0.0
+    for k in range(i, 0, -1):                 # la vuelta cubre orden[k-1 .. i-1]
+      if max_unidades is not None and i - k + 1 > max_unidades:
+        break
+      peso += pesos[unidades[k - 1]]
+      if peso > capacidad:
+        break
+      if k < i:
+        # si las dos unidades son del mismo producto, m[a][a] = 0 y no suma nada
+        interno += m[unidades[k - 1]][unidades[k]]
+      costo = m[0][unidades[k - 1]] + interno + m[unidades[i - 1]][0]
+      if mejor[k - 1] + costo < mejor[i]:
+        mejor[i] = mejor[k - 1] + costo
+        corte[i] = k - 1
+
+  vueltas, i = [], n
+  while i > 0:
+    j = corte[i]
+    vueltas.append(list(unidades[j:i]))
+    i = j
+  vueltas.reverse()
+  return mejor[n], vueltas
+
+
+def peso_total(orden, pesos):
+  """Kilos que suman los productos de una vuelta o de un pedido."""
+  return sum(pesos[i] for i in orden)
 
 # ---------------------------------------------------------------------------------------
 # Selección de la técnica según el tamaño del pedido

@@ -38,18 +38,61 @@ def seleccionar_nodos(datos, por_zona=config.PRODUCTOS_POR_ZONA):
   return seleccion.join(info, on="product_id", rsuffix="_")
 
 
-def info_productos(nodos):
-  """Diccionario product_id -> datos del producto seleccionado."""
-  info = {}
+def cargar_pesos(ruta=config.RUTA_DATOS):
+  """Diccionario product_id -> peso_kg, leído de pesos.csv."""
+  archivo = Path(ruta) / "pesos.csv"
+  if not archivo.exists():
+    raise FileNotFoundError(
+        f"No se encontró el archivo de pesos: {archivo}. "
+        "Debe tener las columnas product_id, product_name, department, peso_kg y origen.")
+  tabla = pd.read_csv(archivo)
+  faltan = {"product_id", "peso_kg"} - set(tabla.columns)
+  if faltan:
+    raise ValueError(f"A {archivo} le faltan columnas: {sorted(faltan)}")
+  return {int(f.product_id): float(f.peso_kg) for f in tabla.itertuples()}
+
+
+def info_productos(nodos, pesos=None):
+  """Diccionario product_id -> datos del producto seleccionado, con su peso en kg.
+
+  `pesos` es un diccionario product_id -> kg (datos.cargar_pesos); si no se pasa, se lee
+  pesos.csv de la carpeta de datos por defecto. Si algún producto seleccionado no tiene
+  peso, se corta con un error que dice cuáles son."""
+  if pesos is None:
+    pesos = cargar_pesos()
+  info, sin_peso = {}, []
   for fila in nodos.itertuples():
-    info[int(fila.product_id)] = {
+    pid = int(fila.product_id)
+    if pid not in pesos:
+      sin_peso.append(f"{pid} ({fila.product_name})")
+      continue
+    info[pid] = {
         "nombre": fila.product_name,
         "zona": fila.zona,
         "departamento": fila.department,
         "pasillo": int(fila.aisle_id),
         "freq": int(fila.freq),
+        "peso": pesos[pid],
     }
+  if sin_peso:
+    raise ValueError(
+        f"Faltan {len(sin_peso)} productos en pesos.csv: {', '.join(sin_peso[:5])}"
+        + (" ..." if len(sin_peso) > 5 else ""))
   return info
+
+
+def calcular_stock(info, base=config.STOCK_BASE, excepciones=None):
+  """Unidades en almacén de cada producto.
+
+  Todos los productos tienen `base` unidades, salvo los que aparezcan en `excepciones`
+  ({producto: unidades}), que llevan la cantidad indicada. Un producto con 0 unidades
+  está agotado."""
+  if base < 0:
+    raise ValueError("El stock no puede ser negativo")
+  excepciones = excepciones or {}
+  if any(n < 0 for n in excepciones.values()):
+    raise ValueError("El stock no puede ser negativo")
+  return {p: int(excepciones.get(p, base)) for p in info}
 
 
 def pedidos_filtrados(datos, nodos):

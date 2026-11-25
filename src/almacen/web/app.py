@@ -160,16 +160,31 @@ def elegir_pedido(s):
     else:
       elegidos = st.multiselect("Productos (escribir para buscar)", sorted(s.info),
                                 format_func=lambda p: s.info[p]["nombre"])
+      cuantos = {}
+      if elegidos:
+        st.caption("Unidades de cada producto")
+        for prod in elegidos:
+          unitario = s.info[prod]["peso"]
+          cuantos[prod] = st.number_input(
+              f'{s.info[prod]["nombre"][:34]} · {unitario:.2f} kg c/u',
+              min_value=1, max_value=99, value=1, step=1, key=f"cant_{prod}")
+          st.caption(f"{cuantos[prod]} × {unitario:.2f} kg = "
+                     f"**{cuantos[prod] * unitario:.2f} kg**")
       if st.button("Usar mi selección"):
         if not elegidos:
           st.warning("Se debe elegir al menos un producto.")
         else:
-          st.session_state["pedido"] = ("propio", list(elegidos))
+          st.session_state["pedido"] = ("propio", list(elegidos), dict(cuantos))
   except ValueError as e:
     st.warning(str(e))
-  oid, productos = st.session_state["pedido"]
-  st.caption(f"Pedido {oid}: {len(productos)} productos distintos")
-  return oid, productos
+  guardado = st.session_state["pedido"]
+  oid, productos = guardado[0], guardado[1]
+  cantidades = guardado[2] if len(guardado) > 2 else {p: 1 for p in productos}
+  unidades = sum(cantidades.values())
+  extra = f" · {unidades} unidades" if unidades != len(productos) else ""
+  st.caption(f"Pedido {oid}: {len(productos)} productos distintos{extra} · "
+             f"{s.peso_pedido(cantidades):.2f} kg")
+  return oid, productos, cantidades
 
 
 def ms_texto(segundos):
@@ -184,26 +199,89 @@ def num_pasillo(s, p, layout):
   return s.layouts[layout].pasillo[p] + 1
 
 
-def tabla_visita(s, productos, layout, orden=None):
+def tabla_visita(s, productos, layout, orden=None, cantidades=None):
+  cantidades = cantidades or {}
   filas = []
   for k, p in enumerate(orden or productos, start=1):
     filas.append({"Visita": k if orden else None, "Producto": s.info[p]["nombre"],
-                  "Zona": s.info[p]["zona"], "Pasillo": num_pasillo(s, p, layout)})
+                  "Unidades": cantidades.get(p, 1), "Zona": s.info[p]["zona"],
+                  "Pasillo": num_pasillo(s, p, layout)})
   return pd.DataFrame(filas)
 
 
 VELOCIDADES = {"Lenta": 2.2, "Normal": 1.0, "Rápida": 0.4}   # factor sobre el tiempo por cuadro
+LIMITES = {"Peso (kg)": "peso", "Unidades": "unidades", "Peso y unidades": "ambos"}
+
+
+def stock_texto(s, base, excepciones=None):
+  """Cuánto stock hay en el almacén, en unidades y en kilos."""
+  stock = s.stock(base, excepciones)
+  unidades = sum(stock.values())
+  kilos = sum(n * s.info[p]["peso"] for p, n in stock.items())
+  agotados = sum(1 for n in stock.values() if n < 1)
+  texto = f"Almacén: **{unidades:,} unidades** · **{kilos:,.0f} kg**"
+  return texto + (f" · {agotados} productos agotados" if agotados else " · sin agotados")
+
+
+def controles_excepciones(s):
+  """Productos con un stock distinto al del resto. Devuelve {producto: unidades}."""
+  guardadas = st.session_state.setdefault("stock_excep", {})
+  with st.expander(f"Configurar un producto en específico ({len(guardadas)})"):
+    prod = st.selectbox("Buscar producto", sorted(s.info), index=None,
+                        placeholder="Escribir para buscar…",
+                        format_func=lambda p: s.info[p]["nombre"], key="excep_prod")
+    unidades = st.number_input("Unidades de ese producto", min_value=0,
+                               max_value=int(config.STOCK_MAXIMO), value=0, step=1,
+                               key="excep_unidades",
+                               help="0 deja el producto agotado.")
+    c1, c2 = st.columns(2)
+    if c1.button("Guardar", width="stretch", disabled=prod is None):
+      guardadas[prod] = int(unidades)
+    if c2.button("Quitar todas", width="stretch", disabled=not guardadas):
+      guardadas.clear()
+    for p, n in list(guardadas.items()):
+      fila, boton = st.columns([4, 1])
+      fila.write(f"{s.info[p]['nombre'][:30]}: **{n}**" + (" (agotado)" if n == 0 else ""))
+      if boton.button("✕", key=f"quitar_{p}"):
+        del guardadas[p]
+        st.rerun()
+  return dict(guardadas)
+
+
+def limite_texto(r):
+  """Cómo quedó limitado el carrito, para explicar por qué salieron esas vueltas."""
+  partes = []
+  if r.capacidad_kg != float("inf"):
+    partes.append(f"{r.capacidad_kg:.0f} kg")
+  if r.max_unidades is not None:
+    partes.append(f"{r.max_unidades} unidades")
+  limite = " y ".join(partes) if partes else "sin tope"
+  return (f"Carrito de {limite}. El pedido lleva {sum(v['unidades'] for v in r.vueltas)} "
+          f"productos y pesa {sum(v['kg'] for v in r.vueltas):.2f} kg.")
 
 
 def tabla_tramos(s, r):
   """La ruta calculada, tramo por tramo, con los metros de cada uno y el acumulado."""
   def nombre(e):
     return "Depot" if e == "depot" else s.info[e]["nombre"][:34]
-  return pd.DataFrame([{"Tramo": k, "Desde": nombre(t["desde"]), "Hasta": nombre(t["hasta"]),
+  return pd.DataFrame([{"Tramo": k, "Vuelta": t["vuelta"], "Desde": nombre(t["desde"]),
+                        "Hasta": nombre(t["hasta"]),
                         "Pasillo": "" if t["hasta"] == "depot"
                         else str(num_pasillo(s, t["hasta"], r.layout)),
                         "Metros": round(t["metros"]), "Acumulado": round(t["acumulado"])}
                        for k, t in enumerate(s.tramos(r), start=1)])
+
+
+def tabla_vueltas(s, r):
+  """Una fila por vuelta del carrito: cuántos productos lleva, cuántos kilos y cuántos metros."""
+  def detalle(v):
+    return ", ".join(f"{s.info[p]['nombre'][:20]}" +
+                     (f" x{v['cantidades'][p]}" if v["cantidades"][p] > 1 else "")
+                     for p in v["productos"])
+  return pd.DataFrame([{"Vuelta": k, "Productos": len(v["productos"]),
+                        "Unidades": v["unidades"], "Peso (kg)": round(v["kg"], 2),
+                        "Metros": round(v["metros"]), "Detalle": detalle(v)}
+                       for k, v in enumerate(r.vueltas, start=1)])
 
 
 def carrera(s, clave, panes, factor=1.0):
@@ -220,7 +298,7 @@ def pestana_ruteo(s):
   izq, der = st.columns([1, 2], gap="large")
   with izq:
     st.markdown("#### 1. Pedido")
-    oid, productos = elegir_pedido(s)
+    oid, productos, cantidades = elegir_pedido(s)
     st.markdown("#### 2. Técnica")
     tecnica = textos.TECNICAS[st.selectbox("Técnica", list(textos.TECNICAS),
                                            label_visibility="collapsed")]
@@ -228,6 +306,34 @@ def pestana_ruteo(s):
     st.markdown("#### 3. Layout")
     layout = textos.LAYOUTS[st.radio("Layout", list(textos.LAYOUTS),
                                      label_visibility="collapsed")]
+    st.markdown("#### 4. Carrito")
+    modo = LIMITES[st.radio("Limitar el carrito por", list(LIMITES), horizontal=True,
+                            help="Si el pedido no entra en el carrito, vuelve al depot a "
+                                 "descargar y sale de nuevo. Bajar el tope (por ejemplo a "
+                                 "10 kg o a 4 unidades) para ver varias vueltas.")]
+    capacidad, tope = float("inf"), float("inf")
+    if modo in ("peso", "ambos"):
+      capacidad = st.number_input(
+          "Capacidad (kg)", min_value=0.5,
+          max_value=float(config.CAPACIDAD_CARRITO_KG * 10),
+          value=float(config.CAPACIDAD_CARRITO_KG), step=5.0)
+    if modo in ("unidades", "ambos"):
+      tope = st.number_input(
+          "Unidades por vuelta", min_value=1,
+          max_value=int(config.CAPACIDAD_CARRITO_UNIDADES),
+          value=int(config.CAPACIDAD_CARRITO_UNIDADES), step=1)
+    st.caption(f"Este pedido: **{sum(cantidades.values())} unidades** de "
+               f"**{len(productos)} productos**, **{s.peso_pedido(cantidades):.2f} kg**.")
+
+    st.markdown("#### 5. Stock del almacén")
+    stock_base = st.number_input(
+        "Unidades de cada producto", min_value=0, max_value=int(config.STOCK_MAXIMO),
+        value=int(config.STOCK_BASE), step=10,
+        help="Cantidad que hay de todos los productos del almacén. Abajo se puede "
+             "configurar aparte un producto concreto, por ejemplo dejarlo en 0 para que "
+             "esté agotado.")
+    excepciones = controles_excepciones(s)
+    st.caption(stock_texto(s, stock_base, excepciones))
     factor = VELOCIDADES[st.radio("Velocidad de las animaciones", list(VELOCIDADES), index=1,
                                   horizontal=True)]
     calcular = st.button("Calcular ruta", type="primary", width="stretch")
@@ -235,24 +341,28 @@ def pestana_ruteo(s):
     comparar_t = c1.button("Carrera de técnicas", width="stretch")
     comparar_l = c2.button("Carrera de layouts", width="stretch")
 
-  clave = (str(oid), tuple(productos), layout, tecnica)
+  opciones = dict(capacidad_kg=capacidad, max_unidades=tope, stock_base=stock_base,
+                  stock_excepciones=excepciones)
+  clave = (str(oid), tuple(sorted(cantidades.items())), layout, tecnica, float(capacidad),
+           float(tope), int(stock_base), tuple(sorted(excepciones.items())))
   if calcular:
     try:
       with st.spinner("Calculando la ruta…"):
-        st.session_state["res"] = (clave, s.rutear(productos, layout, tecnica))
+        st.session_state["res"] = (clave, s.rutear(cantidades, layout, tecnica, **opciones))
     except ValueError as e:
       st.warning(str(e))
   if comparar_t:
     try:
       with st.spinner("Ejecutando las tres técnicas…"):
-        st.session_state["cmp_t"] = (clave[:3], s.comparar_tecnicas(productos, layout))
+        st.session_state["cmp_t"] = (clave[:3],
+                                     s.comparar_tecnicas(cantidades, layout, **opciones))
     except ValueError as e:
       st.warning(str(e))
   if comparar_l:
     try:
       with st.spinner("Ruteando en ambos layouts…"):
         st.session_state["cmp_l"] = ((clave[0], clave[1], tecnica),
-                                     s.comparar_layouts(productos, tecnica))
+                                     s.comparar_layouts(cantidades, tecnica, **opciones))
     except ValueError as e:
       st.warning(str(e))
 
@@ -260,15 +370,30 @@ def pestana_ruteo(s):
   r = guardado[1] if guardado and guardado[0] == clave else None
   with der:
     if r:
-      m = st.columns(3)
-      m[0].metric("Distancia total", f"{r.costo:,.0f} m")
-      m[1].metric("Tiempo del algoritmo", ms_texto(r.tiempo_s))
-      m[2].markdown(f"<span style='font-size:0.85rem;color:#6b6b6b'>Técnica ejecutada</span><br>"
+      m = st.columns(4)
+      m[0].metric("Distancia total", f"{r.costo_total:,.0f} m",
+                  delta=None if len(r.vueltas) < 2 else f"+{r.costo_total - r.costo:,.0f} m "
+                  "por descargar", delta_color="inverse")
+      m[1].metric("Vueltas del carrito", len(r.vueltas), help=limite_texto(r))
+      m[2].metric("Tiempo del algoritmo", ms_texto(r.tiempo_s))
+      m[3].markdown(f"<span style='font-size:0.85rem;color:#6b6b6b'>Técnica ejecutada</span><br>"
                     f"<span style='font-size:1.05rem;font-weight:600'>"
                     f"{textos.NOMBRE_TECNICA.get(r.tecnica, r.tecnica)}</span>",
                     unsafe_allow_html=True)
     else:
       st.info("Para ver el recorrido, presionar **Calcular ruta** y luego **Reproducir**.")
+    if r and r.faltantes:
+      detalle = ", ".join(f"{s.info[p]['nombre'][:26]} (faltan {q})"
+                          for p, q in list(r.faltantes.items())[:5])
+      st.info(f"**Stock insuficiente**: se recoge lo que hay. {detalle}"
+              + (" …" if len(r.faltantes) > 5 else ""))
+    if r and r.omitidos:
+      nombres = ", ".join(s.info[p]["nombre"][:30] for p in r.omitidos[:6])
+      st.warning(f"**{len(r.omitidos)} producto(s) sin stock** y fuera de la ruta: {nombres}"
+                 + (" …" if len(r.omitidos) > 6 else "")
+                 + f". El almacén tiene {r.stock_base} unidades de cada producto"
+                 + (f" y {len(r.stock_excepciones)} configurado(s) aparte." if
+                    r.stock_excepciones else "."))
     c1, c2 = st.columns(2)
     acercar = c1.checkbox("Acercar a la ruta", value=False, disabled=r is None)
     metros = c2.checkbox("Mostrar los metros de cada tramo", value=False, disabled=r is None)
@@ -282,10 +407,20 @@ def pestana_ruteo(s):
                "se puede avanzar o retroceder, y al pasar el mouse sobre un punto se ve el "
                "nombre del producto.")
     if r:
+      if len(r.vueltas) > 1:
+        st.markdown("**Vueltas del carrito**")
+        st.plotly_chart(mapas.mapa_vueltas(s, r), width="stretch", key="mapa_vueltas",
+                        config={"displaylogo": False})
+        st.caption(f"{limite_texto(r)} Por eso se recoge en {len(r.vueltas)} vueltas: cada una "
+                   "sale del depot, recoge sus productos y vuelve a descargar. El corte se "
+                   "elige con programación dinámica, de modo que la suma de las vueltas sea la "
+                   "menor posible.")
+        st.dataframe(tabla_vueltas(s, r), hide_index=True, width="stretch")
       st.markdown("**La ruta, tramo por tramo**")
       st.dataframe(tabla_tramos(s, r), hide_index=True, width="stretch")
     else:
-      st.dataframe(tabla_visita(s, productos, layout), hide_index=True, width="stretch")
+      st.dataframe(tabla_visita(s, productos, layout, cantidades=cantidades),
+                   hide_index=True, width="stretch")
 
   g = st.session_state.get("cmp_t")
   if g and g[0] == clave[:3]:
@@ -344,7 +479,7 @@ def pestana_ruteo(s):
                     "Reducción": "—" if nombre == ACTUAL or not base
                     else f"{100 * (base - x.costo) / base:+.1f} %"})
     st.dataframe(pd.DataFrame(filas), hide_index=True, width="stretch")
-  asi_piensa(s, productos, layout, factor)
+  asi_piensa(s, list(r.cantidades) if r else productos, layout, factor)
 
 
 MAX_PASO_A_PASO = 9      # productos: con más, fuerza bruta y backtracking tardan demasiado
