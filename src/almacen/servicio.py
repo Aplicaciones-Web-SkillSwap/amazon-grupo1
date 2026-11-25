@@ -345,17 +345,19 @@ class Servicio:
                       "acumulado": acumulado})
     return filas
 
-  def comparar_tecnicas(self, productos, layout=ACTUAL):
+  def comparar_tecnicas(self, productos, layout=ACTUAL, **opciones):
     """Corre backtracking, DP optimizada y voraz sobre el mismo pedido.
 
-    Devuelve {tecnica: Resultado, o None si el pedido es demasiado grande para ella}."""
+    `opciones` son las mismas de rutear (capacidad_kg, max_unidades, stock_base,
+    stock_excepciones), para que la comparación use la configuración de la pantalla."""
     n = len(dict.fromkeys(productos))
     salida = {}
     for nombre in ("backtracking", "dp", "voraz"):
-      salida[nombre] = (self.rutear(productos, layout, nombre)
+      salida[nombre] = (self.rutear(productos, layout, nombre, **opciones)
                         if n <= TECNICAS[nombre][1] else None)
     return salida
 
-  def comparar_layouts(self, productos, tecnica="auto"):
+  def comparar_layouts(self, productos, tecnica="auto", **opciones):
     """El mismo pedido en el layout actual y en el optimizado."""
-    return {nombre: self.rutear(productos, nombre, tecnica) for nombre in (ACTUAL, OPTIMIZADO)}
+    return {nombre: self.rutear(productos, nombre, tecnica, **opciones)
+            for nombre in (ACTUAL, OPTIMIZADO)}

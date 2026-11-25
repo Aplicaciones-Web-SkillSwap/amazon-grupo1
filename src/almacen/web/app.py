@@ -341,26 +341,28 @@ def pestana_ruteo(s):
     comparar_t = c1.button("Carrera de técnicas", width="stretch")
     comparar_l = c2.button("Carrera de layouts", width="stretch")
 
+  opciones = dict(capacidad_kg=capacidad, max_unidades=tope, stock_base=stock_base,
+                  stock_excepciones=excepciones)
   clave = (str(oid), tuple(sorted(cantidades.items())), layout, tecnica, float(capacidad),
            float(tope), int(stock_base), tuple(sorted(excepciones.items())))
   if calcular:
     try:
       with st.spinner("Calculando la ruta…"):
-        st.session_state["res"] = (clave, s.rutear(cantidades, layout, tecnica, capacidad,
-                                                   tope, stock_base, excepciones))
+        st.session_state["res"] = (clave, s.rutear(cantidades, layout, tecnica, **opciones))
     except ValueError as e:
       st.warning(str(e))
   if comparar_t:
     try:
       with st.spinner("Ejecutando las tres técnicas…"):
-        st.session_state["cmp_t"] = (clave[:3], s.comparar_tecnicas(cantidades, layout))
+        st.session_state["cmp_t"] = (clave[:3],
+                                     s.comparar_tecnicas(cantidades, layout, **opciones))
     except ValueError as e:
       st.warning(str(e))
   if comparar_l:
     try:
       with st.spinner("Ruteando en ambos layouts…"):
         st.session_state["cmp_l"] = ((clave[0], clave[1], tecnica),
-                                     s.comparar_layouts(cantidades, tecnica))
+                                     s.comparar_layouts(cantidades, tecnica, **opciones))
     except ValueError as e:
       st.warning(str(e))
 
@@ -477,7 +479,7 @@ def pestana_ruteo(s):
                     "Reducción": "—" if nombre == ACTUAL or not base
                     else f"{100 * (base - x.costo) / base:+.1f} %"})
     st.dataframe(pd.DataFrame(filas), hide_index=True, width="stretch")
-  asi_piensa(s, productos, layout, factor)
+  asi_piensa(s, list(r.cantidades) if r else productos, layout, factor)
 
 
 MAX_PASO_A_PASO = 9      # productos: con más, fuerza bruta y backtracking tardan demasiado

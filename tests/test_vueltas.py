@@ -350,3 +350,25 @@ def test_sin_cantidades_el_resultado_no_cambia(servicio):
   dicc = servicio.rutear({1: 1, 2: 1, 4: 1}, ACTUAL)
   assert lista.costo_total == pytest.approx(dicc.costo_total)
   assert lista.orden == dicc.orden
+
+
+def test_comparar_tecnicas_respeta_el_carrito_y_el_stock(servicio):
+  r = servicio.rutear([1, 2, 4], ACTUAL, capacidad_kg=CARRITO_CHICO,
+                      stock_excepciones={2: 0})
+  comparacion = servicio.comparar_tecnicas([1, 2, 4], ACTUAL,
+                                           capacidad_kg=CARRITO_CHICO,
+                                           stock_excepciones={2: 0})
+  for resultado in comparacion.values():
+    if resultado is not None:
+      assert resultado.omitidos == r.omitidos          # el agotado sale en ambos
+      assert resultado.capacidad_kg == CARRITO_CHICO
+      assert len(resultado.vueltas) == len(r.vueltas)
+
+
+def test_comparar_layouts_respeta_el_carrito_y_el_stock(servicio):
+  comparacion = servicio.comparar_layouts([1, 2, 4], "voraz",
+                                          capacidad_kg=CARRITO_CHICO,
+                                          stock_excepciones={2: 0})
+  for resultado in comparacion.values():
+    assert resultado.omitidos == [2]
+    assert all(v["kg"] <= CARRITO_CHICO + 1e-9 for v in resultado.vueltas)
