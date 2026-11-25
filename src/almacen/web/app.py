@@ -345,6 +345,11 @@ def pestana_ruteo(s):
                   stock_excepciones=excepciones)
   clave = (str(oid), tuple(sorted(cantidades.items())), layout, tecnica, float(capacidad),
            float(tope), int(stock_base), tuple(sorted(excepciones.items())))
+  if calcular and tecnica == "dp" and len(productos) > config.UMBRAL_DP:
+    st.warning(f"En la versión web la programación dinámica admite hasta {config.UMBRAL_DP} "
+               "productos (con más, la memoria del servidor no alcanza). Se recomienda la "
+               "técnica automática para este pedido.")
+    calcular = False
   if calcular:
     try:
       with st.spinner("Calculando la ruta…"):
@@ -355,7 +360,9 @@ def pestana_ruteo(s):
     try:
       with st.spinner("Ejecutando las tres técnicas…"):
         st.session_state["cmp_t"] = (clave[:3],
-                                     s.comparar_tecnicas(cantidades, layout, **opciones))
+                                     s.comparar_tecnicas(cantidades, layout,
+                                                         max_dp=config.UMBRAL_DP,
+                                                         **opciones))
     except ValueError as e:
       st.warning(str(e))
   if comparar_l:

@@ -345,19 +345,25 @@ class Servicio:
                       "acumulado": acumulado})
     return filas
 
-  def comparar_tecnicas(self, productos, layout=ACTUAL, **opciones):
+  def comparar_tecnicas(self, productos, layout=ACTUAL, max_dp=None, **opciones):
     """Corre backtracking, DP optimizada y voraz sobre el mismo pedido.
 
-    `opciones` son las mismas de rutear (capacidad_kg, max_unidades, stock_base,
-    stock_excepciones), para que la comparación use la configuración de la pantalla."""
+    max_dp limita el tamaño para la DP (la versión web usa el umbral T para no agotar la
+    memoria del servidor). `opciones` son las mismas de rutear (capacidad_kg,
+    max_unidades, stock_base, stock_excepciones), para que la comparación use la
+    configuración de la pantalla. Devuelve {tecnica: Resultado, o None si el pedido es
+    demasiado grande para ella}."""
     # cuentan los productos que de verdad se van a rutear: los agotados no entran, y
     # sin esto una tecnica podia salir "no viable" por productos que ni se recogen
     disponible = self.stock(opciones.get("stock_base"), opciones.get("stock_excepciones"))
     n = sum(1 for p in self.unidades_pedidas(productos) if disponible.get(p, 0) >= 1)
+    limite = dict((k, v[1]) for k, v in TECNICAS.items())
+    if max_dp is not None:
+      limite["dp"] = min(limite["dp"], max_dp)
     salida = {}
     for nombre in ("backtracking", "dp", "voraz"):
       salida[nombre] = (self.rutear(productos, layout, nombre, **opciones)
-                        if n <= TECNICAS[nombre][1] else None)
+                        if n <= limite[nombre] else None)
     return salida
 
   def comparar_layouts(self, productos, tecnica="auto", **opciones):
