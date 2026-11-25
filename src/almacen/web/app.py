@@ -199,11 +199,20 @@ def tabla_tramos(s, r):
   """La ruta calculada, tramo por tramo, con los metros de cada uno y el acumulado."""
   def nombre(e):
     return "Depot" if e == "depot" else s.info[e]["nombre"][:34]
-  return pd.DataFrame([{"Tramo": k, "Desde": nombre(t["desde"]), "Hasta": nombre(t["hasta"]),
+  return pd.DataFrame([{"Tramo": k, "Vuelta": t["vuelta"], "Desde": nombre(t["desde"]),
+                        "Hasta": nombre(t["hasta"]),
                         "Pasillo": "" if t["hasta"] == "depot"
                         else str(num_pasillo(s, t["hasta"], r.layout)),
                         "Metros": round(t["metros"]), "Acumulado": round(t["acumulado"])}
                        for k, t in enumerate(s.tramos(r), start=1)])
+
+
+def tabla_vueltas(s, r):
+  """Una fila por vuelta del carrito: cuántos productos lleva, cuántos kilos y cuántos metros."""
+  return pd.DataFrame([{"Vuelta": k, "Productos": len(v["productos"]),
+                        "Peso (kg)": round(v["kg"], 2), "Metros": round(v["metros"]),
+                        "Detalle": ", ".join(s.info[p]["nombre"][:22] for p in v["productos"])}
+                       for k, v in enumerate(r.vueltas, start=1)])
 
 
 def carrera(s, clave, panes, factor=1.0):
@@ -228,6 +237,14 @@ def pestana_ruteo(s):
     st.markdown("#### 3. Layout")
     layout = textos.LAYOUTS[st.radio("Layout", list(textos.LAYOUTS),
                                      label_visibility="collapsed")]
+    st.markdown("#### 4. Carrito")
+    capacidad = st.number_input(
+        "Capacidad del carrito (kg)", min_value=0.5,
+        max_value=float(config.CAPACIDAD_CARRITO_KG * 10),
+        value=float(config.CAPACIDAD_CARRITO_KG), step=5.0,
+        help="Si el pedido pesa más que esto, el carrito vuelve al depot a descargar y sale "
+             "de nuevo. Bajarla (por ejemplo a 10 kg) para ver varias vueltas.")
+    st.caption(f"Este pedido pesa **{s.peso_pedido(productos):.2f} kg**.")
     factor = VELOCIDADES[st.radio("Velocidad de las animaciones", list(VELOCIDADES), index=1,
                                   horizontal=True)]
     calcular = st.button("Calcular ruta", type="primary", width="stretch")
@@ -235,11 +252,11 @@ def pestana_ruteo(s):
     comparar_t = c1.button("Carrera de técnicas", width="stretch")
     comparar_l = c2.button("Carrera de layouts", width="stretch")
 
-  clave = (str(oid), tuple(productos), layout, tecnica)
+  clave = (str(oid), tuple(productos), layout, tecnica, float(capacidad))
   if calcular:
     try:
       with st.spinner("Calculando la ruta…"):
-        st.session_state["res"] = (clave, s.rutear(productos, layout, tecnica))
+        st.session_state["res"] = (clave, s.rutear(productos, layout, tecnica, capacidad))
     except ValueError as e:
       st.warning(str(e))
   if comparar_t:
@@ -260,10 +277,15 @@ def pestana_ruteo(s):
   r = guardado[1] if guardado and guardado[0] == clave else None
   with der:
     if r:
-      m = st.columns(3)
-      m[0].metric("Distancia total", f"{r.costo:,.0f} m")
-      m[1].metric("Tiempo del algoritmo", ms_texto(r.tiempo_s))
-      m[2].markdown(f"<span style='font-size:0.85rem;color:#6b6b6b'>Técnica ejecutada</span><br>"
+      m = st.columns(4)
+      m[0].metric("Distancia total", f"{r.costo_total:,.0f} m",
+                  delta=None if len(r.vueltas) < 2 else f"+{r.costo_total - r.costo:,.0f} m "
+                  "por descargar", delta_color="inverse")
+      m[1].metric("Vueltas del carrito", len(r.vueltas),
+                  help=f"Carrito de {r.capacidad_kg:.0f} kg; el pedido pesa "
+                       f"{sum(v['kg'] for v in r.vueltas):.2f} kg.")
+      m[2].metric("Tiempo del algoritmo", ms_texto(r.tiempo_s))
+      m[3].markdown(f"<span style='font-size:0.85rem;color:#6b6b6b'>Técnica ejecutada</span><br>"
                     f"<span style='font-size:1.05rem;font-weight:600'>"
                     f"{textos.NOMBRE_TECNICA.get(r.tecnica, r.tecnica)}</span>",
                     unsafe_allow_html=True)
@@ -282,6 +304,15 @@ def pestana_ruteo(s):
                "se puede avanzar o retroceder, y al pasar el mouse sobre un punto se ve el "
                "nombre del producto.")
     if r:
+      if len(r.vueltas) > 1:
+        st.markdown("**Vueltas del carrito**")
+        st.plotly_chart(mapas.mapa_vueltas(s, r), width="stretch", key="mapa_vueltas",
+                        config={"displaylogo": False})
+        st.caption(f"El carrito aguanta {r.capacidad_kg:.0f} kg, así que el pedido se recoge en "
+                   f"{len(r.vueltas)} vueltas: cada una sale del depot, recoge sus productos y "
+                   "vuelve a descargar. El corte se elige con programación dinámica, de modo que "
+                   "la suma de las vueltas sea la menor posible.")
+        st.dataframe(tabla_vueltas(s, r), hide_index=True, width="stretch")
       st.markdown("**La ruta, tramo por tramo**")
       st.dataframe(tabla_tramos(s, r), hide_index=True, width="stretch")
     else:
