@@ -116,7 +116,7 @@ difiere de `UMBRAL_DP` en `src/almacen/config.py`, actualice ese valor.
 python -m pytest -q
 ```
 
-131 pruebas. Las que usan el dataset real se omiten si no está en `dataset/`, y las de la ventana se
+158 pruebas. Las que usan el dataset real se omiten si no está en `dataset/`, y las de la ventana se
 omiten si no hay pantalla. Las distancias del almacén se validan contra un Dijkstra independiente
 sobre las 1,697 ubicaciones; las técnicas exactas se validan entre sí.
 
@@ -189,8 +189,8 @@ Los pedidos se separan al azar (semilla 42): el 70 % arma G₁ y las frecuencias
 | 21 | – | 3.50 s |
 
 Mediana de 5 pedidos reales por tamaño. Backtracking tarda de 1 a 4 s con 11 productos, por eso el corte
-de fuerza bruta/backtracking es 10. El voraz queda, en promedio, a 0.25 % del óptimo en el layout
-optimizado y es exacto en el 91 % de los pedidos, pero con 21 % de brecha en el peor caso. La
+de fuerza bruta/backtracking es 10. El voraz queda, en promedio, a 0.34 % del óptimo en el layout
+optimizado y es exacto en el 90 % de los pedidos, pero con 28.8 % de brecha en el peor caso. La
 poda por cota superior **no reduce el tiempo** (+10 a 20 %): la cota inferior que usa es ~40 % del
 óptimo y casi no descarta estados.
 

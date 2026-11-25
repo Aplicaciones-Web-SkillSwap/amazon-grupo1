@@ -23,7 +23,7 @@ AYUDA_TECNICA = {
              "dinámica; más allá usa el voraz, que es rápido pero no siempre óptimo."),
     "fuerza_bruta": "Prueba todos los órdenes. Exacta, pero solo viable hasta 9 productos.",
     "backtracking": "Prueba órdenes y abandona los que ya son más largos que el mejor. Hasta 11 productos.",
-    "dp": "Guarda las mejores rutas parciales de cada subconjunto. Exacta, hasta 22 productos.",
+    "dp": "Guarda las mejores rutas parciales de cada subconjunto. Exacta, hasta 19 productos en la versión web.",
     "voraz": "Va siempre al producto más cercano. Instantánea, pero puede dar una ruta más larga.",
 }
 LAYOUTS = {"Actual (catálogo de Instacart)": ACTUAL, "Optimizado (UFDS)": OPTIMIZADO}

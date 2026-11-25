@@ -178,3 +178,10 @@ def test_tramos_suman_la_distancia_de_la_ruta(servicio):
   assert [t["hasta"] for t in tramos[:-1]] == r.orden
   assert tramos[-1]["acumulado"] == pytest.approx(r.costo)
   assert sum(t["metros"] for t in tramos) == pytest.approx(r.costo)
+
+
+def test_comparar_tecnicas_respeta_el_limite_de_la_dp(servicio):
+  productos = [1, 2, 4, 6]
+  assert servicio.comparar_tecnicas(productos, ACTUAL)["dp"] is not None
+  limitado = servicio.comparar_tecnicas(productos, ACTUAL, max_dp=3)
+  assert limitado["dp"] is None and limitado["voraz"] is not None
