@@ -193,6 +193,19 @@ def tabla_visita(s, productos, layout, orden=None):
 
 
 VELOCIDADES = {"Lenta": 2.2, "Normal": 1.0, "Rápida": 0.4}   # factor sobre el tiempo por cuadro
+LIMITES = {"Peso (kg)": "peso", "Unidades": "unidades", "Peso y unidades": "ambos"}
+
+
+def limite_texto(r):
+  """Cómo quedó limitado el carrito, para explicar por qué salieron esas vueltas."""
+  partes = []
+  if r.capacidad_kg != float("inf"):
+    partes.append(f"{r.capacidad_kg:.0f} kg")
+  if r.max_unidades is not None:
+    partes.append(f"{r.max_unidades} productos")
+  limite = " y ".join(partes) if partes else "sin tope"
+  return (f"Carrito de {limite}. El pedido lleva {sum(v['unidades'] for v in r.vueltas)} "
+          f"productos y pesa {sum(v['kg'] for v in r.vueltas):.2f} kg.")
 
 
 def tabla_tramos(s, r):
@@ -238,13 +251,23 @@ def pestana_ruteo(s):
     layout = textos.LAYOUTS[st.radio("Layout", list(textos.LAYOUTS),
                                      label_visibility="collapsed")]
     st.markdown("#### 4. Carrito")
-    capacidad = st.number_input(
-        "Capacidad del carrito (kg)", min_value=0.5,
-        max_value=float(config.CAPACIDAD_CARRITO_KG * 10),
-        value=float(config.CAPACIDAD_CARRITO_KG), step=5.0,
-        help="Si el pedido pesa más que esto, el carrito vuelve al depot a descargar y sale "
-             "de nuevo. Bajarla (por ejemplo a 10 kg) para ver varias vueltas.")
-    st.caption(f"Este pedido pesa **{s.peso_pedido(productos):.2f} kg**.")
+    modo = LIMITES[st.radio("Limitar el carrito por", list(LIMITES), horizontal=True,
+                            help="Si el pedido no entra en el carrito, vuelve al depot a "
+                                 "descargar y sale de nuevo. Bajar el tope (por ejemplo a "
+                                 "10 kg o a 4 productos) para ver varias vueltas.")]
+    capacidad, tope = float("inf"), float("inf")
+    if modo in ("peso", "ambos"):
+      capacidad = st.number_input(
+          "Capacidad (kg)", min_value=0.5,
+          max_value=float(config.CAPACIDAD_CARRITO_KG * 10),
+          value=float(config.CAPACIDAD_CARRITO_KG), step=5.0)
+    if modo in ("unidades", "ambos"):
+      tope = st.number_input(
+          "Productos por vuelta", min_value=1,
+          max_value=int(config.CAPACIDAD_CARRITO_UNIDADES),
+          value=int(config.CAPACIDAD_CARRITO_UNIDADES), step=1)
+    st.caption(f"Este pedido: **{len(productos)} productos**, "
+               f"**{s.peso_pedido(productos):.2f} kg**.")
     factor = VELOCIDADES[st.radio("Velocidad de las animaciones", list(VELOCIDADES), index=1,
                                   horizontal=True)]
     calcular = st.button("Calcular ruta", type="primary", width="stretch")
@@ -252,11 +275,12 @@ def pestana_ruteo(s):
     comparar_t = c1.button("Carrera de técnicas", width="stretch")
     comparar_l = c2.button("Carrera de layouts", width="stretch")
 
-  clave = (str(oid), tuple(productos), layout, tecnica, float(capacidad))
+  clave = (str(oid), tuple(productos), layout, tecnica, float(capacidad), float(tope))
   if calcular:
     try:
       with st.spinner("Calculando la ruta…"):
-        st.session_state["res"] = (clave, s.rutear(productos, layout, tecnica, capacidad))
+        st.session_state["res"] = (clave, s.rutear(productos, layout, tecnica, capacidad,
+                                                   tope))
     except ValueError as e:
       st.warning(str(e))
   if comparar_t:
@@ -281,9 +305,7 @@ def pestana_ruteo(s):
       m[0].metric("Distancia total", f"{r.costo_total:,.0f} m",
                   delta=None if len(r.vueltas) < 2 else f"+{r.costo_total - r.costo:,.0f} m "
                   "por descargar", delta_color="inverse")
-      m[1].metric("Vueltas del carrito", len(r.vueltas),
-                  help=f"Carrito de {r.capacidad_kg:.0f} kg; el pedido pesa "
-                       f"{sum(v['kg'] for v in r.vueltas):.2f} kg.")
+      m[1].metric("Vueltas del carrito", len(r.vueltas), help=limite_texto(r))
       m[2].metric("Tiempo del algoritmo", ms_texto(r.tiempo_s))
       m[3].markdown(f"<span style='font-size:0.85rem;color:#6b6b6b'>Técnica ejecutada</span><br>"
                     f"<span style='font-size:1.05rem;font-weight:600'>"
@@ -308,10 +330,10 @@ def pestana_ruteo(s):
         st.markdown("**Vueltas del carrito**")
         st.plotly_chart(mapas.mapa_vueltas(s, r), width="stretch", key="mapa_vueltas",
                         config={"displaylogo": False})
-        st.caption(f"El carrito aguanta {r.capacidad_kg:.0f} kg, así que el pedido se recoge en "
-                   f"{len(r.vueltas)} vueltas: cada una sale del depot, recoge sus productos y "
-                   "vuelve a descargar. El corte se elige con programación dinámica, de modo que "
-                   "la suma de las vueltas sea la menor posible.")
+        st.caption(f"{limite_texto(r)} Por eso se recoge en {len(r.vueltas)} vueltas: cada una "
+                   "sale del depot, recoge sus productos y vuelve a descargar. El corte se "
+                   "elige con programación dinámica, de modo que la suma de las vueltas sea la "
+                   "menor posible.")
         st.dataframe(tabla_vueltas(s, r), hide_index=True, width="stretch")
       st.markdown("**La ruta, tramo por tramo**")
       st.dataframe(tabla_tramos(s, r), hide_index=True, width="stretch")

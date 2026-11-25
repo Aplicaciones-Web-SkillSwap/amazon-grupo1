@@ -24,7 +24,8 @@ def mapa_vueltas(s, r, alto=380):
     fig.add_trace(go.Scatter(
         x=[q[0] for q in puntos], y=[q[1] for q in puntos], mode="lines",
         line=dict(color=color, width=2.5), hoverinfo="skip",
-        name=f"Vuelta {k}: {vuelta['kg']:.2f} kg · {vuelta['metros']:,.0f} m"))
+        name=f"Vuelta {k}: {vuelta['unidades']} prod · {vuelta['kg']:.2f} kg · "
+             f"{vuelta['metros']:,.0f} m"))
     prods = vuelta["productos"]
     fig.add_trace(go.Scatter(
         x=[lo.pos[p][0] for p in prods], y=[lo.pos[p][1] for p in prods], mode="markers",
